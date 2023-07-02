@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld'
+import { ref } from 'vue'
+const msg = ref<number>(1)
+import '@/hooks/usePage/demo.ts'
 </script>
 
 <template>
@@ -11,7 +14,7 @@ import HelloWorld from './components/HelloWorld'
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
-  <HelloWorld msg="Vite + Vue" />
+<!--  <HelloWorld v-model:msg="msg" />-->
 </template>
 
 <style scoped>
