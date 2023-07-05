@@ -67,9 +67,9 @@ export default {
         <a href="https://vuejs.org/" target="_blank">
           <img src="./assets/vue.svg" className="logo vue" alt="Vue logo"/>
         </a>
-        {/*<DefineCompDemo v-model={[this.defineCompDemoMsg,'msg']} v-slots={this.childrenSlot} />*/}
+        <DefineCompDemo v-model={[this.defineCompDemoMsg,'msg']} v-slots={this.childrenSlot} />
         {/*<DefineCompDemo v-model:msg={this.defineCompDemoMsg} v-slots={this.childrenSlot} />*/}
-        <FunctionalCompDemo v-model={[this.functionalCompDemoMsg,'msg']} />
+        <FunctionalCompDemo v-model={[this.functionalCompDemoMsg,'msg']} v-slots={this.childrenSlot} />
       </div>
     </>
   }
