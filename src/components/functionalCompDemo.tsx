@@ -1,33 +1,35 @@
-import { ref, FunctionalComponent, defineEmits, CSSProperties } from 'vue'
+import { ref, FunctionalComponent, defineEmits, CSSProperties, render } from 'vue'
 import {Events} from "@vue/runtime-dom";
 
 interface Props {
-  msg: number;
+  msg: string;
   style: CSSProperties
 }
 
 type Emit = {
-  'update:msg': (num: number) => void
+  'update:msg': (msg: string) => void
 }
 
 const demoComp: FunctionalComponent<Props, Emit> = (props, ctx) => {
-  let { msg } = props
-  const { slots, emit } = ctx
   let count = ref(0);
+  let { msg } = props;
+  const { slots, emit } = ctx;
   const handleButton: Events = () => {
+    console.log(count, count.value, ++count.value)
     count.value++
-    emit('update:msg', msg + 1)
-  }
+    emit('update:msg', `${msg}${count.value}`)
+  };
+
   return (
     <div>
       {slots?.default && slots.default()}
-      <h1>这个是外部传入的： {msg}</h1>
-      <div className="card">
-        这是内部的： {count.value}
-        <button type="button" onClick={handleButton}>点击一起增加</button>
-      </div>
+      <h2>这个是外部传入的： {msg}</h2>
+      {slots?.common && slots.common()}
+      <h2>这是内部的： {count.value}</h2>
+      <button type="button" onClick={handleButton}>点击一起增加</button>
     </div>
   )
+
 }
 
 export default demoComp
