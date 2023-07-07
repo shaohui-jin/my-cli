@@ -1,9 +1,10 @@
 import { ref, defineAsyncComponent } from 'vue'
 
-import '@/hooks/usePage/demo.ts'
+import '@/hooks/usePage/demo.tsx'
 import style from './App.module.less'
 // import DefineCompDemo from './components/defineCompDemo'
 // import FunctionalCompDemo from './components/functionalCompDemo'
+const UsePageDemo = defineAsyncComponent(() => import('./hooks/usePage/demo'))
 const DefineCompDemo = defineAsyncComponent(() => import('./components/defineCompDemo'))
 const FunctionalCompDemo = defineAsyncComponent(() => import('./components/functionalCompDemo'))
 
@@ -67,6 +68,7 @@ export default {
         <a href="https://vuejs.org/" target="_blank">
           <img src="./assets/vue.svg" className="logo vue" alt="Vue logo"/>
         </a>
+        <UsePageDemo />
         <DefineCompDemo v-model={[this.defineCompDemoMsg,'msg']} v-slots={this.childrenSlot} />
         {/*<DefineCompDemo v-model:msg={this.defineCompDemoMsg} v-slots={this.childrenSlot} />*/}
         <FunctionalCompDemo v-model={[this.functionalCompDemoMsg,'msg']} v-slots={this.childrenSlot} />

@@ -1,4 +1,4 @@
-import {ref, defineComponent, defineEmits} from 'vue'
+import {ref, defineComponent, defineEmits, getCurrentInstance} from 'vue'
 import {Events} from "@vue/runtime-dom";
 
 export default defineComponent({
@@ -8,9 +8,10 @@ export default defineComponent({
     }
   },
   emits: ['update:msg'],
-  setup(props, ctx) {
+  setup(props, { slots, emit }) {
+    const { appContext : { config: { globalProperties: global } } } = getCurrentInstance()
+    global.$console.info('渲染了defineComponent组件')
     let count = ref(0);
-    const { slots, emit } = ctx;
     const handleButton: Events = () => {
       count.value++
       emit('update:msg', `${props.msg}${count.value}`)

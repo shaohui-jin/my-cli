@@ -1,29 +1,41 @@
-import {reactive, ref} from 'vue'
+import {reactive, ref, getCurrentInstance, FunctionalComponent, CSSProperties} from 'vue'
 
 // 一个用于重置对象字段为原始值的函数
 const resetObjToPrimitiveType = (searchForm: {}) => {}
 
-/**
- * @description usePage 接收一个 opts 参数，返回列表所需数据
- * @param {Object} opts.searchForm - 默认查询参数
- * @param {Function} opts.getListApi  - 获取列表数据的接口
- * @param {Function} opts.customQueryParameters  - 自定义查询参数
- * @param {Function} opts.getListFunc  - 执行完 getList 成功后执行的逻辑 有一个opts参数
- * @param {Function} opts.resetFunc  - 执行完 reset 后执行的逻辑
- * @param {Function} opts.sizeChangeFunc  - 执行完 sizeChange 后执行的逻辑
- * @param {Function} opts.currentChangeFunc  - 执行完 currentChange 后执行的逻辑
- */
-export const usePage = (opts) => {
+interface Props {
+  // 默认查询参数
+  searchForm: Object;
+  // 获取列表数据的接口
+  getListApi: (params: any) => Promise<any>;
+  // 自定义查询参数
+  customQueryParameters: () => Object;
+  // 执行完 getList 成功后执行的逻辑 有一个opts参数
+  getListFunc: (options: Props) => void;
+  // 执行完 reset 后执行的逻辑
+  resetFunc: () => void;
+  // 执行完 sizeChange 后执行的逻辑
+  sizeChangeFunc: () => void;
+  // 执行完 currentChange 后执行的逻辑
+  currentChangeFunc: () => void;
+  style: CSSProperties;
+}
+
+type Emit = {}
+
+const usePage: FunctionalComponent<Props, Emit> = (props, ctx) => {
+  // const { appContext : { config: { globalProperties: global } } } = getCurrentInstance()
+  // global.$console.info(123123)
   // searchForm 由外部传入，内部传入导出的数据无法推导类型即无法知道对象里有什么也会失去代码提示
   const {
-    searchForm = {},
+    searchForm,
     getListApi,
     customQueryParameters = () => {},
-    getListFunc = (opts) => {},
-    resetFunc = () => {},
+    getListFunc = () => {},
+    resetFunc,
     sizeChangeFunc = () => {},
     currentChangeFunc = () => {}
-  } = opts
+  } = props
 
   const reset = () => {
     Object.assign(searchForm, resetObjToPrimitiveType(searchForm))
@@ -49,8 +61,8 @@ export const usePage = (opts) => {
       if (res.code === 0) {
         tableData.value = res.data?.rows || []
         page.total = res.data?.total || 0
-        console.log(JSON.stringify(tableData.value))
-        getListFunc(opts)
+        // global.$console.info(JSON.stringify(tableData.value))
+        getListFunc(props)
       }
     })
   }
@@ -76,3 +88,5 @@ export const usePage = (opts) => {
     handleCurrentChange
   }
 }
+
+export default usePage
