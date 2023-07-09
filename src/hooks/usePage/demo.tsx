@@ -37,10 +37,10 @@ export default defineComponent({
     const { slots, props, count, handleButton } = this
     return  (
       <div>
-        {slots?.default && slots.default()}
-        <h2>这个是外部传入的： {props.msg}</h2>
-        {slots?.common && slots.common()}
-        <h2>这是内部的： {count}</h2>
+        {/*{slots?.default && slots.default()}*/}
+        {/*<h2>这个是外部传入的： {props.msg}</h2>*/}
+        {/*{slots?.common && slots.common()}*/}
+        {/*<h2>这是内部的： {count}</h2>*/}
         <button type="button" onClick={handleButton}>点击增加</button>
       </div>
     )

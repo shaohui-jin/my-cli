@@ -1,7 +1,7 @@
 import {reactive, ref, getCurrentInstance, FunctionalComponent, CSSProperties} from 'vue'
 
 // 一个用于重置对象字段为原始值的函数
-const resetObjToPrimitiveType = (searchForm: {}) => {}
+const resetObjToPrimitiveType = (searchForm: {}): Object => ({})
 
 interface Props {
   // 默认查询参数
