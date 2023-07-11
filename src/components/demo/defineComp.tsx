@@ -1,6 +1,6 @@
 import {ref, defineComponent, defineEmits, getCurrentInstance} from 'vue'
-import {Events} from "@vue/runtime-dom";
-
+import {Events} from '@vue/runtime-dom'
+import style from './demo.module.less'
 export default defineComponent({
   props: {
     msg: {
@@ -21,12 +21,14 @@ export default defineComponent({
   render() {
     const { slots, props, count, handleButton } = this
     return  (
-      <div>
-        {slots?.default && slots.default()}
-        <h2>这个是外部传入的： {props.msg}</h2>
-        {slots?.common && slots.common()}
-        <h2>这是内部的： {count}</h2>
-        <button type="button" onClick={handleButton}>点击增加</button>
+      <div className={style.defineComp}>
+        <div className={`${style.defineComp}__left`}>123123</div>
+        <div className={`${style.defineComp}__right`}>
+          {slots?.default && slots.default()}
+          <h2>外部的： {props.msg}，内部的： {count}</h2>
+          {slots?.common && slots.common()}
+          <button type="button" onClick={handleButton}>点击增加</button>
+        </div>
       </div>
     )
   }

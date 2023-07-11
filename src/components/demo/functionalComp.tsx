@@ -22,9 +22,8 @@ const demoComp: FunctionalComponent<Props, Emit> = (props, { slots, emit }) => {
   return (
     <div>
       {slots?.default && slots.default()}
-      <h2>这个是外部传入的： {props.msg}</h2>
+      <h2>外部的： {props.msg}，内部的： {count.value}</h2>
       {slots?.common && slots.common()}
-      <h2>这是内部的： {count.value}</h2>
       <button type="button" onClick={handleButton}>点击一起增加</button>
     </div>
   )

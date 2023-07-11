@@ -28,10 +28,10 @@ export default {
     let functionalCompDemoMsg = ref('FunctionalCompDemo')
     const childrenSlot = {
       default: () => {
-        return <p>父组件插入内容至子组件：默认插槽</p>
+        return <p>default 默认插槽</p>
       },
       common: () => {
-        return <p>父组件插入内容至子组件：具名插槽</p>
+        return <p>common 具名插槽</p>
       },
     }
     return {
@@ -43,11 +43,11 @@ export default {
   },
   render() {
     return <div className={style.home}>
-      <a className={style.logo} href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" className="logo" alt="Vite logo"/>
+      <a href="https://vitejs.dev" target="_blank">
+        <img src="/vite.svg" className={style.logo} alt="Vite logo"/>
       </a>
       <a href="https://vuejs.org/" target="_blank">
-        <img src={vueImg} className="logo vue" alt="Vue logo"/>
+        <img src={vueImg} className={`${style.logo} ${style.vue}`} alt="Vue logo"/>
       </a>
       <UsePageDemo />
       <DefineCompDemo v-model={[this.defineCompDemoMsg,'msg']} v-slots={this.childrenSlot} />
