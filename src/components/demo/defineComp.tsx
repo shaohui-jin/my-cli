@@ -1,6 +1,6 @@
 import {ref, defineComponent, defineEmits, getCurrentInstance} from 'vue'
 import {Events} from '@vue/runtime-dom'
-import style from './demo.module.less'
+import styles from "@/components/demo/demo.module.less";
 export default defineComponent({
   props: {
     msg: {
@@ -10,7 +10,7 @@ export default defineComponent({
   emits: ['update:msg'],
   setup(props, { slots, emit }) {
     const { appContext : { config: { globalProperties: global } } } = getCurrentInstance()
-    global.$console.info('渲染了defineComponent组件')
+    global.$console.info('渲染了defineComponent组件：defineComponent')
     let count = ref(0);
     const handleButton: Events = () => {
       count.value++
@@ -21,11 +21,13 @@ export default defineComponent({
   render() {
     const { slots, props, count, handleButton } = this
     return  (
-      <div className={style.defineComp}>
-        <div className={`${style.defineComp}__left`}>123123</div>
-        <div className={`${style.defineComp}__right`}>
-          {slots?.default && slots.default()}
+      <div className={styles.defineComp}>
+        <div className={styles.defineComp__left}>
+          <span>这是defineComponent组件</span>
+        </div>
+        <div className={styles.defineComp__right}>
           <h2>外部的： {props.msg}，内部的： {count}</h2>
+          {slots?.default && slots.default()}
           {slots?.common && slots.common()}
           <button type="button" onClick={handleButton}>点击增加</button>
         </div>

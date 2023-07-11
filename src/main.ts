@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
 import store from './store'
-import './style.css'
 import App from './App.tsx'
 import router from '@/router'
 import { install } from './common'

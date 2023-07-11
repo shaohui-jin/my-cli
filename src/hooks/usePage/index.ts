@@ -24,8 +24,8 @@ interface Props {
 type Emit = {}
 
 const usePage: FunctionalComponent<Props, Emit> = (props, ctx) => {
-  // const { appContext : { config: { globalProperties: global } } } = getCurrentInstance()
-  // global.$console.info(123123)
+  const { appContext : { config: { globalProperties: global } } } = getCurrentInstance()
+
   // searchForm 由外部传入，内部传入导出的数据无法推导类型即无法知道对象里有什么也会失去代码提示
   const {
     searchForm,
@@ -35,7 +35,7 @@ const usePage: FunctionalComponent<Props, Emit> = (props, ctx) => {
     resetFunc,
     sizeChangeFunc = () => {},
     currentChangeFunc = () => {}
-  } = props
+  } = props as Props
 
   const reset = () => {
     Object.assign(searchForm, resetObjToPrimitiveType(searchForm))
@@ -79,13 +79,18 @@ const usePage: FunctionalComponent<Props, Emit> = (props, ctx) => {
     getList()
   }
 
+  const query = () => {
+    getList()
+    global.$console.info('调用了getList')
+  }
   return {
     searchForm,
     reset,
     page,
     tableData,
     handleSizeChange,
-    handleCurrentChange
+    handleCurrentChange,
+    query
   }
 }
 

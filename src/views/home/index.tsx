@@ -3,7 +3,7 @@ import { ref, defineAsyncComponent } from 'vue'
 import style from './home.module.less'
 // import DefineCompDemo from './components/defineCompDemo'
 // import FunctionalCompDemo from './components/functionalCompDemo'
-const UsePageDemo = defineAsyncComponent(() => import('@/hooks/usePage/demo'))
+const UsePageDemo = defineAsyncComponent(() => import('@/components/demo/usePage.tsx'))
 const DefineCompDemo = defineAsyncComponent(() => import('@/components/demo/defineComp.tsx'))
 const FunctionalCompDemo = defineAsyncComponent(() => import('@/components/demo/functionalComp.tsx'))
 import vueImg from '@/assets/vue.svg'

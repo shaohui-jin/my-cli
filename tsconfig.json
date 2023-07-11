@@ -27,7 +27,14 @@
       "@/*": ["*"],
     },
 
-    "plugins": [{"name": "typescript-plugin-css-modules"}],
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules",
+        "options": {
+          "customMatcher": ".(styl|css|scss|less|sass)$"
+        }
+      },
+    ],
     /* Volar支持 */
     "types": ["element-plus/global"],
 
