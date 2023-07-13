@@ -1,10 +1,3 @@
-/*
- * @Description:
- * @Author: 郑志福
- * @Date: 2020-12-02 11:42:37
- * @LastEditTime: 2021-02-03 16:44:19
- * @LastEditors: 郑志福
- */
 import React, { useState } from "react";
 import { ModalFuncProps } from "antd/lib/modal";
 import { Form, Input, InputNumber, Modal, Select, TreeSelect } from "antd";
