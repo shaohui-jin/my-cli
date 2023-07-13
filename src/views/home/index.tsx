@@ -1,4 +1,4 @@
-import { ref, defineAsyncComponent } from 'vue'
+import {ref, defineAsyncComponent, defineComponent} from 'vue'
 
 import style from './home.module.less'
 // import DefineCompDemo from './components/defineCompDemo'
@@ -7,7 +7,7 @@ const UsePageDemo = defineAsyncComponent(() => import('@/components/demo/usePage
 const DefineCompDemo = defineAsyncComponent(() => import('@/components/demo/defineComp.tsx'))
 const FunctionalCompDemo = defineAsyncComponent(() => import('@/components/demo/functionalComp.tsx'))
 import vueImg from '@/assets/vue.svg'
-export default {
+export default defineComponent({
   setup() {
     let msg = ref<number>(1)
     const onFun = {
@@ -55,4 +55,4 @@ export default {
       <FunctionalCompDemo msg={this.functionalCompDemoMsg} v-slots={this.childrenSlot}  style={{}}/>
     </div>
   }
-}
+})
