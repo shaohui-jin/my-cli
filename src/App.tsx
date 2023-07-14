@@ -1,13 +1,9 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
-import { RouterView } from "vue-router";
-import './style.css'
-const sidebar = defineAsyncComponent(() => import('@/views/layout'))
+import '@/assets/css/theme.css'
+const Layout = defineAsyncComponent(() => import('@/layout'))
 
 export default defineComponent({
   setup() {
-    return () => <>
-      <sidebar />
-      <RouterView />
-    </>
+    return () => <Layout />
   },
 });
