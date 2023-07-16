@@ -5,6 +5,8 @@ import {
   Location,
   Setting,
 } from '@element-plus/icons-vue'
+import { menu } from '@/layout/sidebar/menuData.ts'
+import subMenu from './subMenu.tsx'
 
 export default defineComponent({
   setup() {
@@ -16,11 +18,11 @@ export default defineComponent({
     const handleClose = (key: string, keyPath: string[]) => {
       console.log(key, keyPath)
     }
-    return { menu, isCollapse, handleClose, handleOpen }
+    return { isCollapse, handleClose, handleOpen }
 
   },
   render() {
-    const { menu, isCollapse, handleOpen, handleClose, $slots } = this
+    const { isCollapse, handleOpen, handleClose, $slots } = this
     return <>
       {/*<el-radio-group v-model={isCollapse} style={{ marginBottom: '20px' }}>*/ }
       {/*  <el-radio-button label={false}>expand</el-radio-button>*/ }
@@ -33,29 +35,12 @@ export default defineComponent({
         onOpen={ handleOpen }
         onClose={ handleClose }
       >
-        { menu.map((menuItem, menuIndex) =>
-          <>
-            <el-sub-menu
-              index={ menuIndex.toString() }
-              v-slots={ {
-                title: () => {
-                  return <>
-                    <el-icon>{ menuItem.icon }</el-icon>
-                    <span>{ menuItem.title }</span>
-                  </>
-                }
-              } }
-            >
-              <el-menu-item-group title="Group Two">
-                <el-menu-item index="1-3">item three</el-menu-item>
-              </el-menu-item-group>
-              {/*<el-sub-menu index="1-4">*/ }
-              {/*  <template #title><span>item four</span></template>*/ }
-              {/*<el-menu-item index="1-4-1">item one</el-menu-item>*/ }
-              {/*</el-sub-menu>*/ }
-            </el-sub-menu>
+        { menu.map((subMenu, subIndex) => {
+          return <>
+            <subMenu { ...subMenu } subIndex={ subIndex + 1 }/>
           </>
-        ) }
+        })
+        }
       </el-menu>
     </>
   }

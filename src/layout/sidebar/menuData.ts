@@ -1,15 +1,20 @@
-import { reactive } from "vue";
-import { Document, Location, Setting } from "@element-plus/icons-vue";
-import { Menu as IconMenu } from "@element-plus/icons-vue/components";
+import { reactive } from 'vue';
+import {
+  Document,
+  Menu as IconMenu,
+  Location,
+  Setting,
+} from '@element-plus/icons-vue'
+import type { DefineComponent } from 'vue';
 
-const menu = reactive<HTMLUListElement>([
+export const menu = reactive<SubMenu[]>([
   {
     icon: Location,
     title: 'Navigator One',
     childMenu: [
-      { isGroup: true, title: 'Group One', groupMenu: [{ title: 'item one' }, { title: 'item two' }] },
-      { isGroup: true, title: 'Group Two', groupMenu: [{ title: 'item three' }] },
-      { isGroup: false, title: 'item four', childMenu: [{ title: 'item three' }] },
+      { isGroup: true, subTitle: 'Group One', childMenu: [{ title: 'item one' }, { title: 'item two' }] },
+      { isGroup: true, subTitle: 'Group Two', childMenu: [{ title: 'item three' }] },
+      { isGroup: false, subTitle: 'item four', childMenu: [{ title: 'item three' }] },
     ]
   },
   {
@@ -30,15 +35,24 @@ interface SubMenu {
   // 标题名称
   title: string,
   // 图标
-  icon: any,
+  icon?: DefineComponent,
+  // 路由
+  route?: string,
+  click?: Event,
   // 子菜单
-  childMenu?: any[]
+  childMenu?: MenuItemGroup[] | SubMenu[]
+}
+
+interface MenuItem {
+  title: string,
+  click?: Event
 }
 
 interface MenuItemGroup {
   // 标题名称
   title: string,
-
+  isGroup: true,
+  childMenu: MenuItem[]
 }
 
 
