@@ -1,7 +1,6 @@
-import { RouterView } from "vue-router";
-import { defineComponent } from "vue";
-import Menu from "@/layout/sidebar/menu.tsx";
-
+import { RouterView } from 'vue-router';
+import { defineAsyncComponent, defineComponent } from 'vue';
+const Menu: JSX.Element = defineAsyncComponent(() => import('@/layout/sidebar/menu.tsx'))
 export default defineComponent({
   render() {
     return <>

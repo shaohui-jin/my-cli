@@ -12,9 +12,9 @@ export const menu = reactive<SubMenu[]>([
     icon: Location,
     title: 'Navigator One',
     childMenu: [
-      { isGroup: true, subTitle: 'Group One', childMenu: [{ title: 'item one' }, { title: 'item two' }] },
-      { isGroup: true, subTitle: 'Group Two', childMenu: [{ title: 'item three' }] },
-      { isGroup: false, subTitle: 'item four', childMenu: [{ title: 'item three' }] },
+      { isGroup: true, title: 'Group One', childMenu: [{ title: 'item one' }, { title: 'item two' }] },
+      { isGroup: true, title: 'Group Two', childMenu: [{ title: 'item three' }] },
+      { isGroup: false, title: 'item four', childMenu: [{ title: 'item three' }] },
     ]
   },
   {
@@ -31,7 +31,7 @@ export const menu = reactive<SubMenu[]>([
   }
 ])
 
-interface SubMenu {
+export interface SubMenu {
   // 标题名称
   title: string,
   // 图标
@@ -42,19 +42,16 @@ interface SubMenu {
   // 子菜单
   childMenu?: MenuItemGroup[] | SubMenu[]
 }
-
-interface MenuItem {
-  title: string,
-  click?: Event
-}
-
 interface MenuItemGroup {
   // 标题名称
   title: string,
   isGroup: true,
   childMenu: MenuItem[]
 }
-
+interface MenuItem {
+  title: string,
+  click?: Event
+}
 
 // <el-sub-menu
 // index={ menuIndex.toString() }

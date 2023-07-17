@@ -1,4 +1,4 @@
-import { ref, renderSlot, defineComponent, reactive } from 'vue'
+import { ref, renderSlot, defineComponent, reactive, defineAsyncComponent } from 'vue'
 import {
   Document,
   Menu as IconMenu,
@@ -6,12 +6,11 @@ import {
   Setting,
 } from '@element-plus/icons-vue'
 import { menu } from '@/layout/sidebar/menuData.ts'
-import subMenu from './subMenu.tsx'
 
+const SubMenu: JSX.Element = defineAsyncComponent(() => import('./_subMenu.tsx'))
 export default defineComponent({
   setup() {
     const isCollapse = ref<boolean>(false)
-
     const handleOpen = (key: string, keyPath: string[]) => {
       console.log(key, keyPath)
     }
@@ -19,7 +18,6 @@ export default defineComponent({
       console.log(key, keyPath)
     }
     return { isCollapse, handleClose, handleOpen }
-
   },
   render() {
     const { isCollapse, handleOpen, handleClose, $slots } = this
@@ -35,12 +33,14 @@ export default defineComponent({
         onOpen={ handleOpen }
         onClose={ handleClose }
       >
-        { menu.map((subMenu, subIndex) => {
-          return <>
-            <subMenu { ...subMenu } subIndex={ subIndex + 1 }/>
-          </>
-        })
-        }
+        { menu.map((subMenu, subIndex) =>
+          <SubMenu
+            subIcon={ subMenu.icon }
+            subTitle={ subMenu.title }
+            subIndex={ Number(`${ subIndex + 1 }`) }
+            childMenu={ subMenu.childMenu }
+          />
+        ) }
       </el-menu>
     </>
   }

@@ -1,33 +1,50 @@
-import { defineComponent } from 'vue'
-// import SubMenu from './SubMenu.tsx'
-export default defineComponent({
-  setup() {
-    console.log(123123)
-  },
-  render() {
-    const { $props: { subMenu, subIndex, subIcon, subTitle } } = this
-    console.log(subMenu, subIndex, subIcon, subTitle)
-    return <>
-      <el-sub-menu
-        index={ subIndex }
-        v-slots={ {
-          title: () => {
-            return <>
-              {/*{ subIcon ? <el-icon>{ subIcon }</el-icon> : <></> }*/}
-              <span>{ subTitle }</span>
-            </>
-          }
-        } }
-      >
-        { subMenu.childMenu.map((childMenu, childIndex) => {
-          return <>
-            childMenu.isGroup
-            ? <>1</> : <>2</>
-            {/*: <SubMenu {...childMenu} subIndex={`${subIndex}-${childIndex}`} />*/}
-          </>
-        }) }
-      </el-sub-menu>
-    </>
+import { CSSProperties, defineAsyncComponent, defineComponent, FunctionalComponent } from 'vue'
+import type { DefineComponent } from 'vue'
 
-  }
-})
+// const SubMenu: JSX.Element = defineAsyncComponent(() => import('./subMenu.tsx'))
+
+interface Props {
+  subIndex: Number;
+  subIcon: Function;
+  subTitle: String;
+  childMenu: Array;
+}
+
+type Emit = {
+  'update:msg': (msg: string) => void
+}
+const SubMenu: FunctionalComponent<Props, Emit> = (props) => {
+  const {
+    subIndex,
+    subIcon = null,
+    subTitle,
+    childMenu
+  } = props
+  return <>
+    <el-sub-menu
+      index={ subIndex }
+      v-slots={ {
+        title: () => {
+          return <>
+            { subIcon ? <el-icon>{ subIcon.render() }</el-icon> : <></> }
+            <span>{ subTitle }</span>
+          </>
+        }
+      } }
+    >
+      { childMenu.length !== 0 && childMenu.map((childMenu, childIndex) => {
+        return childMenu.isGroup
+          ? <>1</>
+          : <SubMenu
+            subIcon={ childMenu.icon }
+            subTitle={ childMenu.title }
+            subIndex={ Number(`${ subIndex }.${ childIndex + 1 }`) }
+            childMenu={ childMenu.childMenu }
+          />
+      }) }
+    </el-sub-menu>
+  </>
+
+}
+
+export default SubMenu
