@@ -1,13 +1,7 @@
-import { ref, renderSlot, defineComponent, reactive, defineAsyncComponent } from 'vue'
-import {
-  Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-} from '@element-plus/icons-vue'
+import { ref, defineComponent, defineAsyncComponent } from 'vue'
 import { menu } from '@/layout/sidebar/menuData.ts'
+const SubMenu: JSX.Element = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
-const SubMenu: JSX.Element = defineAsyncComponent(() => import('./_subMenu.tsx'))
 export default defineComponent({
   setup() {
     const isCollapse = ref<boolean>(false)
@@ -27,8 +21,9 @@ export default defineComponent({
       {/*  <el-radio-button label={true}>collapse</el-radio-button>*/ }
       {/*</el-radio-group>*/ }
       <el-menu
-        default-active="2"
+        default-active='2'
         class="el-menu-vertical-demo"
+        mode='vertical'
         collapse={ isCollapse }
         onOpen={ handleOpen }
         onClose={ handleClose }
@@ -37,7 +32,7 @@ export default defineComponent({
           <SubMenu
             subIcon={ subMenu.icon }
             subTitle={ subMenu.title }
-            subIndex={ Number(`${ subIndex + 1 }`) }
+            subIndex={ `${ subIndex + 1 }` }
             childMenu={ subMenu.childMenu }
           />
         ) }
