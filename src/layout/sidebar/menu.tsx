@@ -33,7 +33,7 @@ export default defineComponent({
             subIcon={ subMenu.icon }
             subTitle={ subMenu.title }
             subIndex={ `${ subIndex + 1 }` }
-            childMenu={ subMenu.childMenu }
+            childMenu={ subMenu.childMenu || [] }
           />
         ) }
       </el-menu>

@@ -31,7 +31,7 @@ export const menu = reactive<SubMenu[]>([
   }
 ])
 
-export interface SubMenu {
+interface SubMenu {
   // 标题名称
   title: string,
   // 图标
@@ -42,7 +42,9 @@ export interface SubMenu {
   // 子菜单
   childMenu?: MenuItemGroup[] | SubMenu[]
 }
-export interface MenuItemGroup {
+
+
+interface MenuItemGroup {
   // 标题名称
   title: string,
   isGroup: true,
@@ -52,3 +54,6 @@ interface MenuItem {
   title: string,
   click?: Event
 }
+
+// 对外使用的类型
+export type MenuItemType = MenuItemGroup | SubMenu
