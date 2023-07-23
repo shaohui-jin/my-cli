@@ -1,1 +1,1 @@
-export * from './apis/config';
+export * from './modules/file'

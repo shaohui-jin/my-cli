@@ -5,6 +5,7 @@ export default defineComponent({
   props: {
     groupIndex: {
       type: String,
+      required: true
     },
     // subIcon: {
     //   type: Object,
@@ -15,28 +16,32 @@ export default defineComponent({
     },
     childMenu: {
       type: Array,
-      default: () => ([])
+      default: () => []
     }
   },
-  setup(props) {
+  setup() {
     return {}
   },
   render() {
     const {
       $props: { groupIndex, groupTitle, childMenu }
     } = this
-    return <>
-      <el-menu-item-group
-        v-slots={ {
-          title: () => <span>{ groupTitle }</span>
-        } }
-      >
-        { childMenu.map((child, index) => {
-          return <>
-            <el-menu-item index={ `${ groupIndex }.${index}` }>{ child.title }</el-menu-item>
-          </>
-        }) }
-      </el-menu-item-group>
-    </>
+    return (
+      <>
+        <el-menu-item-group
+          v-slots={{
+            title: () => <span>{groupTitle}</span>
+          }}
+        >
+          {childMenu.map((child, index) => {
+            return (
+              <>
+                <el-menu-item index={`${groupIndex}.${index}`}>{child.title}</el-menu-item>
+              </>
+            )
+          })}
+        </el-menu-item-group>
+      </>
+    )
   }
 })

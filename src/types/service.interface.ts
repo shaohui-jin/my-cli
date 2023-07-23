@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosResponse } from 'axios'
 
 // 都是字符串
 export enum STATUS {
@@ -14,13 +14,13 @@ export enum STATUS {
   ERROR_CODE = '111'
 }
 interface BaseResponse {
-  errorCode: STATUS; // 编码
-  resultDesc: string; // 描述
-  suecces: boolean; // 无用的状态
+  errorCode: STATUS // 编码
+  resultDesc: string // 描述
+  suecces: boolean // 无用的状态
 }
 
 export interface Response<T = any> extends BaseResponse {
-  data?: T;
+  data?: T
 }
 
 // export interface TableResponse<T = any> extends BaseResponse {
@@ -30,21 +30,23 @@ export interface Response<T = any> extends BaseResponse {
 // }
 
 export interface TableResponse<T = any> extends BaseResponse {
-  data: T[] | {
-    [K: string]: T[]
-  };
+  data:
+    | T[]
+    | {
+        [K: string]: T[]
+      }
 }
 
 export interface ArrayResponse<T = any> extends BaseResponse {
   data: T[]
 }
 
-export type ResponseBlob = AxiosResponse<Blob>;
+export type ResponseBlob = AxiosResponse<Blob>
 
 export interface TableRequest<T> {
   (params?: any): Promise<TableResponse<T>>
 }
 
-type baseQuery = Record<'pageSize', number>;
-export type pageNoQuery = baseQuery & Record<'pageNo', number>;
-export type currentPageQuery = baseQuery & Record<'currentPage', number>;
+type baseQuery = Record<'pageSize', number>
+export type pageNoQuery = baseQuery & Record<'pageNo', number>
+export type currentPageQuery = baseQuery & Record<'currentPage', number>

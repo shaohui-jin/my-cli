@@ -1,5 +1,5 @@
-import {IUserApi} from '../types/user';
-import fetch from '../fetch';
+import { IUserApi } from '@/api/types/user'
+import fetch from '@/api/fetch'
 
 // export const apiService = {
 //   // Example GET request
@@ -16,11 +16,11 @@ import fetch from '../fetch';
 
 const UserApi: IUserApi = {
   // 登录
-  login: (params) => {
+  login: params => {
     return fetch({
       method: 'post',
       url: '/login',
-      data: params,
+      data: params
     })
   }
 }

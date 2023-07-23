@@ -1,5 +1,4 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios'
-// import
 import { ElMessage, ElNotification } from 'element-plus'
 
 //todo getToken
@@ -9,11 +8,11 @@ const getToken = (): string => {
 
 // create an axios instance
 const service: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL as string || '', // 正式环境
+  baseURL: (import.meta.env.VITE_API_BASE_URL as string) || '', // 正式环境
   timeout: 60 * 1000,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 })
 
 /**
@@ -21,11 +20,11 @@ const service: AxiosInstance = axios.create({
  */
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    config.headers.common.Authorization = getToken() // 请求头带上token
-    config.headers.common.token = getToken()
+    config?.headers.common.Authorization = getToken() // 请求头带上token
+    config?.headers.common.token = getToken()
     return config as any
   },
-  (error) => Promise.reject(error),
+  error => Promise.reject(error)
 )
 
 /**
@@ -41,7 +40,7 @@ service.interceptors.response.use(
           content: 'token失效，请重新登录！',
           onOk: () => {
             sessionStorage.clear()
-          },
+          }
         })
       } else if (code == 200) {
         if (status) {
@@ -60,62 +59,62 @@ service.interceptors.response.use(
     }
     return response
   },
-  (error) => {
+  error => {
     if (error.response.status) {
       switch (error.response.status) {
         case 500:
           ElNotification.error({
             title: '温馨提示',
-            message: '服务异常，请重启服务器！',
+            message: '服务异常，请重启服务器！'
           })
           break
         case 401:
           ElNotification.error({
             title: '温馨提示',
-            message: '服务异常，请重启服务器！',
+            message: '服务异常，请重启服务器！'
           })
           break
         case 403:
           ElNotification.error({
             title: '温馨提示',
-            message: '服务异常，请重启服务器！',
+            message: '服务异常，请重启服务器！'
           })
           break
         // 404请求不存在
         case 404:
           ElNotification.error({
             title: '温馨提示',
-            message: '服务异常，请重启服务器！',
+            message: '服务异常，请重启服务器！'
           })
           break
         default:
           ElNotification.error({
             title: '温馨提示',
-            message: '服务异常，请重启服务器！',
+            message: '服务异常，请重启服务器！'
           })
       }
     }
     return Promise.reject(error.response)
-  },
+  }
 )
 
 interface Http {
-  fetch<T>(params: AxiosRequestConfig): Promise<StoreState.ResType<T>>
+  fetch<T>(params: AxiosRequestConfig): Promise<T>
 }
 
-const http: { fetch(params): Promise<unknown> } = {
+const http: Http = {
   // 用法与axios一致（包含axios内置所有请求方式）
   fetch(params) {
     return new Promise((resolve, reject) => {
       service(params)
-        .then((res) => {
+        .then(res => {
           resolve(res.data)
         })
-        .catch((err) => {
+        .catch(err => {
           reject(err.data)
         })
     })
-  },
+  }
 }
 
 export default http['fetch']

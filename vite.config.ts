@@ -4,9 +4,9 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import';
+import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
 
-import * as path from 'path';
+import * as path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
@@ -17,36 +17,39 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    // JSX
     vueJsx(),
+    // unplugin-vue-components 按需加载
     AutoImport({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver()]
     }),
     Components({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver()]
     }),
+    // vite-plugin-style-import 按需引入样式文件
     createStyleImportPlugin({
       resolves: [ElementPlusResolve()],
       libs: [
         {
-          libraryName: "element-plus",
+          libraryName: 'element-plus',
           esModule: true,
           ensureStyleFile: true,
-          resolveStyle: (name) => {
-            return `element-plus/lib/theme-chalk/${name}.css`;
-          },
-          resolveComponent: (name) => {
-            return `element-plus/lib/${name}`;
-          },
-        },
-      ],
-    }),
+          resolveStyle: name => {
+            return `element-plus/lib/theme-chalk/${name}.css`
+          }
+          // resolveComponent: name => {
+          //   return `element-plus/lib/${name}`
+          // },
+        }
+      ]
+    })
   ],
   server: {
     port: 8080, //启动端口
     hmr: {
       host: '127.0.0.1',
       port: 8080
-    },
+    }
     // 设置 https 代理
     // proxy: {
     //   '/api': {

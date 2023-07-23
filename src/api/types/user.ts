@@ -28,5 +28,6 @@ export interface ILoginApiParams {
  * --------------------------------------------------------------------------
  */
 export interface IUserApi {
-  login: (params: ILoginApiParams) => Promise<StoreState.ResType<ILoginData>>
+  // login: (params: ILoginApiParams) => Promise<StoreState.ResType<ILoginData>>
+  login: (params: ILoginApiParams) => Promise<ILoginData>
 }
