@@ -20,7 +20,7 @@ export default defineComponent({
                 <RouterView />
               </el-scrollbar>
             </el-main>
-            <el-footer>Footer</el-footer>
+            <el-footer height="40px">@1997-2023 网站建设：JSH</el-footer>
           </el-container>
         </el-container>
       </>

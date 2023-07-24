@@ -7,46 +7,55 @@ export enum STATUS {
   // 无数据
   NONE_DATA = '1',
   // token过期需要重登录
-  TOKENE_XPIRED = '100',
+  TOKEN_EXPIRED = '100',
   // 系统异常
   SYSTEM_ERROR = '-1',
   // 验证码不对
   ERROR_CODE = '111'
 }
+
+/**
+ * 基础响应体
+ * */
 interface BaseResponse {
-  errorCode: STATUS // 编码
-  resultDesc: string // 描述
-  suecces: boolean // 无用的状态
+  // 编码
+  resultCode: STATUS
+  // 描述
+  resultDesc: string
+  // 状态
+  success: boolean
 }
 
+/**
+ * 通用对象响应体
+ * */
 export interface Response<T = any> extends BaseResponse {
   data?: T
 }
 
-// export interface TableResponse<T = any> extends BaseResponse {
-//   data: {
-//     total: number; // 总页数
-//   } & Record<string, T[]>; // 数据
-// }
-
-export interface TableResponse<T = any> extends BaseResponse {
-  data:
-    | T[]
-    | {
-        [K: string]: T[]
-      }
-}
-
+/**
+ * 通用集合响应体
+ * */
 export interface ArrayResponse<T = any> extends BaseResponse {
   data: T[]
 }
 
-export type ResponseBlob = AxiosResponse<Blob>
-
-export interface TableRequest<T> {
-  (params?: any): Promise<TableResponse<T>>
+/**
+ * 表格数据响应体
+ * */
+export interface TableResponse<T = any> extends BaseResponse {
+  data: T[] | { [K: string]: T[] }
 }
 
-type baseQuery = Record<'pageSize', number>
-export type pageNoQuery = baseQuery & Record<'pageNo', number>
-export type currentPageQuery = baseQuery & Record<'currentPage', number>
+/**
+ * 文件流响应体
+ * */
+export type BlobResponse = AxiosResponse<Blob>
+
+// export interface TableRequest<T> {
+//   (params?: any): Promise<TableResponse<T>>
+// }
+
+// type baseQuery = Record<'pageSize', number>
+// export type pageNoQuery = baseQuery & Record<'pageNo', number>
+// export type currentPageQuery = baseQuery & Record<'currentPage', number>
