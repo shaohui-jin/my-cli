@@ -1,20 +1,17 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
-const MenuItemGroup: JSX.Element = defineAsyncComponent(
+const MenuItemGroup = defineAsyncComponent(
   () => import('@/layout/sidebar/components/menuItemGroup.tsx')
 )
 const MenuItem = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItem.tsx'))
 import { MenuItemType } from '@/router/menuData.ts'
 export default defineComponent({
-  name: 'SubMenu',
+  name: 'SidebarSubMenu',
   props: {
     subIndex: { type: String, required: true },
     subIcon: { type: Object, default: () => ({ render: () => {} }) },
     subTitle: { type: String, required: true },
     subRoute: { type: String, default: null },
     childMenu: { type: Array as () => MenuItemType[], default: null }
-  },
-  setup(props) {
-    return {}
   },
   render() {
     const {
@@ -37,7 +34,7 @@ export default defineComponent({
             }}
           >
             {childMenu.map((child, index) => {
-              return child.isGroup ? (
+              return child?.isGroup ? (
                 <>
                   <MenuItemGroup
                     groupTitle={child.title}

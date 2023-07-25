@@ -4,6 +4,10 @@ import { menu } from '@/router/menuData.ts'
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
 export default defineComponent({
+  name: 'SidebarMenu',
+  // components: {
+  //   SubMenu
+  // },
   setup() {
     const isCollapse = ref<boolean>(false)
     const handleOpen = (key: string, keyPath: string[]) => {

@@ -2,7 +2,7 @@ import { defineAsyncComponent, defineComponent } from 'vue'
 import { MenuItemType } from '@/router/menuData.ts'
 const MenuItem = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItem.tsx'))
 export default defineComponent({
-  name: 'MenuItemGroup',
+  name: 'menuItemGroup',
   props: {
     groupIndex: { type: String, required: true },
     groupTitle: { type: String, required: true },
