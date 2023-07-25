@@ -12,8 +12,6 @@ export default defineComponent({
   setup(props, ctx) {
     const route = useRouter()
     const handleMenu = () => {
-      console.log(props.menuRoute)
-      console.log(route)
       props.menuRoute && route.push(props.menuRoute)
     }
     return { handleMenu }
