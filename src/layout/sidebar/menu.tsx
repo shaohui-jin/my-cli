@@ -1,5 +1,5 @@
 import { ref, defineComponent, defineAsyncComponent } from 'vue'
-import { menu } from '@/layout/sidebar/menuData.ts'
+import { menu } from '@/router/menuData.ts'
 
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
@@ -35,7 +35,8 @@ export default defineComponent({
               subIcon={subMenu.icon}
               subTitle={subMenu.title}
               subIndex={`${subIndex + 1}`}
-              childMenu={subMenu.childMenu || []}
+              subRoute={subMenu.route}
+              childMenu={subMenu.childMenu}
             />
           ))}
         </el-menu>

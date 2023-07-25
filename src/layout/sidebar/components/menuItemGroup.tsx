@@ -1,30 +1,17 @@
-import { defineComponent } from 'vue'
-
+import { defineAsyncComponent, defineComponent } from 'vue'
+import { MenuItemType } from '@/router/menuData.ts'
+const MenuItem = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItem.tsx'))
 export default defineComponent({
   name: 'MenuItemGroup',
   props: {
-    groupIndex: {
-      type: String,
-      required: true
-    },
-    // subIcon: {
-    //   type: Object,
-    //   default: () =>  ({ render: () => {} })
-    // },
-    groupTitle: {
-      type: String
-    },
-    childMenu: {
-      type: Array,
-      default: () => []
-    }
-  },
-  setup() {
-    return {}
+    groupIndex: { type: String, required: true },
+    groupTitle: { type: String, required: true },
+    groupRoute: { type: String, default: null },
+    childMenu: { type: Array as () => MenuItemType[], required: true }
   },
   render() {
     const {
-      $props: { groupIndex, groupTitle, childMenu }
+      $props: { groupIndex, groupTitle, groupRoute, childMenu }
     } = this
     return (
       <>
@@ -33,13 +20,13 @@ export default defineComponent({
             title: () => <span>{groupTitle}</span>
           }}
         >
-          {childMenu.map((child, index) => {
-            return (
-              <>
-                <el-menu-item index={`${groupIndex}.${index}`}>{child.title}</el-menu-item>
-              </>
-            )
-          })}
+          {childMenu.map((child, index) => (
+            <MenuItem
+              menuIndex={`${groupIndex}.${index}`}
+              menuTitle={child.title}
+              menuRoute={groupRoute}
+            />
+          ))}
         </el-menu-item-group>
       </>
     )

@@ -1,11 +1,10 @@
-import { reactive } from 'vue'
 import { Document, Menu as IconMenu, Location, Setting } from '@element-plus/icons-vue'
 import type { DefineComponent } from 'vue'
 
-export const menu = reactive<SubMenu[]>([
+export const menu: SubMenu[] = [
   {
     icon: Location,
-    title: 'Navigator One',
+    title: '测试菜单结构',
     childMenu: [
       {
         isGroup: true,
@@ -18,17 +17,19 @@ export const menu = reactive<SubMenu[]>([
   },
   {
     icon: IconMenu,
-    title: 'Navigator Two'
+    title: '首页',
+    route: '/home'
   },
   {
     icon: Document,
-    title: 'Navigator Three'
+    title: '头像',
+    route: '/file/images'
   },
   {
     icon: Setting,
     title: 'Navigator Four'
   }
-])
+]
 
 interface SubMenu {
   // 标题名称
@@ -48,6 +49,7 @@ interface MenuItemGroup {
   isGroup: true
   childMenu: MenuItem[]
 }
+
 interface MenuItem {
   title: string
   click?: Event

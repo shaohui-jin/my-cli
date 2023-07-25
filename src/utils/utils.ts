@@ -62,7 +62,7 @@ export const simpleClone = <P>(item: P): P => {
 
 /**
  * 检查是否未定义
- * @param element 被检查的对象
+ * @param variable 被检查的对象
  */
 export const checkUndefined = (variable: any): variable is undefined => {
   return typeof variable === 'undefined'

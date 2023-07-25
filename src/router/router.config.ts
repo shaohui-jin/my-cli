@@ -14,12 +14,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/home')
   },
   {
-    path: '/images',
-    name: 'images',
+    path: '/file/images',
+    name: 'file-images',
     meta: {
       type: 'images'
     },
-    component: () => import('@/views/file')
+    component: () => import('@/views/file/images')
   }
   // {
   //     path: '/login',

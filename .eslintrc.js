@@ -19,6 +19,7 @@ module.exports = {
     }
   },
   rules: {
+    'vue/no-setup-props-destructure': 0, // 0 = off, 1 = warn, 2 = error
     'prettier/prettier': [
       'error',
       {
