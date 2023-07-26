@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
 
-interface UserType {
+interface ThemeType {
   userName: string,
   token: string,
 }
 
-export const UserStore = defineStore('user', {
+export const ThemeStore = defineStore('theme', {
   // 状态库
   state: () => ({
-    userInfo: {
+    defaultTheme: {
       token: '',
       userName: ''
     } as UserType, //用户信息

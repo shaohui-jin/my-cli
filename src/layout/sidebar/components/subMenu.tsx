@@ -5,7 +5,7 @@ const MenuItemGroup = defineAsyncComponent(
 const MenuItem = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItem.tsx'))
 import { MenuItemType } from '@/router/menuData.ts'
 export default defineComponent({
-  name: 'SidebarSubMenu',
+  name: 'SubMenu',
   props: {
     subIndex: { type: String, required: true },
     subIcon: { type: Object, default: () => ({ render: () => {} }) },

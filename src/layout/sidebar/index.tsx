@@ -1,13 +1,10 @@
 import { ref, defineComponent, defineAsyncComponent } from 'vue'
-import { menu } from '@/router/menuData.ts'
+import { menu } from '@/router/menu.config.ts'
 
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
 export default defineComponent({
   name: 'SidebarMenu',
-  // components: {
-  //   SubMenu
-  // },
   setup() {
     const isCollapse = ref<boolean>(false)
     const handleOpen = (key: string, keyPath: string[]) => {

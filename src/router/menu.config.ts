@@ -3,6 +3,16 @@ import type { DefineComponent } from 'vue'
 
 export const menu: SubMenu[] = [
   {
+    icon: IconMenu,
+    title: '首页',
+    route: '/home'
+  },
+  {
+    icon: Document,
+    title: '头像',
+    route: '/file/images'
+  },
+  {
     icon: Location,
     title: '测试菜单结构',
     childMenu: [
@@ -14,16 +24,6 @@ export const menu: SubMenu[] = [
       { isGroup: true, title: 'Group Two', childMenu: [{ title: 'child three' }] },
       { isGroup: false, title: 'Item four', childMenu: [{ title: 'child four' }] }
     ]
-  },
-  {
-    icon: IconMenu,
-    title: '首页',
-    route: '/home'
-  },
-  {
-    icon: Document,
-    title: '头像',
-    route: '/file/images'
   },
   {
     icon: Setting,

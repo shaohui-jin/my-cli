@@ -6,7 +6,7 @@ import { STATUS, Response } from '@/types'
 export default defineComponent({
   setup() {
     let artworks = reactive<Artwork[]>([])
-    const tabPosition = ref<'top' | 'bottom' | 'right' | 'left'>('left')
+    const tabPosition = ref<'top' | 'bottom' | 'right' | 'left'>('top')
     onBeforeMount(() => {
       getArtworks()
     })
@@ -37,7 +37,6 @@ export default defineComponent({
                               style={{ width: '200px', height: '200px' }}
                               src={img.cover_url}
                               preview-src-list={[img.cover_url]}
-                              lazy
                             />
                           </>
                         )
