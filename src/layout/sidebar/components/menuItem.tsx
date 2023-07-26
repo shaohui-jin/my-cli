@@ -1,40 +1,24 @@
 import { defineComponent } from 'vue'
-import { useRouter } from 'vue-router'
-const Icon = { render: () => {} }
+import { MenuItemType } from '@/router/menu.config.ts'
+
 export default defineComponent({
   name: 'MenuItem',
   props: {
-    menuIndex: { type: String, required: true },
-    menuTitle: { type: String, required: true },
-    menuIcon: { type: Object, default: Icon },
-    menuRoute: { type: String, default: '' }
-  },
-  setup(props, ctx) {
-    const route = useRouter()
-    const handleMenu = () => {
-      props.menuRoute && route.push(props.menuRoute)
-    }
-    return { handleMenu }
+    menu: { type: Object as () => MenuItemType, required: true }
   },
   render() {
-    const {
-      $props: { menuIndex, menuTitle, menuIcon },
-      handleMenu
-    } = this
+    const { menu } = this.$props
     return (
       <el-menu-item
-        index={`${menuIndex}`}
+        index={menu.route}
         v-slots={{
-          title: () => {
-            return (
-              <>
-                {menuIcon ? <el-icon>{menuIcon.render()}</el-icon> : <></>}
-                <span>{menuTitle}</span>
-              </>
-            )
-          }
+          title: () => (
+            <>
+              <el-icon>{menu.icon.render()}</el-icon>
+              <span>{menu.title}</span>
+            </>
+          )
         }}
-        onClick={handleMenu}
       />
     )
   }

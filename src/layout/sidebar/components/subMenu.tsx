@@ -1,68 +1,41 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
+import { Menu } from '@/router/menu.config.ts'
+
+const SubMenu = defineAsyncComponent(() => import('./subMenu.tsx'))
 const MenuItemGroup = defineAsyncComponent(
   () => import('@/layout/sidebar/components/menuItemGroup.tsx')
 )
 const MenuItem = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItem.tsx'))
-import { MenuItemType } from '@/router/menuData.ts'
+
 export default defineComponent({
   name: 'SubMenu',
   props: {
-    subIndex: { type: String, required: true },
-    subIcon: { type: Object, default: () => ({ render: () => {} }) },
-    subTitle: { type: String, required: true },
-    subRoute: { type: String, default: null },
-    childMenu: { type: Array as () => MenuItemType[], default: null }
+    menu: { type: Object as () => Menu, required: true }
   },
   render() {
-    const {
-      $props: { subIndex, subIcon, subTitle, childMenu, subRoute }
-    } = this
+    const { menu } = this.$props
     return (
       <>
-        {childMenu ? (
+        {menu.childMenu ? (
           <el-sub-menu
-            index={subIndex}
+            index={menu.route}
             v-slots={{
               title: () => {
                 return (
                   <>
-                    {subIcon ? <el-icon>{subIcon.render()}</el-icon> : <></>}
-                    <span>{subTitle}</span>
+                    <el-icon>{menu.icon.render()}</el-icon>
+                    <span>{menu.title}</span>
                   </>
                 )
               }
             }}
           >
-            {childMenu.map((child, index) => {
-              return child?.isGroup ? (
-                <>
-                  <MenuItemGroup
-                    groupTitle={child.title}
-                    groupIndex={`${subIndex}.${index + 1}`}
-                    groupRoute={subRoute}
-                    childMenu={child?.childMenu}
-                  />
-                </>
-              ) : (
-                <>
-                  <SubMenu
-                    subIcon={child.icon}
-                    subTitle={child.title}
-                    subIndex={`${subIndex}.${index + 1}`}
-                    subRoute={subRoute}
-                    childMenu={child?.childMenu}
-                  />
-                </>
-              )
+            {menu.childMenu.map((child, index) => {
+              return child.isGroup ? <MenuItemGroup menu={child} /> : <SubMenu menu={child} />
             })}
           </el-sub-menu>
         ) : (
-          <MenuItem
-            menuIndex={`${subIndex}`}
-            menuTitle={subTitle}
-            menuIcon={subIcon}
-            menuRoute={subRoute}
-          />
+          <MenuItem menu={menu} />
         )}
       </>
     )

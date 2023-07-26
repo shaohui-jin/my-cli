@@ -8,7 +8,7 @@ const Footer = defineAsyncComponent(() => import('@/layout/footer/index.tsx'))
 
 export default defineComponent({
   setup() {
-    const headerHeight = ref<string>('40px')
+    const headerHeight = ref<string>('50px')
     const footerHeight = ref<string>('40px')
     const asideWidth = ref<string>('250px')
     return { headerHeight, footerHeight, asideWidth }

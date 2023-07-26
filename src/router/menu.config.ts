@@ -1,59 +1,72 @@
-import { Document, Menu as IconMenu, Location, Setting } from '@element-plus/icons-vue'
-import type { DefineComponent } from 'vue'
+import { Document, Menu as IconMenu, Location } from '@element-plus/icons-vue'
 
-export const menu: SubMenu[] = [
-  {
-    icon: IconMenu,
-    title: '首页',
-    route: '/home'
-  },
-  {
-    icon: Document,
-    title: '头像',
-    route: '/file/images'
-  },
-  {
-    icon: Location,
-    title: '测试菜单结构',
-    childMenu: [
-      {
-        isGroup: true,
-        title: 'Group One',
-        childMenu: [{ title: 'child one' }, { title: 'child two' }]
-      },
-      { isGroup: true, title: 'Group Two', childMenu: [{ title: 'child three' }] },
-      { isGroup: false, title: 'Item four', childMenu: [{ title: 'child four' }] }
-    ]
-  },
-  {
-    icon: Setting,
-    title: 'Navigator Four'
-  }
-]
-
-interface SubMenu {
-  // 标题名称
-  title: string
-  // 图标
-  icon?: DefineComponent
-  // 路由
-  route?: string
-  click?: Event
-  // 子菜单
-  childMenu?: MenuItemGroup[] | SubMenu[]
+interface Icon {
+  render: Function
 }
 
-interface MenuItemGroup {
-  // 标题名称
-  title: string
-  isGroup: true
-  childMenu: MenuItem[]
+const defaultIcon: Icon = {
+  render: () => {}
 }
 
 interface MenuItem {
   title: string
-  click?: Event
+  icon: Icon
+  route?: string
+}
+
+// 一级
+export interface Menu extends MenuItem {
+  childMenu?: SubMenu[] | MenuItemGroup[]
+}
+
+// 二级
+interface SubMenu extends MenuItem {
+  isGroup: false
+}
+
+export interface MenuItemGroup extends MenuItem {
+  isGroup: true
+  childMenu: MenuItem[]
 }
 
 // 对外使用的类型
-export type MenuItemType = MenuItemGroup | SubMenu
+export type MenuItemType = SubMenu | MenuItemGroup | MenuItem
+
+export const menu: Menu[] = [
+  {
+    icon: IconMenu as Icon,
+    title: '首页',
+    route: '/home'
+  },
+  {
+    icon: Document as Icon,
+    title: '头像',
+    route: '/file/images'
+  },
+  {
+    icon: Location as Icon,
+    title: '测试菜单结构',
+    childMenu: [
+      {
+        isGroup: true,
+        icon: defaultIcon,
+        title: 'Group One',
+        childMenu: [
+          { icon: defaultIcon, route: '/file/images', title: 'child one' },
+          { icon: defaultIcon, route: '/file/images', title: 'child two' }
+        ]
+      },
+      {
+        isGroup: true,
+        title: 'Group Two',
+        icon: defaultIcon,
+        childMenu: [{ icon: defaultIcon, route: '/file/images', title: 'child three' }]
+      },
+      {
+        isGroup: false,
+        icon: defaultIcon,
+        title: 'Item four'
+      }
+    ]
+  }
+]

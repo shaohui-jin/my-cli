@@ -1,31 +1,27 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
-import { MenuItemType } from '@/router/menuData.ts'
+import { MenuItemGroup } from '@/router/menu.config.ts'
 const MenuItem = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItem.tsx'))
 export default defineComponent({
   name: 'MenuItemGroup',
   props: {
-    groupIndex: { type: String, required: true },
-    groupTitle: { type: String, required: true },
-    groupRoute: { type: String, default: null },
-    childMenu: { type: Array as () => MenuItemType[], required: true }
+    menu: { type: Object as () => MenuItemGroup, required: true }
   },
   render() {
-    const {
-      $props: { groupIndex, groupTitle, groupRoute, childMenu }
-    } = this
+    const { menu } = this.$props
     return (
       <>
         <el-menu-item-group
           v-slots={{
-            title: () => <span>{groupTitle}</span>
+            title: () => (
+              <>
+                <el-icon>{menu.icon.render()}</el-icon>
+                <span>{menu.title}</span>
+              </>
+            )
           }}
         >
-          {childMenu.map((child, index) => (
-            <MenuItem
-              menuIndex={`${groupIndex}.${index}`}
-              menuTitle={child.title}
-              menuRoute={groupRoute}
-            />
+          {menu.childMenu.map(child => (
+            <MenuItem menu={child} />
           ))}
         </el-menu-item-group>
       </>

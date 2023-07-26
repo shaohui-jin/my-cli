@@ -1,6 +1,5 @@
 import { ref, defineComponent, defineAsyncComponent } from 'vue'
 import { menu } from '@/router/menu.config.ts'
-
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
 export default defineComponent({
@@ -24,21 +23,16 @@ export default defineComponent({
         {/*  <el-radio-button label={true}>collapse</el-radio-button>*/}
         {/*</el-radio-group>*/}
         <el-menu
-          default-active="2"
+          default-active={this.$route.path}
           class="el-menu-vertical-demo"
           mode="vertical"
           collapse={isCollapse}
           onOpen={handleOpen}
           onClose={handleClose}
+          router
         >
-          {menu.map((subMenu, subIndex) => (
-            <SubMenu
-              subIcon={subMenu.icon}
-              subTitle={subMenu.title}
-              subIndex={`${subIndex + 1}`}
-              subRoute={subMenu.route}
-              childMenu={subMenu.childMenu}
-            />
+          {menu.map(menu => (
+            <SubMenu menu={menu} />
           ))}
         </el-menu>
       </>
