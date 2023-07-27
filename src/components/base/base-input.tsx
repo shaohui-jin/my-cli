@@ -15,8 +15,14 @@ const BaseInput: BaseInputProps = ({ label, placeholder, onchange, onPressEnter 
       <label className="label" htmlFor={label}>
         {label}
       </label>
-    <input id={label} placeholder={placeholder || ('请输入' + label)} onChange={onchange} onPressEnter={onPressEnter}></input>
-  </>
+      <input
+        id={label}
+        placeholder={placeholder || '请输入' + label}
+        onChange={onchange}
+        onPressEnter={onPressEnter}
+      ></input>
+    </>
+  )
 }
 
-export default BaseInput;
+export default BaseInput
