@@ -19,7 +19,7 @@ import { checkUndefined } from './utils'
  * 3. 都不支持的情况下,判断millisecond是否存在，存在就定cookie的过期时间
  * 5. 不存在就默认30s存储时间
  */
-export const addCookie: (key: string, value: string, extra?: Extra) => boolean = (
+export const setCookie: (key: string, value: string, extra?: Extra) => boolean = (
   key: string,
   value: string,
   extra: Extra = { type: 'sessionStorage' }
@@ -50,6 +50,35 @@ export const addCookie: (key: string, value: string, extra?: Extra) => boolean =
   }
 }
 
+
+/**
+ * 作用：读取cookie值
+ * @param key key值
+ * @param extra 额外拓展信息
+ * return value值
+ */
+export const getCookie: (key: string, extra?: Extra) => string | null = (
+  key: string,
+  extra: Extra = { type: 'sessionStorage' }
+) => {
+  try {
+    if (extra.type === 'localStorage' && !checkUndefined(localStorage)) {
+      return window.localStorage.getItem(key)
+    }
+
+    if (extra.type === 'sessionStorage' && !checkUndefined(sessionStorage)) {
+      return window.sessionStorage.getItem(key)
+    }
+
+    const reg = new RegExp('(^| )' + key + '=([^;]*)(;|$)')
+    let result: RegExpMatchArray | null = document.cookie.match(reg)
+    return result?.length ? unescape(result[2]) : null
+  } catch (err: any) {
+    console.log(err)
+    throw new Error(err)
+  }
+}
+
 /**
  * 作用 移除cookie
  * @param key key值
@@ -62,18 +91,15 @@ export const removeCookie: (key: string, extra?: Extra) => boolean = (
 ) => {
   try {
     if (extra.type === 'localStorage' && !checkUndefined(localStorage)) {
-      // 类型是localStorage且localStorage存在，则使用这个
       window.localStorage.removeItem(key)
       return true
     }
 
     if (extra.type === 'sessionStorage' && !checkUndefined(sessionStorage)) {
-      // 类型是sessionStorage且sessionStorage存在，则使用这个
       window.sessionStorage.removeItem(key)
       return true
     }
 
-    // 都无效的化，直接使用cookie存储 时间设置为过去的1分钟
     const date = new Date().getTime() - 1 * 1000 * 60
     window.document.cookie = `${key}=;expires=${new Date(date)};domain=${
       extra.domain || document.domain
@@ -95,18 +121,15 @@ export const removeAll: (extra?: Extra) => boolean = (
 ) => {
   try {
     if (extra.type === 'localStorage' && !checkUndefined(localStorage)) {
-      // 类型是localStorage且localStorage存在，则使用这个
       window.localStorage.clear()
       return true
     }
 
     if (extra.type === 'sessionStorage' && !checkUndefined(sessionStorage)) {
-      // 类型是sessionStorage且sessionStorage存在，则使用这个
       window.sessionStorage.clear()
       return true
     }
 
-    // 都无效的化，直接使用cookie存储 时间设置为过去的1分钟
     const keys: RegExpMatchArray | null = document.cookie.match(/[^ =;]+(?==)/g)
     if (keys) {
       for (let i = keys.length; i > 0; i--) {
@@ -120,36 +143,5 @@ export const removeAll: (extra?: Extra) => boolean = (
   } catch (err) {
     console.log(err)
     return false
-  }
-}
-
-/**
- * 作用：读取cookie值
- * @param key key值
- * @param extra 额外拓展信息
- * return value值
- */
-export const getCookie: (key: string, extra?: Extra) => string | null = (
-  key: string,
-  extra: Extra = { type: 'sessionStorage' }
-) => {
-  try {
-    if (extra.type === 'localStorage' && !checkUndefined(localStorage)) {
-      // 类型是localStorage且localStorage存在，则使用这个
-      return window.localStorage.getItem(key)
-    }
-
-    if (extra.type === 'sessionStorage' && !checkUndefined(sessionStorage)) {
-      // 类型是sessionStorage且sessionStorage存在，则使用这个
-      return window.sessionStorage.getItem(key)
-    }
-
-    // 都无效的化，直接读取cookie存储
-    const reg = new RegExp('(^| )' + key + '=([^;]*)(;|$)')
-    let result: RegExpMatchArray | null = document.cookie.match(reg)
-    return result?.length ? unescape(result[2]) : null
-  } catch (err: any) {
-    console.log(err)
-    throw new Error(err)
   }
 }

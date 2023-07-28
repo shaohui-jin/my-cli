@@ -1,4 +1,4 @@
-import XLSX from 'xlsx'
+// import XLSX from 'xlsx'
 import { Action, SilderMenuItem, ResponseBlob, ObjectType } from '@/types'
 import { ElMessage } from 'element-plus'
 import { getCookie } from './cookie'
@@ -314,47 +314,47 @@ export const compareMonths = (comStartDate: string, comEndDate: string, mouths: 
  * desc: 处理文件
  * @param file 文件
  */
-export const checkFile = (file?: File) => {
-  if (!file) {
-    return false
-  }
-
-  const name = file.name
-  const suffix = name.substr(name.lastIndexOf('.'))
-  if ('.xls' !== suffix && '.xlsx' !== suffix) {
-    ElMessage.error('选择Excel格式的文件导入！')
-    return false
-  }
-
-  return true
-}
+// export const checkFile = (file?: File) => {
+//   if (!file) {
+//     return false
+//   }
+//
+//   const name = file.name
+//   const suffix = name.substr(name.lastIndexOf('.'))
+//   if ('.xls' !== suffix && '.xlsx' !== suffix) {
+//     ElMessage.error('选择Excel格式的文件导入！')
+//     return false
+//   }
+//
+//   return true
+// }
 
 /**
  * 读取xlxs文件
  * @param {*} file
  */
-export const readExcel = (file: File) => {
-  //此处接受的file，为文件上传的file
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    //以二进制方式读取文件
-    reader.readAsBinaryString(file)
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      //获取文件数据
-      const data = e?.target?.result //e.target.value
-      //XLSX读取文件
-      const wb = XLSX.read(data, { type: 'binary' })
-      //获取第一张表
-      const wsname = wb.SheetNames[0]
-      const ws = wb.Sheets[wsname]
-      resolve(XLSX.utils.sheet_to_json<any[]>(ws, { header: 1 }))
-    }
-
-    reader.onerror = e => {
-      reject(e)
-    }
-  })
-}
+// export const readExcel = (file: File) => {
+//   //此处接受的file，为文件上传的file
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader()
+//     //以二进制方式读取文件
+//     reader.readAsBinaryString(file)
+//     reader.onload = (e: ProgressEvent<FileReader>) => {
+//       //获取文件数据
+//       const data = e?.target?.result //e.target.value
+//       //XLSX读取文件
+//       const wb = XLSX.read(data, { type: 'binary' })
+//       //获取第一张表
+//       const wsname = wb.SheetNames[0]
+//       const ws = wb.Sheets[wsname]
+//       resolve(XLSX.utils.sheet_to_json<any[]>(ws, { header: 1 }))
+//     }
+//
+//     reader.onerror = e => {
+//       reject(e)
+//     }
+//   })
+// }
 
 /**
  * desc: 文件转base64

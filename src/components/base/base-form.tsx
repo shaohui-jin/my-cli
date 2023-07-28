@@ -88,9 +88,8 @@ export const getJSXByType = (item: BaseComponentItem): JSX.Element => {
       return (
         <el-switch
           v-model={item.value}
-          class="mb-2"
-          active-text="Pay by month"
-          inactive-text="Pay by year"
+          active-text={item.activeText || ''}
+          inactive-text={item.inactiveText || ''}
         />
       )
     default:
@@ -107,8 +106,13 @@ export default defineComponent({
     formData: {
       type: Array as () => FormDataItem[],
       required: true
-    }
+    },
   },
+  // emits: () => {
+  //   const res = this.formData.map(e => `update:${e.key}`)
+  //   console.log(res)
+  //   return this.formData.map(e => `${e.key}`)
+  // },
   render() {
     return (
       <>
@@ -128,12 +132,9 @@ export default defineComponent({
           >
             {getJSXByType(item)}
           </el-form-item>
-        ))
-        }
+        ))}
       </>
     )
   }
 })
-
-  = (data: BaseComponentItem<any>[]): JSX.Element[] =>
 

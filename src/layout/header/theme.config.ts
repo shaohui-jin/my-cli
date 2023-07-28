@@ -3,14 +3,16 @@ import { BaseComponentItem } from '@/types'
 const defaultThemeConfig: BaseComponentItem[] = [
   {
     type: 'switch',
-    key: 'xxx',
+    key: 'aaa',
     label: 'xxx',
     activeText: 'on',
-    inactiveText: 'off'
+    inactiveText: 'off',
+    activeIcon: 'Check',
+    inactiveIcon: 'Close'
   },
   {
     type: 'input',
-    key: '123',
+    key: 'bbb',
     label: '123123'
   }
 ]
