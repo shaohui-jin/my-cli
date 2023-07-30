@@ -8,15 +8,15 @@ const BaseForm = defineAsyncComponent(() => import('@/components/base/base-form.
 export default defineComponent({
   name: 'SLAThemeSetting',
   props: {
-    modelValue: {
+    visible: {
       type: Boolean,
       required: true
     }
   },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
+  emits: ['update:visible'],
+  setup(_, { emit }) {
     const close = (done: Function) => {
-      emit('update:modelValue', false)
+      emit('update:visible', false)
       typeof done === 'function' && done()
     }
     const showClose = ref<boolean>(false)
@@ -26,7 +26,7 @@ export default defineComponent({
   render() {
     return (
       <el-drawer
-        v-model={this.$props.modelValue}
+        v-model={this.$props.visible}
         direction="rtl"
         size="30%"
         show-close={this.showClose}
