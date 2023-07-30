@@ -13,19 +13,19 @@ export default defineComponent({
   render() {
     return (
       <>
-        <div className="header-container">
-          <div className="container__left">
+        <div class="header-container">
+          <div class="container__left">
             <el-image src={headerIcon} />
             <el-image src="/vite.svg" />
             <span>小石头潭记</span>
           </div>
-          <div className="container__right">
+          <div class="container__right">
             <el-icon onClick={() => (this.visible = true)}>
               <Setting />
             </el-icon>
           </div>
         </div>
-        <ThemeSetting v-model={this.visible} />
+        <ThemeSetting visible={this.visible} />
       </>
     )
   }
