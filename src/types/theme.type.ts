@@ -3,4 +3,9 @@ type ThemeSidebar = {
   isCollapse: boolean
 }
 
-export type ThemeType = Record<'sidebar', ThemeSidebar>
+type ThemeHeader = {
+  // 头部标题
+  title: string
+}
+
+export type ThemeType = Record<'sidebar', ThemeSidebar> & Record<'header', ThemeHeader>

@@ -426,3 +426,49 @@ export function format(time: number | Date, fmt: string) {
  * @return boolean
  */
 export const isObjectEmpty = (obj: Object) => Object.keys(obj).length === 0
+
+/**
+ * desc: 集合扁平化
+ * @param collection
+ */
+export const flattenCollection = <T>(collection: T[]): T[] => {
+  return collection.reduce((result: T[], current: T) => {
+    return result.concat(Array.isArray(current) ? flattenCollection(current) : current)
+  }, [])
+}
+
+/**
+ * desc: 对象扁平化
+ * @param obj
+ * @param prefix
+ */
+export const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
+  return Object.keys(obj).reduce(
+    (acc, k) => {
+      const pre = prefix.length ? prefix + '.' : ''
+      if (typeof obj[k] === 'object' && obj[k] !== null) {
+        Object.assign(acc, flattenObject(obj[k], pre + k))
+      } else {
+        acc[pre + k] = obj[k]
+      }
+      return acc
+    },
+    {} as Record<string, any>
+  )
+}
+
+export const unFlattenObject = (obj: Record<string, any>): any => {
+  const result: any = {}
+  for (const key in obj) {
+    const keys = key.split('.')
+    let nestedObj = result
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (!nestedObj[keys[i]]) {
+        nestedObj[keys[i]] = {}
+      }
+      nestedObj = nestedObj[keys[i]]
+    }
+    nestedObj[keys[keys.length - 1]] = obj[key]
+  }
+  return result
+}

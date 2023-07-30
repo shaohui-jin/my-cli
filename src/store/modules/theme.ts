@@ -3,17 +3,13 @@ import { getCookie, setCookie, isObjectEmpty } from '@/utils'
 
 import { ThemeType } from '@/types'
 import { CookieEnum, defaultThemeConfig } from '@/constant'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 
 export const ThemeStore = defineStore('theme', () => {
-  let theme = reactive<ThemeType>(defaultThemeConfig)
+  let theme = ref<ThemeType>(defaultThemeConfig)
   let hasInit = ref<boolean>(false)
-  const setTheme = (themeData: ThemeType) => {
-    theme = themeData
-    setCookie(CookieEnum.CUSTOM_THEME, JSON.stringify(themeData), { type: 'localStorage' })
-  }
 
-  const getTheme = (): ThemeType => {
+  onMounted(() => {
     const hasThemeSetting = isObjectEmpty(theme)
     if (!hasInit.value && !hasThemeSetting) {
       console.log('theme未初始化')
@@ -23,6 +19,11 @@ export const ThemeStore = defineStore('theme', () => {
       setTheme(isObjectEmpty(themeConfig) ? defaultThemeConfig : themeConfig)
     }
     return theme
+  })
+  const getTheme = (): ThemeType => theme.value
+  const setTheme = (themeData: ThemeType) => {
+    theme.value = themeData
+    setCookie(CookieEnum.CUSTOM_THEME, JSON.stringify(themeData), { type: 'localStorage' })
   }
 
   return {
