@@ -179,7 +179,7 @@ export const debounce = (
   interval: number = 500,
   isImmediate: boolean = true
 ): ((this: any, ...rest: any[]) => boolean) => {
-  let timer: null | NodeJS.Timeout = null
+  let timer: null | number = null
 
   return function (this: any, ...rest: any[]) {
     if (isImmediate) {
@@ -188,11 +188,11 @@ export const debounce = (
       return false
     }
 
-    timer && clearTimeout(timer as NodeJS.Timeout)
+    timer && clearTimeout(timer as number)
 
     timer = setTimeout(() => {
       callback.apply(this, rest)
-      clearTimeout(timer as NodeJS.Timeout)
+      clearTimeout(timer as number)
       timer = null
     }, interval)
     return false
@@ -397,10 +397,10 @@ export const getRestDays = (startDate: string, days: number, endDate = new Date(
  * @param {number/Date} time 时间
  * @param {string} fmt 格式
  */
-export function format(time, fmt) {
+export function format(time: number | Date, fmt: string) {
   time = typeof time === 'number' ? new Date(time) : time
 
-  var o = {
+  let o = {
     'M+': time.getMonth() + 1, //月份
     'd+': time.getDate(), //日
     'h+': time.getHours(), //小时
@@ -419,3 +419,10 @@ export function format(time, fmt) {
       )
   return fmt
 }
+
+/***
+ * desc: 判断对象是否为空
+ * @param {Object} obj
+ * @return boolean
+ */
+export const isObjectEmpty = (obj: Object) => Object.keys(obj).length === 0
