@@ -2,7 +2,7 @@
 // import { SelectProps } from "antd/lib/select";
 // import { SHOW_PARENT } from "rc-tree-select";
 //
-export type ObjectType = Record<string, string>;
+export type ObjectType = Record<string, string>
 //
 // interface RcFile extends File {
 //   uid: string;

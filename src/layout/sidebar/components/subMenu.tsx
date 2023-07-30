@@ -1,5 +1,5 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
-import { Menu } from '@/router/menu.config.ts'
+import { Menu } from '@/types'
 
 const SubMenu = defineAsyncComponent(() => import('./subMenu.tsx'))
 const MenuItemGroup = defineAsyncComponent(
@@ -18,7 +18,7 @@ export default defineComponent({
       <>
         {menu.childMenu ? (
           <el-sub-menu
-            index={menu.route}
+            index={menu.route || this.$route.path}
             v-slots={{
               title: () => {
                 return (
@@ -30,7 +30,7 @@ export default defineComponent({
               }
             }}
           >
-            {menu.childMenu.map((child, index) => {
+            {menu.childMenu.map(child => {
               return child.isGroup ? <MenuItemGroup menu={child} /> : <SubMenu menu={child} />
             })}
           </el-sub-menu>

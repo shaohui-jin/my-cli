@@ -1,7 +1,6 @@
 import { ref, defineComponent, defineAsyncComponent, onMounted, watchEffect } from 'vue'
-import { menu } from '@/router/menu.config.ts'
+import { defaultMenuConfig } from '@/constant'
 import { ThemeStore } from '@/store/modules/theme.ts'
-import { storeToRefs } from 'pinia'
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
 export default defineComponent({
@@ -14,7 +13,7 @@ export default defineComponent({
     const themeSore = ThemeStore()
     onMounted(() => {
       watchEffect(() => {
-        isCollapse.value = themeSore.getTheme.sidebar.isCollapse
+        isCollapse.value = themeSore.getTheme().sidebar.isCollapse
       })
     })
 
@@ -22,7 +21,7 @@ export default defineComponent({
   },
   render() {
     const { isCollapse, handleOpen, handleClose } = this
-    const menuItems: JSX.Element[] = menu.map(menu => <SubMenu menu={menu} />)
+    const menuItems: JSX.Element[] = defaultMenuConfig.map(menu => <SubMenu menu={menu} />)
     return (
       <>
         <el-menu

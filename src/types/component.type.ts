@@ -16,11 +16,10 @@ type BaseComponent<T = string> = {
   value: any
 }
 
-//
-// export interface BaseInputItem<T = string> extends BaseComponents<T> {
-//   label: string // label字
-//   placeholder?: string // 占位符
-// }
+export type BaseInputItem<T = string> = BaseComponent<T> & {
+  label: string // label字
+  placeholder?: string // 占位符
+}
 //
 // export interface BaseSelectItem<T = string> extends BaseComponents<T> {
 //   label: string // label

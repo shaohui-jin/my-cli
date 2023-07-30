@@ -1,2 +1,3 @@
-export * from './cookie.ts'
-export * from './theme.ts'
+export * from './cookie'
+export * from './theme'
+export * from './menu'

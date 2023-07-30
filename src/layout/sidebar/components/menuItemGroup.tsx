@@ -1,5 +1,5 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
-import { MenuItemGroup } from '@/router/menu.config.ts'
+import { MenuItemGroup } from '@/types'
 const MenuItem = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItem.tsx'))
 export default defineComponent({
   name: 'MenuItemGroup',

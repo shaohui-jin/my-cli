@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { MenuItemType } from '@/router/menu.config.ts'
+import { MenuItemType } from '@/types'
 
 export default defineComponent({
   name: 'MenuItem',

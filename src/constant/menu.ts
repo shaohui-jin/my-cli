@@ -1,38 +1,11 @@
 import { Document, Menu as IconMenu, Location } from '@element-plus/icons-vue'
-
-interface Icon {
-  render: Function
-}
+import { Menu } from '@/types'
 
 const defaultIcon: Icon = {
   render: () => {}
 }
 
-interface MenuItem {
-  title: string
-  icon: Icon
-  route?: string
-}
-
-// 一级
-export interface Menu extends MenuItem {
-  childMenu?: SubMenu[] | MenuItemGroup[]
-}
-
-// 二级
-interface SubMenu extends MenuItem {
-  isGroup: false
-}
-
-export interface MenuItemGroup extends MenuItem {
-  isGroup: true
-  childMenu: MenuItem[]
-}
-
-// 对外使用的类型
-export type MenuItemType = SubMenu | MenuItemGroup | MenuItem
-
-export const menu: Menu[] = [
+export const defaultMenuConfig: Menu[] = [
   {
     icon: IconMenu as Icon,
     title: '首页',
