@@ -13,4 +13,6 @@ type ThemeNavbar = {
   isBreadCrumb: boolean
 }
 
-export type ThemeType = Record<'sidebar', ThemeSidebar> & Record<'header', ThemeHeader> & Record<'navbar', ThemeNavbar>
+export type ThemeType = Record<'sidebar', ThemeSidebar> &
+  Record<'header', ThemeHeader> &
+  Record<'navbar', ThemeNavbar>

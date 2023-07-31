@@ -4,7 +4,7 @@ import { ThemeStore } from '@/store/modules/theme.ts'
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
 export default defineComponent({
-  name: 'SidebarMenu',
+  name: 'SLASidebar',
   setup() {
     const handleOpen = (key: string, keyPath: string[]) => console.log(key, keyPath)
     const handleClose = (key: string, keyPath: string[]) => console.log(key, keyPath)
