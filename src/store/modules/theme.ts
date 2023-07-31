@@ -25,11 +25,14 @@ export const ThemeStore = defineStore('theme', () => {
     theme.value = themeData
     setCookie(CookieEnum.CUSTOM_THEME, JSON.stringify(themeData), { type: 'localStorage' })
   }
-
+  const resetTheme = () => {
+    setTheme(defaultThemeConfig)
+  }
   return {
     theme,
     getTheme,
-    setTheme
+    setTheme,
+    resetTheme
   }
 })
 

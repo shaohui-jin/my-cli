@@ -4,8 +4,13 @@ type ThemeSidebar = {
 }
 
 type ThemeHeader = {
-  // 头部标题
+  // 顶部标题
   title: string
 }
 
-export type ThemeType = Record<'sidebar', ThemeSidebar> & Record<'header', ThemeHeader>
+type ThemeNavbar = {
+  // 是否展示面包屑
+  isBreadCrumb: boolean
+}
+
+export type ThemeType = Record<'sidebar', ThemeSidebar> & Record<'header', ThemeHeader> & Record<'navbar', ThemeNavbar>

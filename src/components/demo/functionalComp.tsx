@@ -19,7 +19,7 @@ const demoComp: FunctionalComponent<Props, Emit> = (props, { slots, emit }) => {
       config: { globalProperties: global }
     }
   } = getCurrentInstance()
-  global.$console.info('渲染了functionalComponent组件：functionalComponent')
+  global.$console.info('SLAFunctionalComponentDemo 组件渲染，组件类型 functionalComponent')
   const handleButton: Events = () => {
     count.value++
     emit('update:msg', `${props.msg}${count.value}`)

@@ -1,5 +1,4 @@
-import { ref, defineComponent, defineAsyncComponent, watch } from 'vue'
-import { CircleCloseFilled } from '@element-plus/icons-vue'
+import { ref, defineComponent, defineAsyncComponent, watch, getCurrentInstance } from 'vue'
 import { defaultThemeForm } from '@/constant'
 import { ThemeStore } from '@/store/modules/theme.ts'
 import { flattenObject, unFlattenObject } from '@/utils'
@@ -8,19 +7,19 @@ const BaseForm = defineAsyncComponent(() => import('@/components/base/base-form.
 export default defineComponent({
   name: 'SLAThemeSetting',
   props: {
-    visible: {
-      type: Boolean,
+    close: {
+      type: Function,
       required: true
     }
   },
-  emits: ['update:visible'],
-  setup(_, { emit }) {
-    const close = (done: Function) => {
-      emit('update:visible', false)
-      typeof done === 'function' && done()
-    }
-    const showClose = ref<boolean>(false)
-    const withHeader = ref<boolean>(false)
+  setup(props, { emit }) {
+    const {
+      appContext: {
+        config: { globalProperties: global }
+      }
+    } = getCurrentInstance()
+    global.$console.info('SLAThemeSetting 组件渲染，组件类型 defineComponent')
+
     const themeStore = ThemeStore()
     const theme = ref<Record<string, any>>(flattenObject(themeStore.getTheme()))
     watch(
@@ -29,34 +28,44 @@ export default defineComponent({
         setTimeout(() => {
           const theme = unFlattenObject(value)
           themeStore.setTheme(theme)
-          console.log('unFlattenObject', theme)
+          global.$console.info(`flattenObject:`, value, `unFlattenObject:`, theme)
         }, 10)
       },
       { deep: true, immediate: true }
     )
-    return { close, showClose, withHeader, theme }
 
-    // flattenCollection
-    // return { close, showClose, withHeader, theme }
+    const resetLoading = ref<boolean>(false)
+    const reset = () => {
+      resetLoading.value = true
+      setTimeout(() => {
+        themeStore.resetTheme()
+        theme.value = flattenObject(themeStore.getTheme())
+        resetLoading.value = false
+      }, 2000)
+    }
+    return { reset, resetLoading, theme }
   },
   render() {
+    const {
+      reset,
+      resetLoading,
+      $props: { close }
+    } = this
     return (
       <>
-        <el-drawer
-          v-model={this.$props.visible}
-          direction="rtl"
-          size="30%"
-          show-close={this.showClose}
-          with-header={this.withHeader}
-          before-close={this.close}
-        >
-          <BaseForm formOptions={defaultThemeForm} formData={this.theme} />
-          <el-button type="danger" onClick={this.close}>
-            <el-icon class="el-icon--left">
-              <CircleCloseFilled />
-            </el-icon>
+        <div class="drawer__body">
+          <el-form label-width={100} size="small">
+            <BaseForm formOptions={defaultThemeForm} formData={this.theme} />
+          </el-form>
+        </div>
+        <div class="drawer__footer">
+          <el-button type="danger" loading={resetLoading} onClick={reset} plain>
+            <span>恢复默认</span>
           </el-button>
-        </el-drawer>
+          <el-button type="primary" onClick={close} plain>
+            <span>保存</span>
+          </el-button>
+        </div>
       </>
     )
   }

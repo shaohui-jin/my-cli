@@ -8,7 +8,7 @@ const SLAThemeSetting = defineAsyncComponent(() => import('@/layout/header/theme
 export default defineComponent({
   name: 'SLAHeader',
   setup() {
-    const visible = ref<boolean>(true)
+    let visible = ref<boolean>(false)
     const themeSore = ThemeStore()
     const title = computed(() => themeSore.getTheme().header.title)
     return { visible, title }
@@ -30,7 +30,19 @@ export default defineComponent({
             </el-icon>
           </div>
         </div>
-        <SLAThemeSetting visible={this.visible} />
+        <el-drawer
+          v-model={this.visible}
+          direction="rtl"
+          size="30%"
+          show-close={false}
+          with-header={false}
+          before-close={done => {
+            this.visible = false
+            done()
+          }}
+        >
+          <SLAThemeSetting close={() => (this.visible = false)} />
+        </el-drawer>
       </>
     )
   }

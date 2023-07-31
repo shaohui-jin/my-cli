@@ -2,9 +2,11 @@ import { ref, defineComponent, defineEmits, getCurrentInstance } from 'vue'
 import { Events } from 'vue'
 import styles from '@/components/demo/demo.module.less'
 export default defineComponent({
+  name: 'SLADefineComponentDemo',
   props: {
     msg: {
-      type: String
+      type: String,
+      required: true
     }
   },
   emits: ['update:msg'],
@@ -14,7 +16,7 @@ export default defineComponent({
         config: { globalProperties: global }
       }
     } = getCurrentInstance()
-    global.$console.info('渲染了defineComponent组件：defineComponent')
+    global.$console.info('SLADefineComponentDemo 组件渲染，组件类型 defineComponent')
     let count = ref(0)
     const handleButton: Events = () => {
       count.value++

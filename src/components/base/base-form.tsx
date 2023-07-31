@@ -58,7 +58,6 @@ const getJSXByType = (item: BaseComponentItem, formData: any) => {
             disabled={item.disabled}
             placeholder={item.placeholder}
           />
-          *
         </>
       )
     // case 'textarea':
@@ -144,24 +143,7 @@ export default defineComponent({
               }
             ]}
           >
-            {/*{JSON.stringify(this.$props.formData)}*/}
             {getJSXByType(item, this.$props.formData)}
-            {/*{ item.type === 'switch' ? (*/}
-            {/*  <>*/}
-            {/*    <el-switch*/}
-            {/*      v-model={this.$props.formData[item.key]}*/}
-            {/*      active-text={item.activeText || ''}*/}
-            {/*      inactive-text={item.inactiveText || ''}*/}
-            {/*    />*/}
-            {/*  </>*/}
-            {/*) : (*/}
-            {/*  <></>*/}
-            {/*)}*/}
-            {/*{item.type === 'input' ? (*/}
-            {/*  <el-input disabled={item.disabled} placeholder={placeholder} />*/}
-            {/*) : (*/}
-            {/*  <></>*/}
-            {/*)}*/}
           </el-form-item>
         ))}
       </>
