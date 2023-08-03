@@ -1,6 +1,7 @@
 import { defineComponent, defineAsyncComponent, computed } from 'vue'
 import { defaultMenuConfig } from '@/constant'
 import { ThemeStore } from '@/store/modules/theme.ts'
+import './sidebar.less'
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
 export default defineComponent({
@@ -18,17 +19,18 @@ export default defineComponent({
     const menuItems: JSX.Element[] = defaultMenuConfig.map(menu => <SubMenu menu={menu} />)
     return (
       <>
-        <el-menu
-          default-active={this.$route.path}
-          class="el-menu-vertical-demo"
-          mode="vertical"
-          collapse={isCollapse}
-          onOpen={handleOpen}
-          onClose={handleClose}
-          router
-        >
-          {menuItems}
-        </el-menu>
+        <div class="SLA-sidebar-container">
+          <el-menu
+            default-active={this.$route.path}
+            mode="vertical"
+            collapse={isCollapse}
+            onOpen={handleOpen}
+            onClose={handleClose}
+            router
+          >
+            {menuItems}
+          </el-menu>
+        </div>
       </>
     )
   }

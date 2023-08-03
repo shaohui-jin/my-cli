@@ -16,13 +16,11 @@ export default defineComponent({
   render() {
     return (
       <>
-        <div class="header-container">
+        <div class="SLA-header-container">
           <div class="container__left">
             <el-image src={headerIcon} />
             <el-image src="/vite.svg" />
-            <span>
-              {this.title} {this.visible.toString()}
-            </span>
+            <span>{this.title}</span>
           </div>
           <div class="container__right">
             <el-icon onClick={() => (this.visible = true)}>

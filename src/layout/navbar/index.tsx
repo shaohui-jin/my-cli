@@ -1,4 +1,4 @@
-import { defineComponent, defineAsyncComponent, computed } from 'vue'
+import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'SLANavbar',
   setup() {},

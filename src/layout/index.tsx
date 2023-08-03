@@ -1,6 +1,6 @@
 import { RouterView } from 'vue-router'
 import { defineAsyncComponent, defineComponent, ref } from 'vue'
-import styles from './layout.module.less'
+import './layout.less'
 
 const SLASidebar = defineAsyncComponent(() => import('@/layout/sidebar/index.tsx'))
 const SLANavbar = defineAsyncComponent(() => import('@/layout/navbar/index.tsx'))
@@ -8,37 +8,40 @@ const SLAHeader = defineAsyncComponent(() => import('@/layout/header/index.tsx')
 const SLAFooter = defineAsyncComponent(() => import('@/layout/footer/index.tsx'))
 
 export default defineComponent({
+  name: 'SLALayout',
   setup() {
     const headerHeight = ref<string>('50px')
-    const navbarHeight = ref<string>('20px')
+    const navbarHeight = ref<string>('30px')
     const footerHeight = ref<string>('40px')
     const asideWidth = ref<string>('250px')
     return { headerHeight, footerHeight, asideWidth, navbarHeight }
   },
   render() {
+    const { headerHeight, footerHeight, asideWidth, navbarHeight } = this
     return (
       <>
-        <el-container className={styles.layout}>
-          <el-header class={styles.header} height={this.headerHeight}>
+        <el-container class="SLA-layout-container">
+          <el-header class="header-container" height={headerHeight}>
             <SLAHeader />
           </el-header>
           <el-container
+            class="body-container"
             direction="horizontal"
-            style={{ height: `calc(100% - ${this.headerHeight}})` }}
+            style={{ height: `calc(100% - ${headerHeight}})` }}
           >
-            <el-aside class={styles.aside} width={this.asideWidth}>
+            <el-aside class="sidebar-container" width={asideWidth}>
               <SLASidebar />
             </el-aside>
             <el-container style={{ height: '100%' }}>
-              <el-header height={this.navbarHeight}>
+              <el-header class="navbar-container" height={navbarHeight}>
                 <SLANavbar />
               </el-header>
-              <el-main class={styles.main}>
+              <el-main class="main-container">
                 {/*<el-scrollbar>*/}
                 <RouterView />
                 {/*</el-scrollbar>*/}
               </el-main>
-              <el-footer class={styles.footer} height={this.footerHeight}>
+              <el-footer class="footer-container" height={this.footerHeight}>
                 <SLAFooter />
               </el-footer>
             </el-container>
