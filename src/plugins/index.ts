@@ -4,7 +4,7 @@
 //     plugins[key]()
 //   }
 // }
-import AdvancedConsole from './plugins/console'
+import AdvancedConsole from './modules/console.ts'
 
 const mountData = () => {
   window.App = Object.freeze({
