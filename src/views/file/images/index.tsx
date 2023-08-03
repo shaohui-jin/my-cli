@@ -22,7 +22,7 @@ export default defineComponent({
   render() {
     return (
       <>
-        <div>
+        <div style={{ height: '100%' }}>
           <el-tabs tab-position={this.tabPosition} style={{ height: '100%' }} class="demo-tabs">
             {this.artworks.map((image: Artwork) => {
               return (
