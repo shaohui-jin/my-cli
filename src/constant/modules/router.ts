@@ -1,13 +1,13 @@
 import { RouteRecordRaw } from 'vue-router'
 
-const routes: RouteRecordRaw[] = [
+export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     redirect: '/home'
   },
   {
     path: '/home',
-    name: 'home',
+    name: '首页',
     meta: {
       type: 'home'
     },
@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/file/images',
-    name: 'file-images',
+    name: '图片集',
     meta: {
       type: 'images'
     },
@@ -35,5 +35,3 @@ const routes: RouteRecordRaw[] = [
   //     component: () => import('@/views/404'),
   // },
 ]
-
-export default routes

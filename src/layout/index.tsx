@@ -10,10 +10,10 @@ const SLAFooter = defineAsyncComponent(() => import('@/layout/footer/index.tsx')
 export default defineComponent({
   name: 'SLALayout',
   setup() {
-    const headerHeight = ref<string>('50px')
-    const navbarHeight = ref<string>('30px')
+    const headerHeight = ref<string>('40px')
+    const navbarHeight = ref<string>('40px')
     const footerHeight = ref<string>('40px')
-    const asideWidth = ref<string>('250px')
+    const asideWidth = ref<string>('200px')
     return { headerHeight, footerHeight, asideWidth, navbarHeight }
   },
   render() {
@@ -32,10 +32,8 @@ export default defineComponent({
             <el-aside class="sidebar-container" width={asideWidth}>
               <SLASidebar />
             </el-aside>
-            <el-container style={{ height: '100%' }}>
-              <el-header class="navbar-container" height={navbarHeight}>
-                <SLANavbar />
-              </el-header>
+            <el-container class="content-container">
+              <SLANavbar class="navbar-container" />
               <el-main class="main-container">
                 {/*<el-scrollbar>*/}
                 <RouterView />

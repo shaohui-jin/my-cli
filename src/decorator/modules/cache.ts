@@ -32,15 +32,15 @@ export const cacheDecorator = (target, key, descriptor) => {
 }
 
 // 示例类
-class Example {
-  @cacheDecorator
-  getValue(key) {
-    console.log('执行函数逻辑')
-    return key + Math.random() // 模拟复杂的计算逻辑
-  }
-}
-
-// 测试
-const example = new Example()
-console.log(example.getValue('foo'))
-console.log(example.getValue('foo')) // 从缓存中获取结果
+// class Example {
+//   @cacheDecorator
+//   getValue(key) {
+//     console.log('执行函数逻辑')
+//     return key + Math.random() // 模拟复杂的计算逻辑
+//   }
+// }
+//
+// // 测试
+// const example = new Example()
+// console.log(example.getValue('foo'))
+// console.log(example.getValue('foo')) // 从缓存中获取结果
