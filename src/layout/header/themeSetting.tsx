@@ -13,13 +13,7 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
-    const {
-      appContext: {
-        config: { globalProperties: global }
-      }
-    } = getCurrentInstance()
-    global.$console.info('SLAThemeSetting 组件渲染，组件类型 defineComponent')
-
+    window.App.console.info('SLAThemeSetting 组件渲染')
     const themeStore = ThemeStore()
     const theme = ref<Record<string, any>>(flattenObject(themeStore.getTheme()))
     watch(
@@ -28,7 +22,8 @@ export default defineComponent({
         setTimeout(() => {
           const theme = unFlattenObject(value)
           themeStore.setTheme(theme)
-          global.$console.info(`flattenObject:`, value, `unFlattenObject:`, theme)
+          window.App.console.info(`flattenObject:`, value)
+          window.App.console.info(`unFlattenObject:`, theme)
         }, 10)
       },
       { deep: true, immediate: true }
