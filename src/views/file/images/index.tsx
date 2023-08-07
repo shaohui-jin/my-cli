@@ -14,7 +14,6 @@ export default defineComponent({
       const res: Response<Artwork[]> = await FileApi.getArtworks()
       if (res.resultCode === STATUS.SUCCESS) {
         Object.assign(artworks, res.data)
-        console.log(artworks)
       }
     }
     return { tabPosition, artworks }

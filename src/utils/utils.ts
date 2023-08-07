@@ -2,6 +2,7 @@
 import { Action, SilderMenuItem, ResponseBlob, ObjectType } from '@/types'
 import { ElMessage } from 'element-plus'
 import { getCookie } from './cookie'
+import { debounceDecorator, logDecorator } from "@/decorator";
 
 const defaultTenantId = '1'
 /**
@@ -472,3 +473,46 @@ export const unFlattenObject = (obj: Record<string, any>): any => {
   }
   return result
 }
+
+class Utils {
+  /**
+   * desc: 对象扁平化
+   * @param obj
+   * @param prefix
+   */
+  flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
+    return Object.keys(obj).reduce(
+      (acc, k) => {
+        const pre = prefix.length ? prefix + '.' : ''
+        if (typeof obj[k] === 'object' && obj[k] !== null) {
+          Object.assign(acc, flattenObject(obj[k], pre + k))
+        } else {
+          acc[pre + k] = obj[k]
+        }
+        return acc
+      },
+      {} as Record<string, any>
+    )
+  }
+  /**
+   * 扁平化对象还原
+   * @param obj
+   */
+  @debounceDecorator(100)
+  unFlattenObject(obj: Record<string, any>): ObjectType {
+    const result: any = {}
+    for (const key in obj) {
+      const keys = key.split('.')
+      let nestedObj = result
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!nestedObj[keys[i]]) {
+          nestedObj[keys[i]] = {}
+        }
+        nestedObj = nestedObj[keys[i]]
+      }
+      nestedObj[keys[keys.length - 1]] = obj[key]
+    }
+    return result
+  }
+}
+export default Utils
