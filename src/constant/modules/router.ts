@@ -1,22 +1,37 @@
-import { RouteRecordRaw } from 'vue-router'
+import { Document, Location } from '@element-plus/icons-vue'
+import { Route } from '@/types'
 
-export const routes: RouteRecordRaw[] = [
-  {
-    path: '/',
-    redirect: '/home'
-  },
+export const routes: Route[] = [
   {
     path: '/home',
     name: '首页',
-    meta: {
-      type: 'home'
-    },
+    meta: {},
     component: () => import('@/views/home')
+  },
+  {
+    path: '/demo',
+    name: '代码演示',
+    meta: {
+      icon: Location,
+      type: 'demo'
+    },
+    // component: () => import('@/views/home'),
+    children: [
+      {
+        path: '/demo',
+        name: '代码演示',
+        meta: {
+          type: 'demo'
+        },
+        component: () => import('@/views/home')
+      }
+    ]
   },
   {
     path: '/file/images',
     name: '图片集',
     meta: {
+      icon: Document,
       type: 'images'
     },
     component: () => import('@/views/file/images')

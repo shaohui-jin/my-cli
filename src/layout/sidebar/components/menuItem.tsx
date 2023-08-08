@@ -1,21 +1,21 @@
 import { defineComponent } from 'vue'
-import { MenuItemType } from '@/types'
+import { Route } from '@/types'
 
 export default defineComponent({
   name: 'MenuItem',
   props: {
-    menu: { type: Object as () => MenuItemType, required: true }
+    menu: { type: Object as () => Route, required: true }
   },
   render() {
     const { menu } = this.$props
     return (
       <el-menu-item
-        index={menu.route}
+        index={menu.path}
         v-slots={{
           title: () => (
             <>
-              <el-icon>{menu.icon.render()}</el-icon>
-              <span>{menu.title}</span>
+              <el-icon>{menu.meta?.icon?.render()}</el-icon>
+              <span>{menu.name}</span>
             </>
           )
         }}

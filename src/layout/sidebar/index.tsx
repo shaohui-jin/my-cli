@@ -1,5 +1,5 @@
 import { defineComponent, defineAsyncComponent, computed } from 'vue'
-import { defaultMenuConfig } from '@/constant'
+import { routes } from '@/constant'
 import { ThemeStore } from '@/store/modules/theme.ts'
 import './sidebar.less'
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
@@ -16,7 +16,7 @@ export default defineComponent({
   },
   render() {
     const { isCollapse, handleOpen, handleClose } = this
-    const menuItems: JSX.Element[] = defaultMenuConfig.map(menu => <SubMenu menu={menu} />)
+    const menuItems: JSX.Element[] = routes.map(menu => <SubMenu menu={menu} />)
     return (
       <>
         <div class="SLA-sidebar-container">
