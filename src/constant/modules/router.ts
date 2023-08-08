@@ -18,7 +18,7 @@ export const routes: Route[] = [
     // component: () => import('@/views/home'),
     children: [
       {
-        path: '/demo',
+        path: '/demo1',
         name: '代码演示',
         meta: {
           type: 'demo'

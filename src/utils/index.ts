@@ -1,2 +1,2 @@
-export * from './utils'
+export * from './defaultUtils'
 export * from './cookie'

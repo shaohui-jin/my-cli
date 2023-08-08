@@ -5,7 +5,7 @@ export interface Extra {
   type: 'cookie' | 'localStorage' | 'sessionStorage' // 类型
 }
 
-import { checkUndefined } from './utils'
+import { checkUndefined } from './defaultUtils'
 
 /**
  * 作用：添加cookie

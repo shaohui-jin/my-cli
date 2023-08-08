@@ -1,8 +1,10 @@
-import { computed, ComputedRef, defineComponent, watch, watchEffect, ref } from 'vue'
+import { computed, defineComponent, watchEffect, ref, ComputedRef } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { routes } from '@/constant'
 import './navbar.less'
-import { RouteRecordRaw, useRoute, useRouter } from 'vue-router'
 import { Back } from '@element-plus/icons-vue'
+import { Route } from '@/types'
+import Utils from '@/utils/utils'
 
 export default defineComponent({
   name: 'SLANavbar',
@@ -11,45 +13,20 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
 
-    const current = ref<string>()
-    // const current = ref<string>(route.path)
-    // const back = ref<string>(router.options.history.state.back || basePath)
-    const back = ref<string>()
+    const current = ref<string>(basePath)
+    const back = ref<string>(basePath)
     watchEffect(() => {
       current.value = route.path
-      back.value = router.options.history.state.back || basePath
+      back.value = (router.options.history?.state?.back || basePath) as string
     })
-    // watchEffect(() => {
-    //   const route = this.$route
-    //   console.log(12312312, route)
-    //   current.value = route.path
-    //   back.value = this.$router.options.history.state.back || '/home'
-    // })
-    // watch(
-    //   () => route.path,
-    //   (path, _path) => {
-    //     console.log(12312312, path, _path)
-    //     current.value = path
-    //     back.value = router.options.history.state.back || '/home'
-    //   },
-    //   { deep: true }
-    // )
 
-    const routesMap = ref<{ [path: string]: RouteRecordRaw }>({})
-    routes.forEach(route => {
+    const routesMap = ref<{ [path: string]: Route }>({})
+    Utils.flattenArray(routes, 'children').forEach(route => {
       routesMap.value[route.path] = route
     })
 
-    const currentRoute: RouteRecordRaw = computed(
-      () =>
-        // routes.find(route => route.path === current.value)
-        routesMap.value[current.value]
-    )
-    const backRoute: RouteRecordRaw = computed(
-      () =>
-        // routes.find(route => route.path === back.value)
-        routesMap.value[back.value]
-    )
+    const currentRoute: ComputedRef<Route> = computed((): Route => routesMap.value[current.value])
+    const backRoute: ComputedRef<Route> = computed((): Route => routesMap.value[back.value])
 
     const showBack = computed(() => {
       return current.value !== back.value || back.value !== basePath
@@ -80,7 +57,7 @@ export default defineComponent({
               </div>
             </>
           ) : (
-            <></>
+            <div></div>
           )}
           <div class="navbar-container__current_route">
             {/*<span class="">{backRoute.name} </span>*/}
