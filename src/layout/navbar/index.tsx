@@ -2,6 +2,7 @@ import { computed, ComputedRef, defineComponent, watch, watchEffect, ref } from 
 import { routes } from '@/constant'
 import './navbar.less'
 import { RouteRecordRaw, useRoute, useRouter } from 'vue-router'
+import { Back } from '@element-plus/icons-vue'
 
 export default defineComponent({
   name: 'SLANavbar',
@@ -53,7 +54,7 @@ export default defineComponent({
     const showBack = computed(() => {
       return current.value !== back.value || back.value !== basePath
     })
-    const toBack = () => router.push({ path: backRoute.value.path })
+    const toBack = () => router.back()
     return {
       currentRoute,
       backRoute,
@@ -66,8 +67,22 @@ export default defineComponent({
     return (
       <>
         <div class="SLA-navbar-container">
-          {showBack ? <span>{backRoute.name} </span> : <span></span>}
-          <div>
+          {showBack ? (
+            <>
+              <div class="navbar-container__back_route">
+                <el-icon class="pointer" onClick={toBack}>
+                  <Back />
+                </el-icon>
+                <span class="back-route__name pointer" onClick={toBack}>
+                  {backRoute.name}
+                </span>
+                <span class="back-route__separator"></span>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+          <div class="navbar-container__current_route">
             {/*<span class="">{backRoute.name} </span>*/}
             {/*<span class="">{currentRoute.name}</span>*/}
             <el-tag>{currentRoute.name}</el-tag>
