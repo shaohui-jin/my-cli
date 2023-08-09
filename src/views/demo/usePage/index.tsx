@@ -1,15 +1,9 @@
-import { reactive, ref, defineComponent, getCurrentInstance } from 'vue'
+import { reactive, defineComponent } from 'vue'
 import usePage from '@/hooks/usePage'
-import { Events } from 'vue'
-import styles from '@/components/demo/demo.module.less'
+
 export default defineComponent({
   setup(props, { slots, emit }) {
-    const {
-      appContext: {
-        config: { globalProperties: global }
-      }
-    } = getCurrentInstance()
-    global.$console.info('SLAThemeSetting 组件渲染，组件类型 defineComponent')
+    window.App.$console.info('SLAThemeSetting 组件渲染，组件类型 defineComponent')
 
     const searchForm = reactive({
       createEndTime: '',
@@ -33,24 +27,16 @@ export default defineComponent({
         })
     })
 
-    // const handleButton: Events = () => {
-    //   count.value++
-    //   emit('update:msg', `${props.msg}${count.value}`)
-    // };
     return { query }
   },
   render() {
     const { query } = this
     return (
-      <div className={styles.usePage}>
-        <div className={styles.usePage__left}>
-          <span>这是usePage组件</span>
-        </div>
-        <div className={styles.usePage__right}>
-          <button type="button" onClick={query}>
-            点击查询
-          </button>
-        </div>
+      <div class="flex-center flex-column">
+        <span class="m-b-20">F12查看控制台</span>
+        <button type="button" onClick={query}>
+          点击查询
+        </button>
       </div>
     )
   }

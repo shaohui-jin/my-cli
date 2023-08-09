@@ -1,5 +1,5 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
-import '@/assets/css/theme.css'
+import '@/assets/css/theme.less'
 
 const Layout = defineAsyncComponent(() => import('@/layout'))
 

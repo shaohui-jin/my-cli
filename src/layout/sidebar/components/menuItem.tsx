@@ -14,7 +14,7 @@ export default defineComponent({
         v-slots={{
           title: () => (
             <>
-              <el-icon>{menu.meta?.icon?.render()}</el-icon>
+              {menu.meta.icon ? <el-icon>{menu.meta.icon.render()}</el-icon> : <div></div>}
               <span>{menu.name}</span>
             </>
           )

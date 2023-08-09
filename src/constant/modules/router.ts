@@ -9,6 +9,15 @@ export const routes: Route[] = [
     component: () => import('@/views/home')
   },
   {
+    path: '/file/images',
+    name: '图片集',
+    meta: {
+      icon: Document,
+      type: 'images'
+    },
+    component: () => import('@/views/file/images')
+  },
+  {
     path: '/demo',
     name: '代码演示',
     meta: {
@@ -18,23 +27,30 @@ export const routes: Route[] = [
     // component: () => import('@/views/home'),
     children: [
       {
-        path: '/demo1',
-        name: '代码演示',
+        path: '/define-demo',
+        name: 'define 代码演示',
         meta: {
           type: 'demo'
         },
-        component: () => import('@/views/home')
+        component: () => import('@/views/demo/define')
+      },
+      {
+        path: '/functional-demo',
+        name: 'functional 代码演示',
+        meta: {
+          type: 'demo'
+        },
+        component: () => import('@/views/demo/functional')
+      },
+      {
+        path: '/hook-demo',
+        name: 'usePage 代码演示',
+        meta: {
+          type: 'demo'
+        },
+        component: () => import('@/views/demo/usePage')
       }
     ]
-  },
-  {
-    path: '/file/images',
-    name: '图片集',
-    meta: {
-      icon: Document,
-      type: 'images'
-    },
-    component: () => import('@/views/file/images')
   }
   // {
   //     path: '/login',

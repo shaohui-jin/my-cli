@@ -12,6 +12,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  /* elementPlus 修改 */
+  --el-menu-level-padding: 0px;
+
 }
 
 body {
@@ -25,6 +29,43 @@ body {
   width: 100vw;
   height: 100vh;
 }
+
+.flex-center {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+@base-size: 4; // 生成样式的基数
+@max-size: 64; // 生成的最大值
+.generate(@class, @attribute) {
+  .loop(@n) when (@n <= @max-size) {
+    .@{class}-@{n} {
+        @{attribute}: 1px * @n !important;
+    }
+    .loop(@n + @base-size);
+  }
+  .loop(0)
+}
+
+.generate(m-t, margin-top);
+.generate(m-b, margin-bottom);
+.generate(m-l, margin-left);
+.generate(m-r, margin-right);
+.generate(p-t, padding-top);
+.generate(p-b, padding-bottom);
+.generate(p-l, padding-left);
+.generate(p-r, padding-right);
+
 
 /*a {*/
 /*    font-weight: 500;*/
