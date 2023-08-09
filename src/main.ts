@@ -8,7 +8,4 @@ import 'element-plus/dist/index.css'
 
 install()
 
-const app = createApp(App)
-app.config.globalProperties.$console = window.App.console
-
-app.use(ElementPlus).use(router).use(store).mount('#app')
+const app = createApp(App).use(ElementPlus).use(router).use(store).mount('#app')

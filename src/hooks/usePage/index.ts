@@ -25,12 +25,6 @@ interface Props {
 type Emit = {}
 
 const usePage: FunctionalComponent<Props, Emit> = props => {
-  const {
-    appContext: {
-      config: { globalProperties: global }
-    }
-  } = getCurrentInstance() as ComponentInternalInstance
-
   // searchForm 由外部传入，内部传入导出的数据无法推导类型即无法知道对象里有什么也会失去代码提示
   const {
     searchForm,
@@ -66,7 +60,6 @@ const usePage: FunctionalComponent<Props, Emit> = props => {
       if (res.code === 0) {
         tableData.value = res.data?.rows || []
         page.total = res.data?.total || 0
-        // global.$console.info(JSON.stringify(tableData.value))
         getListFunc(props)
       }
     })
@@ -86,7 +79,7 @@ const usePage: FunctionalComponent<Props, Emit> = props => {
 
   const query = () => {
     getList()
-    global.$console.info('调用了getList')
+    window.App.$console.info('调用了getList')
   }
   return {
     searchForm,

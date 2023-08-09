@@ -8,7 +8,7 @@ import AdvancedConsole from './modules/console.ts'
 
 const mountData = () => {
   window.App = Object.freeze({
-    console: AdvancedConsole
+    $console: AdvancedConsole
   })
 }
 
