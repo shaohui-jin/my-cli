@@ -32,7 +32,7 @@ export default defineComponent({
   render() {
     const { query } = this
     return (
-      <div class="flex-center flex-column">
+      <div class="flex-center flex-d-c">
         <span class="m-b-20">F12查看控制台</span>
         <button type="button" onClick={query}>
           点击查询

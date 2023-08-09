@@ -14,12 +14,13 @@ export default defineComponent({
         v-slots={{
           title: () => (
             <>
-              {menu.meta.icon ? <el-icon>{menu.meta.icon.render()}</el-icon> : <div></div>}
               <span>{menu.name}</span>
             </>
           )
         }}
-      />
+      >
+        {menu.meta.icon ? <el-icon>{menu.meta.icon.render()}</el-icon> : <div></div>}
+      </el-menu-item>
     )
   }
 })

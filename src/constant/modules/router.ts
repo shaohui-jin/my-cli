@@ -1,11 +1,14 @@
-import { Document, Location } from '@element-plus/icons-vue'
+import { Document, Location, House, Finished } from '@element-plus/icons-vue'
 import { Route } from '@/types'
 
 export const routes: Route[] = [
   {
     path: '/home',
     name: '首页',
-    meta: {},
+    meta: {
+      type: 'home',
+      icon: House
+    },
     component: () => import('@/views/home')
   },
   {
@@ -30,6 +33,7 @@ export const routes: Route[] = [
         path: '/define-demo',
         name: 'define 代码演示',
         meta: {
+          icon: Finished,
           type: 'demo'
         },
         component: () => import('@/views/demo/define')
@@ -38,6 +42,7 @@ export const routes: Route[] = [
         path: '/functional-demo',
         name: 'functional 代码演示',
         meta: {
+          icon: Finished,
           type: 'demo'
         },
         component: () => import('@/views/demo/functional')
@@ -46,6 +51,7 @@ export const routes: Route[] = [
         path: '/hook-demo',
         name: 'usePage 代码演示',
         meta: {
+          icon: Finished,
           type: 'demo'
         },
         component: () => import('@/views/demo/usePage')

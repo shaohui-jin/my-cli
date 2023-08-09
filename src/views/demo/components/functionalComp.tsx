@@ -19,7 +19,7 @@ const demoComp: FunctionalComponent<Props, Emit> = (props, { slots, emit }) => {
     emit('update:msg', `${props.msg}${count.value}`)
   }
   return (
-    <div class="flex-center flex-column">
+    <div class="flex-center flex-d-c">
       <h2>
         外部的： {props.msg}，内部的： {count.value}
       </h2>

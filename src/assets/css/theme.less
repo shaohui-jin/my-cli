@@ -30,6 +30,10 @@ body {
   height: 100vh;
 }
 
+.flex {
+  display: flex;
+}
+
 .flex-center {
   height: 100%;
   display: flex;
@@ -37,16 +41,26 @@ body {
   align-items: center;
 }
 
-.flex-row {
+.flex-align-center {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.flex-d-r {
   flex-direction: row;
 }
 
-.flex-column {
+.flex-d-c {
   flex-direction: column;
 }
 
-@base-size: 4; // 生成样式的基数
-@max-size: 64; // 生成的最大值
+.flex-jc-sb {
+  justify-content: space-between;
+}
+
+@base-size: 2; // 生成样式的基数
+@max-size: 32; // 生成的最大值
 .generate(@class, @attribute) {
   .loop(@n) when (@n <= @max-size) {
     .@{class}-@{n} {

@@ -13,6 +13,15 @@ type ThemeNavbar = {
   isBreadCrumb: boolean
 }
 
+type ThemeLayout = {
+  // 是否展示面包屑
+  headerHeight: number
+  navbarHeight: number
+  footerHeight: number
+  asideWidth: number
+}
+
 export type ThemeType = Record<'sidebar', ThemeSidebar> &
   Record<'header', ThemeHeader> &
-  Record<'navbar', ThemeNavbar>
+  Record<'navbar', ThemeNavbar> &
+  Record<'layout', ThemeLayout>

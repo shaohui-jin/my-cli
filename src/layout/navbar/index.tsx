@@ -2,12 +2,19 @@ import { computed, defineComponent, watchEffect, ref, ComputedRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { routes } from '@/constant'
 import './navbar.less'
-import { Back } from '@element-plus/icons-vue'
+import { Fold, Expand } from '@element-plus/icons-vue'
 import { Route } from '@/types'
 import Utils from '@/utils/utils'
+import { ThemeStore } from '@/store/modules/theme.ts'
 
 export default defineComponent({
   name: 'SLANavbar',
+  props: {
+    maxHeight: {
+      type: Number,
+      required: true
+    }
+  },
   setup() {
     const basePath: string = '/home'
     const route = useRoute()
@@ -20,50 +27,75 @@ export default defineComponent({
       back.value = (router.options.history?.state?.back || basePath) as string
     })
 
+    // 是否收缩侧边栏
+    const themeStore = ThemeStore()
+    const isCollapse = ref<boolean>(false)
+    watchEffect(() => {
+      isCollapse.value = themeStore.theme.sidebar.isCollapse
+    })
+    const handleCollapse = () => {
+      themeStore.setTheme({
+        ...themeStore.getTheme(),
+        ...{ sidebar: { isCollapse: !isCollapse.value } }
+      })
+    }
+
+    // 计算当前路由、上一页路由
     const routesMap = ref<{ [path: string]: Route }>({})
     Utils.flattenArray(routes, 'children').forEach(route => {
       routesMap.value[route.path] = route
     })
-
     const currentRoute: ComputedRef<Route> = computed((): Route => routesMap.value[current.value])
     const backRoute: ComputedRef<Route> = computed((): Route => routesMap.value[back.value])
-
-    const showBack = computed(() => {
+    const showBack: ComputedRef<boolean> = computed(() => {
       return current.value !== back.value || back.value !== basePath
     })
-    const toBack = () => router.back()
-    return {
-      currentRoute,
-      backRoute,
-      showBack,
-      toBack
+
+    /**
+     * 获取切换侧边栏收缩状态图标
+     */
+    const getCollapseIcon = () => {
+      return isCollapse.value ? (
+        <el-icon class="pointer" onClick={handleCollapse}>
+          <Expand />
+        </el-icon>
+      ) : (
+        <el-icon class="pointer" onClick={handleCollapse}>
+          <Fold />
+        </el-icon>
+      )
     }
+
+    /**
+     * 获取回退的tag
+     */
+    const getBackTag = () => {
+      return showBack.value ? (
+        <>
+          <el-tag class="pointer" onClick={toBack}>
+            {backRoute.value.name}
+          </el-tag>
+        </>
+      ) : (
+        <div></div>
+      )
+    }
+    const toBack = () => router.back()
+    return { currentRoute, backRoute, showBack, toBack, getCollapseIcon, getBackTag }
   },
   render() {
-    const { toBack, showBack, currentRoute, backRoute } = this
+    const { currentRoute, getCollapseIcon, getBackTag } = this
     return (
       <>
-        <div class="SLA-navbar-container">
-          {showBack ? (
-            <>
-              <div class="navbar-container__back_route">
-                <el-icon class="pointer" onClick={toBack}>
-                  <Back />
-                </el-icon>
-                <span class="back-route__name pointer" onClick={toBack}>
-                  {backRoute.name}
-                </span>
-                <span class="back-route__separator"></span>
-              </div>
-            </>
-          ) : (
-            <div></div>
-          )}
-          <div class="navbar-container__current_route">
-            {/*<span class="">{backRoute.name} </span>*/}
-            {/*<span class="">{currentRoute.name}</span>*/}
-            <el-tag>{currentRoute.name}</el-tag>
+        <div
+          class="SLA-navbar-container flex flex-jc-sb"
+          style={{ height: `${this.$props.maxHeight}px` }}
+        >
+          <div class="navbar-container__left flex-align-center">
+            {getCollapseIcon()}
+            <el-tag class="m-l-10">{currentRoute.name}</el-tag>
           </div>
+          <div class="navbar-container__right flex-align-center">{getBackTag()}</div>
         </div>
       </>
     )

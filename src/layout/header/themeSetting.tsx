@@ -1,7 +1,8 @@
-import { ref, defineComponent, defineAsyncComponent, watch, getCurrentInstance } from 'vue'
+import { ref, defineComponent, defineAsyncComponent, watch } from 'vue'
 import { defaultThemeForm } from '@/constant'
 import { ThemeStore } from '@/store/modules/theme.ts'
 import { flattenObject, unFlattenObject } from '@/utils'
+import Utils from '@/utils/utils.ts'
 const BaseForm = defineAsyncComponent(() => import('@/components/base/base-form.tsx'))
 
 export default defineComponent({
@@ -12,10 +13,10 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props, { emit }) {
+  setup() {
     window.App.$console.info('SLAThemeSetting 组件渲染')
     const themeStore = ThemeStore()
-    const theme = ref<Record<string, any>>(flattenObject(themeStore.getTheme()))
+    const theme = ref<Record<string, any>>(Utils.flattenObject(themeStore.theme))
     watch(
       () => theme.value,
       value => {
