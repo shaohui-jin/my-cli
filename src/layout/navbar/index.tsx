@@ -4,7 +4,6 @@ import { routes } from '@/constant'
 import './navbar.less'
 import { Fold, Expand } from '@element-plus/icons-vue'
 import { Route } from '@/types'
-import Utils from '@/utils/utils'
 import { ThemeStore } from '@/store/modules/theme.ts'
 
 export default defineComponent({
@@ -42,7 +41,7 @@ export default defineComponent({
 
     // 计算当前路由、上一页路由
     const routesMap = ref<{ [path: string]: Route }>({})
-    Utils.flattenArray(routes, 'children').forEach(route => {
+    window.App.$utils.flattenArray(routes, 'children').forEach(route => {
       routesMap.value[route.path] = route
     })
     const currentRoute: ComputedRef<Route> = computed((): Route => routesMap.value[current.value])

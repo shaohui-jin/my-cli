@@ -5,8 +5,7 @@ export interface Extra {
   type: 'cookie' | 'localStorage' | 'sessionStorage' // 类型
 }
 
-import { checkUndefined } from './defaultUtils'
-
+const { checkUndefined } = window.App.$utils
 /**
  * 作用：添加cookie
  * @param key  key值

@@ -4,11 +4,13 @@
 //     plugins[key]()
 //   }
 // }
-import AdvancedConsole from './modules/console.ts'
+import AdvancedConsole from './modules/console'
+import Utils from './modules/utils'
 
 const mountData = () => {
   window.App = Object.freeze({
-    $console: AdvancedConsole
+    $console: AdvancedConsole,
+    $utils: Utils
   })
 }
 

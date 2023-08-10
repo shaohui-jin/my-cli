@@ -9,7 +9,6 @@ export const debounceDecorator = (time: number) => {
     descriptor.value = function () {
       clearTimeout(timer)
       timer = setTimeout(() => {
-        console.log('zhongduanle')
         oldFunction.apply(this, arguments)
       }, time)
     }
