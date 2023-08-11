@@ -53,11 +53,7 @@ const getJSXByType = (item: BaseComponentItem, formData: any) => {
     case 'input':
       return (
         <>
-          <el-input
-            v-model={formData[item.key]}
-            disabled={item.disabled}
-            placeholder={item.placeholder}
-          />
+          <el-input v-model={formData[item.key]} disabled={item.disabled} placeholder={item.placeholder} />
         </>
       )
     // case 'textarea':

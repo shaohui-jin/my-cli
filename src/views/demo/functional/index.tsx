@@ -1,11 +1,9 @@
 import { ref, defineAsyncComponent, defineComponent } from 'vue'
-const FunctionalCompDemo = defineAsyncComponent(
-  () => import('@/views/demo/components/functionalComp.tsx')
-)
+const FunctionalCompDemo = defineAsyncComponent(() => import('@/views/demo/components/functionalComp.tsx'))
 
 export default defineComponent({
   setup() {
-    let functionalCompDemoMsg = ref<string>('FunctionalCompDemo')
+    const functionalCompDemoMsg = ref<string>('FunctionalCompDemo')
     const childrenSlot = {
       default: () => {
         return <p>default 默认插槽</p>
@@ -20,16 +18,7 @@ export default defineComponent({
     return (
       <>
         <div>
-          <FunctionalCompDemo
-            msg={this.functionalCompDemoMsg}
-            v-slots={this.childrenSlot}
-            style={{}}
-          />
-          <FunctionalCompDemo
-            v-model={[this.functionalCompDemoMsg, 'msg']}
-            v-slots={this.childrenSlot}
-            style={{}}
-          />
+          <FunctionalCompDemo msg={this.functionalCompDemoMsg} v-slots={this.childrenSlot} style={{}} />
         </div>
       </>
     )

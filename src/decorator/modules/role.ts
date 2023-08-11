@@ -11,7 +11,7 @@ const getCurrentUser = (): User => {
 }
 
 const checkUserPermissions = (user: User, permissions: string): boolean => {
-  return false
+  return user.roleType.includes(permissions)
 }
 
 /**
@@ -20,10 +20,11 @@ const checkUserPermissions = (user: User, permissions: string): boolean => {
  * @constructor
  */
 export const roleDecorator = (permissions: string) => {
-  return function (target, key, descriptor) {
+  return function (target: any, key: string, descriptor: any) {
+    window.App.$console.log('@roleDecorator:', target, key, descriptor)
     const originalMethod = descriptor.value // 保存原始方法
 
-    descriptor.value = function () {
+    descriptor.value = function (...args: any[]) {
       // 在原始方法执行前进行权限验证
       const user: User = getCurrentUser() // 获取当前用户信息
 
@@ -36,7 +37,7 @@ export const roleDecorator = (permissions: string) => {
       }
 
       // 执行原始方法
-      return originalMethod.apply(this, arguments)
+      return originalMethod.apply(this, args)
     }
 
     return descriptor

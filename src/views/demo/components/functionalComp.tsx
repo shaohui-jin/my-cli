@@ -1,5 +1,4 @@
-import { ref, FunctionalComponent, getCurrentInstance, CSSProperties } from 'vue'
-import { Events } from 'vue'
+import { ref, FunctionalComponent, CSSProperties } from 'vue'
 
 interface Props {
   msg: string
@@ -10,11 +9,11 @@ type Emit = {
   'update:msg': (msg: string) => void
 }
 // 定义到functional外部，才不会每次都重新声明
-let count = ref(0)
+const count = ref(0)
 
 const demoComp: FunctionalComponent<Props, Emit> = (props, { slots, emit }) => {
   window.App.$console.info('SLAFunctionalComponentDemo 组件渲染，组件类型 functionalComponent')
-  const handleButton: Events = () => {
+  const handleButton = () => {
     count.value++
     emit('update:msg', `${props.msg}${count.value}`)
   }

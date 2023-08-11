@@ -3,7 +3,7 @@ const DefineCompDemo = defineAsyncComponent(() => import('@/views/demo/component
 
 export default defineComponent({
   setup() {
-    let defineCompDemoMsg = ref('DefineCompDemo')
+    const defineCompDemoMsg = ref('DefineCompDemo')
     const childrenSlot = {
       default: () => {
         return <p>default 默认插槽</p>
@@ -17,8 +17,7 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DefineCompDemo v-model={[this.defineCompDemoMsg, 'msg']} v-slots={this.childrenSlot} />
-        <DefineCompDemo v-model:msg={this.defineCompDemoMsg} v-slots={this.childrenSlot} />
+        <DefineCompDemo msg={this.defineCompDemoMsg} v-slots={this.childrenSlot} />
       </div>
     )
   }

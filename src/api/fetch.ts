@@ -2,9 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios'
 import { ElMessage, ElNotification } from 'element-plus'
 
 //todo getToken
-const getToken = (): string => {
-  return 'unknown'
-}
+const token = 'unknown'
 
 // create an axios instance
 const service: AxiosInstance = axios.create({
@@ -20,8 +18,8 @@ const service: AxiosInstance = axios.create({
  */
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    config?.headers.common.Authorization = getToken() // 请求头带上token
-    config?.headers.common.token = getToken()
+    config.headers && (config.headers.Authorization = token) // 请求头带上token
+    config.headers && (config.headers.token = token)
     return config as any
   },
   error => Promise.reject(error)
@@ -35,25 +33,26 @@ service.interceptors.response.use(
     if (response.status == 201 || response.status == 200) {
       const { code, status, msg } = response.data
       if (code == 401) {
-        ElMessage.warning({
-          title: 'token出错',
-          content: 'token失效，请重新登录！',
-          onOk: () => {
-            sessionStorage.clear()
-          }
-        })
+        // ElMessageBox.confirm({
+        //   title: 'token出错',
+        //   message: 'token失效，请重新登录！',
+        //   onOk: () => {
+        //     sessionStorage.clear()
+        //   }
+        // })
+        sessionStorage.clear()
       } else if (code == 200) {
         if (status) {
           // 接口请求成功
-          msg && ElMessage.success(msg) // 后台如果返回了msg，则将msg提示出来
+          ElMessage.success(msg) // 后台如果返回了msg，则将msg提示出来
           return Promise.resolve(response) // 返回成功数据
         }
         // 接口异常
-        msg && ElMessage.warning(msg) // 后台如果返回了msg，则将msg提示出来
+        ElMessage.warning(msg) // 后台如果返回了msg，则将msg提示出来
         return Promise.reject(response) // 返回异常数据
       } else {
         // 接口异常
-        msg && ElMessage.error(msg)
+        ElMessage.error(msg)
         return Promise.reject(response)
       }
     }

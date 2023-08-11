@@ -47,7 +47,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 8080, //启动端口
-    watch: true
+    // watch: true
     // hmr: {
     //   host: '127.0.0.1',
     //   port: 8080

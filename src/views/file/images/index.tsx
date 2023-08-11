@@ -5,7 +5,7 @@ import { STATUS, Response } from '@/types'
 
 export default defineComponent({
   setup() {
-    let artworks = reactive<Artwork[]>([])
+    const artworks = reactive<Artwork[]>([])
     const tabPosition = ref<'top' | 'bottom' | 'right' | 'left'>('top')
     onBeforeMount(() => {
       getArtworks()

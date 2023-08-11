@@ -1,5 +1,5 @@
-import { ref, defineComponent, defineEmits, getCurrentInstance } from 'vue'
-import { Events } from 'vue'
+import { ref, defineComponent } from 'vue'
+
 export default defineComponent({
   name: 'SLADefineComponentDemo',
   props: {
@@ -11,8 +11,8 @@ export default defineComponent({
   emits: ['update:msg'],
   setup(props, { emit }) {
     window.App.$console.info('SLADefineComponentDemo 组件渲染，组件类型 defineComponent')
-    let count = ref(0)
-    const handleButton: Events = () => {
+    const count = ref(0)
+    const handleButton = () => {
       count.value++
       emit('update:msg', `${props.msg}${count.value}`)
     }

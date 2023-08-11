@@ -49,7 +49,6 @@ export const setCookie: (key: string, value: string, extra?: Extra) => boolean =
   }
 }
 
-
 /**
  * 作用：读取cookie值
  * @param key key值
@@ -70,7 +69,7 @@ export const getCookie: (key: string, extra?: Extra) => string | null = (
     }
 
     const reg = new RegExp('(^| )' + key + '=([^;]*)(;|$)')
-    let result: RegExpMatchArray | null = document.cookie.match(reg)
+    const result: RegExpMatchArray | null = document.cookie.match(reg)
     return result?.length ? unescape(result[2]) : null
   } catch (err: any) {
     console.log(err)
@@ -99,10 +98,10 @@ export const removeCookie: (key: string, extra?: Extra) => boolean = (
       return true
     }
 
-    const date = new Date().getTime() - 1 * 1000 * 60
-    window.document.cookie = `${key}=;expires=${new Date(date)};domain=${
-      extra.domain || document.domain
-    };path=${extra.path || '/'}`
+    const date = new Date().getTime() - 1000 * 60
+    window.document.cookie = `${key}=;expires=${new Date(date)};domain=${extra.domain || document.domain};path=${
+      extra.path || '/'
+    }`
 
     return true
   } catch (err) {
@@ -115,9 +114,7 @@ export const removeCookie: (key: string, extra?: Extra) => boolean = (
  * 作用：清除所有的cookie
  * @param extra 额外信息
  */
-export const removeAll: (extra?: Extra) => boolean = (
-  extra: Extra = { type: 'sessionStorage' }
-) => {
+export const removeAll: (extra?: Extra) => boolean = (extra: Extra = { type: 'sessionStorage' }) => {
   try {
     if (extra.type === 'localStorage' && !checkUndefined(localStorage)) {
       window.localStorage.clear()

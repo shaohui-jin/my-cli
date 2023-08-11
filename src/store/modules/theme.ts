@@ -6,8 +6,8 @@ import { onMounted, ref } from 'vue'
 const { isObjectEmpty } = window.App.$utils
 
 export const ThemeStore = defineStore('theme', () => {
-  let theme = ref<ThemeType>(defaultThemeConfig)
-  let hasInit = ref<boolean>(false)
+  const theme = ref<ThemeType>(defaultThemeConfig)
+  const hasInit = ref<boolean>(false)
 
   onMounted(() => {
     const hasThemeSetting = isObjectEmpty(theme)

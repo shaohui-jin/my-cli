@@ -24,10 +24,7 @@ export default defineComponent({
     const menuItems: JSX.Element[] = routes.map(menu => <SubMenu menu={menu} />)
     return (
       <>
-        <div
-          class="SLA-sidebar-container"
-          style={{ width: isCollapse ? 'auto' : `${this.$props.maxWidth}px` }}
-        >
+        <div class="SLA-sidebar-container" style={{ width: isCollapse ? 'auto' : `${this.$props.maxWidth}px` }}>
           <el-menu
             class="sidebar-menu"
             default-active={this.$route.path}

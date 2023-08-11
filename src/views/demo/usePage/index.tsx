@@ -2,7 +2,7 @@ import { reactive, defineComponent } from 'vue'
 import usePage from '@/hooks/usePage'
 
 export default defineComponent({
-  setup(props, { slots, emit }) {
+  setup() {
     window.App.$console.info('SLAThemeSetting 组件渲染，组件类型 defineComponent')
 
     const searchForm = reactive({
@@ -11,10 +11,10 @@ export default defineComponent({
     })
 
     // 接收 查询参数、获取列表的接口 返回 列表所需要的数据、分页参数、分页函数等
-    const { reset, page, tableData, handleSizeChange, handleCurrentChange, query } = usePage({
+    const { query } = usePage({
       searchForm,
-      getListApi: () =>
-        new Promise(resolve => {
+      getListApi: () => {
+        return new Promise(resolve => {
           resolve({
             code: 0,
             data: {
@@ -25,6 +25,7 @@ export default defineComponent({
             }
           })
         })
+      }
     })
 
     return { query }

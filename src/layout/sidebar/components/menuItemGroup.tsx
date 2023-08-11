@@ -20,9 +20,7 @@ export default defineComponent({
             )
           }}
         >
-          {menu.children?.map((child: Route) => (
-            <MenuItem menu={child} />
-          ))}
+          {menu.children?.map((child: Route) => <MenuItem menu={child} />)}
         </el-menu-item-group>
       </>
     )

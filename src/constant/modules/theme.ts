@@ -29,7 +29,7 @@ export enum THEME_ENUM {
   LAYOUT_HEADER_HEIGHT = 'layout.headerHeight', // 顶部高度
   LAYOUT_NAVBAR_HEIGHT = 'layout.navbarHeight', // 面包屑高度
   LAYOUT_FOOTER_HEIGHT = 'layout.footerHeight', // 底部高度
-  LAYOUT_ASIDE_WIDTH = 'layout.asideWidth', // 菜单宽度
+  LAYOUT_ASIDE_WIDTH = 'layout.asideWidth' // 菜单宽度
 }
 
 export const defaultThemeForm: BaseComponentItem[] = [

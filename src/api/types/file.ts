@@ -11,7 +11,7 @@ export interface Artwork {
   // 是否置顶
   is_top: '1' | '0'
   artworks_type_id: number
-  artworksInfo: Array
+  artworksInfo: Array<any>
   audit_status: 'success'
   // 添加时间
   created_at: number
@@ -31,5 +31,4 @@ export interface IFileApi {
    * 获取图片列表
    * */
   getArtworks: () => Promise<Response<Artwork[]>>
-  a: number
 }

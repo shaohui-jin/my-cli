@@ -1,4 +1,4 @@
-import { ObjectType, ResponseBlob } from '@/types'
+import { ObjectType } from '@/types'
 
 // todo 搞成类就是为了使用装饰器，如： @debounceDecorator
 class Utils {
@@ -83,7 +83,7 @@ class Utils {
       'm+': time.getMinutes(), //分
       's+': time.getSeconds(), //秒
       'q+': Math.floor((time.getMonth() + 3) / 3), //季度
-      S: time.getMilliseconds() //毫秒
+      'S': time.getMilliseconds() //毫秒
     }
     if (/(y+)/.test(fmt))
       fmt = fmt.replace(RegExp.$1, (time.getFullYear() + '').substr(4 - RegExp.$1.length))

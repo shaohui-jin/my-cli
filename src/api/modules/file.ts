@@ -1,12 +1,11 @@
 import type { Artwork, IFileApi } from '@/api/types/file'
-// import fetch from '@/api/fetch.ts'
 import imageList from '../mock/imageList.json'
 import type { Response } from '@/types'
 
 const FileApi: IFileApi = {
   getArtworks: () => {
     return new Promise<Response<Artwork[]>>(resolve => {
-      resolve(imageList)
+      resolve(imageList as any as Response<Artwork[]>)
       // resolve('1')
     })
   }
@@ -18,6 +17,5 @@ const FileApi: IFileApi = {
   //   })
   // }
 }
-
 
 export default FileApi

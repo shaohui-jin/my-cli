@@ -2,9 +2,7 @@ import { defineAsyncComponent, defineComponent } from 'vue'
 import { Route } from '@/types'
 
 const SubMenu = defineAsyncComponent(() => import('./subMenu.tsx'))
-const MenuItemGroup = defineAsyncComponent(
-  () => import('@/layout/sidebar/components/menuItemGroup.tsx')
-)
+const MenuItemGroup = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItemGroup.tsx'))
 const MenuItem = defineAsyncComponent(() => import('@/layout/sidebar/components/menuItem.tsx'))
 
 export default defineComponent({

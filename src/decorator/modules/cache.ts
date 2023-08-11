@@ -6,23 +6,24 @@ import { ObjectType } from '@/types'
  * @param key
  * @param descriptor
  */
-export const cacheDecorator = (target, key, descriptor) => {
+export const cacheDecorator = (target: any, key: string, descriptor: any) => {
   const cache: ObjectType = {} // 缓存对象
 
+  window.App.$console.log('@cacheDecorator:', target, key, descriptor)
   const originalMethod = descriptor.value // 保存原始方法
 
-  descriptor.value = function (...args) {
+  descriptor.value = function (...args: any[]) {
     const cacheKey: string = JSON.stringify(args) // 生成缓存键
 
     if (cacheKey in cache) {
-      console.log('从缓存中获取结果')
+      window.App.$console.log('从缓存中获取结果')
       return cache[cacheKey] // 直接返回缓存结果
     }
 
     // 执行原始方法
     const result = originalMethod.apply(this, args)
 
-    console.log('将结果缓存起来')
+    window.App.$console.log('将结果缓存起来')
     cache[cacheKey] = result // 缓存结果
 
     return result

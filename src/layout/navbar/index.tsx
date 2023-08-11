@@ -41,7 +41,7 @@ export default defineComponent({
 
     // 计算当前路由、上一页路由
     const routesMap = ref<{ [path: string]: Route }>({})
-    window.App.$utils.flattenArray(routes, 'children').forEach(route => {
+    ;(window.App.$utils.flattenArray(routes, 'children') as Route[]).forEach((route: Route) => {
       routesMap.value[route.path] = route
     })
     const currentRoute: ComputedRef<Route> = computed((): Route => routesMap.value[current.value])

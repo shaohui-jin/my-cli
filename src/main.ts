@@ -8,4 +8,4 @@ import 'element-plus/dist/index.css'
 
 install()
 
-const app = createApp(App).use(ElementPlus).use(router).use(store).mount('#app')
+createApp(App).use(ElementPlus).use(router).use(store).mount('#app')

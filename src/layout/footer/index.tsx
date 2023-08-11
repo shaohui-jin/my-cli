@@ -1,4 +1,4 @@
-import { ref, defineComponent, defineAsyncComponent } from 'vue'
+import { defineComponent } from 'vue'
 import './footer.less'
 export default defineComponent({
   name: 'SLAFooter',
