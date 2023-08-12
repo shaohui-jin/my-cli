@@ -64,7 +64,7 @@ class Utils {
    * @param {Object} obj
    * @return 是否为空
    */
-  static isObjectEmpty(obj: Object): boolean {
+  static isObjectEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0
   }
 
@@ -76,23 +76,20 @@ class Utils {
    */
   static format(time: number | Date, fmt: string) {
     time = typeof time === 'number' ? new Date(time) : time
-    let o = {
+    const o: { [key: string]: number } = {
       'M+': time.getMonth() + 1, //月份
       'd+': time.getDate(), //日
       'h+': time.getHours(), //小时
       'm+': time.getMinutes(), //分
       's+': time.getSeconds(), //秒
       'q+': Math.floor((time.getMonth() + 3) / 3), //季度
-      'S': time.getMilliseconds() //毫秒
+      S: time.getMilliseconds() //毫秒
     }
-    if (/(y+)/.test(fmt))
-      fmt = fmt.replace(RegExp.$1, (time.getFullYear() + '').substr(4 - RegExp.$1.length))
-    for (let k in o)
-      if (new RegExp('(' + k + ')').test(fmt))
-        fmt = fmt.replace(
-          RegExp.$1,
-          RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
-        )
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (time.getFullYear() + '').substr(4 - RegExp.$1.length))
+    for (const k in o)
+      if (new RegExp('(' + k + ')').test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k].toString() : ('00' + o[k]).substr(('' + o[k]).length))
+      }
     return fmt
   }
 
@@ -104,10 +101,7 @@ class Utils {
    * @param endDate
    */
   static getRestDays(startDate: string, days: number, endDate = new Date()): number {
-    return (
-      (endDate.getTime() - (new Date(startDate + ' 00:00:00').getTime() + days * 86400000)) /
-      86400000
-    )
+    return (endDate.getTime() - (new Date(startDate + ' 00:00:00').getTime() + days * 86400000)) / 86400000
   }
 
   /**
@@ -141,7 +135,7 @@ class Utils {
     interval: number = 500,
     isImmediate: boolean = true
   ): (this: any, ...rest: any[]) => void {
-    let timer: number = null
+    let timer: NodeJS.Timeout
 
     return function (this: any, ...rest: any[]) {
       if (isImmediate) {
@@ -152,8 +146,8 @@ class Utils {
       timer && clearTimeout(timer)
       timer = setTimeout(() => {
         callback.apply(this, rest)
-        clearTimeout(timer as number)
-        timer = null
+        clearTimeout(timer)
+        timer = null as any as NodeJS.Timeout
       }, interval)
     }
   }
@@ -163,13 +157,10 @@ class Utils {
    * @param callback 回调函数
    * @param interval 时间
    */
-  static throttle(
-    callback: (...rest: any) => void,
-    interval: number = 500
-  ): (this: any, ...rest: any[]) => void {
+  static throttle(callback: (...rest: any) => void, interval: number = 500): (this: any, ...rest: any[]) => void {
     let oldTime: number = 0
     return function (this: any, ...rest: any[]) {
-      let newTime: number = new Date().getTime()
+      const newTime: number = new Date().getTime()
 
       if (newTime - oldTime > interval) {
         oldTime = newTime
@@ -193,9 +184,9 @@ class Utils {
    * @param name key
    * @return 值
    */
-  static getQueryString(path: string, name: string): string {
-    let reg = new RegExp('(^|;)' + name + '=([^;]*)(;|$)', 'i')
-    let r = path.substr(1).match(reg)
+  static getQueryString(path: string, name: string): string | null {
+    const reg = new RegExp('(^|;)' + name + '=([^;]*)(;|$)', 'i')
+    const r = path.substr(1).match(reg)
     if (r != null) return unescape(r[2])
     return null
   }
@@ -214,8 +205,8 @@ class Utils {
    * @param response 接口返回的数据
    */
   static handleBlob = (response: any) => {
-    const filename = getQueryString(response.headers['content-disposition'], 'filename')
-    let a = document.createElement('a')
+    const filename = this.getQueryString(response.headers['content-disposition'], 'filename')
+    const a = document.createElement('a')
     a.href = window.URL.createObjectURL(response.data)
     //设置文件名称
     a.download = filename as string

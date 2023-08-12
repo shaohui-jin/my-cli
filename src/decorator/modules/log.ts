@@ -1,11 +1,5 @@
-enum LOG_LEVEL {
-  LOG = 'log',
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error'
-}
-
-const logLevel: Record<LOG_LEVEL, any> = {
+type LEVEL = 'log' | 'info' | 'warn' | 'error'
+const logLevel: Record<LEVEL, Record<'icon' | 'color', string>> = {
   log: { icon: '☺', color: 'black' },
   info: { icon: 'ℹ️', color: 'blue' },
   warn: { icon: '⚠️', color: 'orange' },
@@ -14,11 +8,13 @@ const logLevel: Record<LOG_LEVEL, any> = {
 
 /**
  * desc: 日志打印装饰器 @logDecorator
+ * @param _
+ * @param key
+ * @param descriptor
  */
-export const logDecorator = (target: any, key: LOG_LEVEL, descriptor: any) => {
+export const logDecorator = (_: any, key: LEVEL, descriptor: any) => {
   const originalMethod = descriptor.value
   descriptor.value = function (...args: any[]) {
-    window.App.$console.log('@logDecorator:', target, key, descriptor)
     const timestamp = new Date().toLocaleString()
     const formattedArgs = args.map(arg => JSON.stringify(arg)).join(' ')
     return originalMethod.apply(this, [
