@@ -1,11 +1,11 @@
-import getQueryString from './common'
+import { getQueryString } from '@/utils/common.ts'
 
 /**
  * desc: 文件转base64
  * @param file 文件
  * @return 文件base64流
  */
-const getBase64 = (file: File): Promise<string> => {
+export const getBase64 = (file: File): Promise<string> => {
   return new Promise(resolve => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
@@ -25,7 +25,7 @@ const getBase64 = (file: File): Promise<string> => {
  * desc: 处理下载的blob数据
  * @param response 接口返回的数据
  */
-const handleBlob = (response: any) => {
+export const handleBlob = (response: any) => {
   const filename = getQueryString(response.headers['content-disposition'], 'filename')
   const a = document.createElement('a')
   a.href = window.URL.createObjectURL(response.data)
@@ -38,9 +38,4 @@ const handleBlob = (response: any) => {
     a.click()
   }
   document.body.appendChild(a)
-}
-
-export default {
-  getBase64,
-  handleBlob
 }

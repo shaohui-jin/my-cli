@@ -4,7 +4,8 @@ import { routes } from '@/constant'
 import './navbar.less'
 import { Fold, Expand } from '@element-plus/icons-vue'
 import { Route } from '@/types'
-import { ThemeStore } from '@/store/modules/theme.ts'
+import { ThemeStore } from '@/store/modules/theme'
+import { flattenArray } from '@/utils/common'
 
 export default defineComponent({
   name: 'SLANavbar',
@@ -41,7 +42,7 @@ export default defineComponent({
 
     // 计算当前路由、上一页路由
     const routesMap = ref<{ [path: string]: Route }>({})
-    ;(window.App.$utils.flattenArray(routes, 'children') as Route[]).forEach((route: Route) => {
+    ;(flattenArray(routes, 'children') as Route[]).forEach((route: Route) => {
       routesMap.value[route.path] = route
     })
     const currentRoute: ComputedRef<Route> = computed((): Route => routesMap.value[current.value])
@@ -86,10 +87,7 @@ export default defineComponent({
     const { currentRoute, getCollapseIcon, getBackTag } = this
     return (
       <>
-        <div
-          class="SLA-navbar-container flex flex-jc-sb"
-          style={{ height: `${this.$props.maxHeight}px` }}
-        >
+        <div class="SLA-navbar-container flex flex-jc-sb" style={{ height: `${this.$props.maxHeight}px` }}>
           <div class="navbar-container__left flex-align-center">
             {getCollapseIcon()}
             <el-tag class="m-l-10">{currentRoute.name}</el-tag>

@@ -1,8 +1,7 @@
 import type { App } from 'vue'
-// import { judementSameArr } from '@/utils/arrayOperation'
 import { UserStore } from '@/store/modules/user'
+import { judgmentSameArr } from '@/utils/common'
 
-const judementSameArr = (...args) => true
 /**
  * 用户权限指令
  * @directive 单个权限验证（v-auth="xxx"）
@@ -32,7 +31,7 @@ export function authDirective(app: App) {
   // 多个权限验证，全部满足则显示（v-auth-all="[xxx,xxx]"）
   app.directive('auth-all', {
     mounted(el, binding) {
-      const flag = judementSameArr(binding.value, userStore.getUserAuthButton())
+      const flag = judgmentSameArr(binding.value, userStore.getUserAuthButton())
       if (!flag) el.parentNode.removeChild(el)
     }
   })

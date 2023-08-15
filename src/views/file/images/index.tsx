@@ -1,6 +1,6 @@
 import { defineComponent, onBeforeMount, reactive, ref } from 'vue'
-import FileApi from '@/api/modules/file.ts'
-import type { Artwork } from '@/api/types/file.ts'
+import FileApi from '@/api/modules/file'
+import type { Artwork } from '@/api/types/file'
 import { STATUS, Response } from '@/types'
 
 export default defineComponent({

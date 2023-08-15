@@ -1,9 +1,10 @@
 import { ref, defineComponent, defineAsyncComponent, watch } from 'vue'
 import { defaultThemeForm } from '@/constant'
-import { ThemeStore } from '@/store/modules/theme.ts'
+import { ThemeStore } from '@/store/modules/theme'
+import { flattenObject, unFlattenObject } from '@/utils/common'
+import { ThemeType } from '@/types'
 const BaseForm = defineAsyncComponent(() => import('@/components/base/base-form.tsx'))
 
-const { flattenObject, unFlattenObject } = window.App.$utils
 export default defineComponent({
   name: 'SLAThemeSetting',
   props: {
@@ -20,7 +21,7 @@ export default defineComponent({
       () => theme.value,
       value => {
         setTimeout(() => {
-          const theme = unFlattenObject(value)
+          const theme = unFlattenObject(value) as ThemeType
           themeStore.setTheme(theme)
           window.App.$console.info(`flattenObject:`, value)
           window.App.$console.info(`unFlattenObject:`, theme)

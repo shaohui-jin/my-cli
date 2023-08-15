@@ -2,7 +2,7 @@ import { ref, defineComponent, defineAsyncComponent, computed } from 'vue'
 import { Setting } from '@element-plus/icons-vue'
 import headerIcon from '@/assets/vue.svg'
 import './header.less'
-import { ThemeStore } from '@/store/modules/theme.ts'
+import { ThemeStore } from '@/store/modules/theme'
 
 const SLAThemeSetting = defineAsyncComponent(() => import('@/layout/header/themeSetting.tsx'))
 export default defineComponent({

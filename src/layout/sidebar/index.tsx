@@ -1,6 +1,6 @@
 import { defineComponent, defineAsyncComponent, computed } from 'vue'
 import { routes } from '@/constant'
-import { ThemeStore } from '@/store/modules/theme.ts'
+import { ThemeStore } from '@/store/modules/theme'
 import './sidebar.less'
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 

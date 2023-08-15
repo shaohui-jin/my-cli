@@ -1,7 +1,7 @@
 import { RouterView } from 'vue-router'
 import { defineAsyncComponent, defineComponent, ref, watchEffect } from 'vue'
 import './layout.less'
-import { ThemeStore } from '@/store/modules/theme.ts'
+import { ThemeStore } from '@/store/modules/theme'
 
 const SLASidebar = defineAsyncComponent(() => import('@/layout/sidebar/index.tsx'))
 const SLANavbar = defineAsyncComponent(() => import('@/layout/navbar/index.tsx'))

@@ -5,7 +5,7 @@ import { ObjectType } from '@/types'
  * @param obj
  * @param prefix
  */
-const flattenObject = (obj: ObjectType, prefix = ''): ObjectType => {
+export const flattenObject = (obj: ObjectType, prefix = ''): ObjectType => {
   return Object.keys(obj).reduce(
     (acc, k) => {
       const pre = prefix.length ? prefix + '.' : ''
@@ -24,7 +24,7 @@ const flattenObject = (obj: ObjectType, prefix = ''): ObjectType => {
  * 扁平化对象还原
  * @param obj
  */
-const unFlattenObject = (obj: Record<string, any>): ObjectType => {
+export const unFlattenObject = (obj: ObjectType): ObjectType => {
   const result: any = {}
   for (const key in obj) {
     const keys = key.split('.')
@@ -46,7 +46,7 @@ const unFlattenObject = (obj: Record<string, any>): ObjectType => {
  * @param prefix 标识
  * @return 扁平化后的数组
  */
-const flattenArray = (arr: any[], prefix = ''): any[] => {
+export const flattenArray = (arr: any[], prefix = ''): any[] => {
   return arr.reduce((result, item): any[] => {
     result = result.concat(item)
     const checkData = prefix ? item[prefix] : item
@@ -57,12 +57,54 @@ const flattenArray = (arr: any[], prefix = ''): any[] => {
   }, [])
 }
 
+/**
+ * desc: 判断两数组是否相同
+ * @param news 新数据
+ * @param old 源数据
+ * @returns 两数组相同返回 `true`，反之则反
+ */
+export function judgmentSameArr(news: Array<string>, old: Array<string>): boolean {
+  let count = 0
+  const leng = old.length
+  for (const i in old) {
+    for (const j in news) {
+      if (old[i] === news[j]) count++
+    }
+  }
+  return count === leng
+}
+
+/**
+ * desc:判断两个对象是否相同
+ * @param a 要比较的对象一
+ * @param b 要比较的对象二
+ * @returns 相同返回 true，反之则反
+ */
+export function isObjectValueEqual(a: { [key: string]: any }, b: { [key: string]: any }) {
+  if (!a || !b) return false
+  const aProps = Object.getOwnPropertyNames(a)
+  const bProps = Object.getOwnPropertyNames(b)
+  if (aProps.length != bProps.length) return false
+  for (let i = 0; i < aProps.length; i++) {
+    const propName = aProps[i]
+    const propA = a[propName]
+    const propB = b[propName]
+    if (!Object.prototype.hasOwnProperty.call(b, propName)) return false
+    if (propA instanceof Object) {
+      if (!isObjectValueEqual(propA, propB)) return false
+    } else if (propA !== propB) {
+      return false
+    }
+  }
+  return true
+}
+
 /***
  * desc: 判断对象是否为空
  * @param {Object} obj
  * @return 是否为空
  */
-const isObjectEmpty = (obj: object): boolean => {
+export const isObjectEmpty = (obj: object): boolean => {
   return Object.keys(obj).length === 0
 }
 
@@ -71,7 +113,7 @@ const isObjectEmpty = (obj: object): boolean => {
  * @param variable 被检查的对象
  * @return 是否未定义
  */
-const checkUndefined = (variable: any): boolean => {
+export const checkUndefined = (variable: any): boolean => {
   return typeof variable === 'undefined'
 }
 
@@ -81,7 +123,7 @@ const checkUndefined = (variable: any): boolean => {
  * @param name key
  * @return 值
  */
-const getQueryString = (path: string, name: string): string | null => {
+export const getQueryString = (path: string, name: string): string | null => {
   const reg = new RegExp('(^|;)' + name + '=([^;]*)(;|$)', 'i')
   const r = path.substr(1).match(reg)
   if (r != null) return unescape(r[2])
@@ -94,7 +136,7 @@ const getQueryString = (path: string, name: string): string | null => {
  * @param interval 间隔时间
  * @param isImmediate 是否第一次执行
  */
-const debounce = (
+export const debounce = (
   callback: (...rest: any) => void,
   interval: number = 500,
   isImmediate: boolean = true
@@ -121,7 +163,10 @@ const debounce = (
  * @param callback 回调函数
  * @param interval 时间
  */
-const throttle = (callback: (...rest: any) => void, interval: number = 500): ((this: any, ...rest: any[]) => void) => {
+export const throttle = (
+  callback: (...rest: any) => void,
+  interval: number = 500
+): ((this: any, ...rest: any[]) => void) => {
   let oldTime: number = 0
   return function (this: any, ...rest: any[]) {
     const newTime: number = new Date().getTime()
@@ -131,15 +176,4 @@ const throttle = (callback: (...rest: any) => void, interval: number = 500): ((t
       callback.apply(this, rest)
     }
   }
-}
-
-export default {
-  flattenObject,
-  unFlattenObject,
-  flattenArray,
-  isObjectEmpty,
-  checkUndefined,
-  getQueryString,
-  debounce,
-  throttle,
 }

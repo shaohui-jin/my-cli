@@ -4,7 +4,7 @@
  * @param {string} fmt 格式
  * @return 格式化hou de 时间
  */
-const format = (time: number | Date, fmt: string) => {
+export const format = (time: number | Date, fmt: string) => {
   time = typeof time === 'number' ? new Date(time) : time
   const o: { [key: string]: number } = {
     'M+': time.getMonth() + 1, //月份
@@ -29,7 +29,7 @@ const format = (time: number | Date, fmt: string) => {
  * @param days
  * @param endDate
  */
-const getRestDays = (startDate: string, days: number, endDate = new Date()): number => {
+export const getRestDays = (startDate: string, days: number, endDate = new Date()): number => {
   return (endDate.getTime() - (new Date(startDate + ' 00:00:00').getTime() + days * 86400000)) / 86400000
 }
 
@@ -38,12 +38,6 @@ const getRestDays = (startDate: string, days: number, endDate = new Date()): num
  * @param year 年份
  * @return 是否为平年
  */
-const isOrdinaryYear = (year: number): boolean => {
+export const isOrdinaryYear = (year: number): boolean => {
   return !((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0)
-}
-
-export default {
-  format,
-  getRestDays,
-  isOrdinaryYear
 }

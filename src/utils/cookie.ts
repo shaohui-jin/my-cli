@@ -1,4 +1,4 @@
-import checkUndefined from './common'
+import { checkUndefined } from '@/utils/common.ts'
 
 interface Extra {
   path?: string // 路径
@@ -19,7 +19,7 @@ interface Extra {
  * 3. 都不支持的情况下,判断millisecond是否存在，存在就定cookie的过期时间
  * 5. 不存在就默认30s存储时间
  */
-const setCookie: (key: string, value: string, extra?: Extra) => boolean = (
+export const setCookie: (key: string, value: string, extra?: Extra) => boolean = (
   key: string,
   value: string,
   extra: Extra = { type: 'sessionStorage' }
@@ -56,7 +56,7 @@ const setCookie: (key: string, value: string, extra?: Extra) => boolean = (
  * @param extra 额外拓展信息
  * return value值
  */
-const getCookie: (key: string, extra?: Extra) => string | null = (
+export const getCookie: (key: string, extra?: Extra) => string | null = (
   key: string,
   extra: Extra = { type: 'sessionStorage' }
 ) => {
@@ -84,7 +84,7 @@ const getCookie: (key: string, extra?: Extra) => string | null = (
  * @param extra 额外拓展信息
  * return boolean
  */
-const removeCookie: (key: string, extra?: Extra) => boolean = (
+export const removeCookie: (key: string, extra?: Extra) => boolean = (
   key: string,
   extra: Extra = { type: 'sessionStorage' }
 ) => {
@@ -115,7 +115,7 @@ const removeCookie: (key: string, extra?: Extra) => boolean = (
  * 作用：清除所有的cookie
  * @param extra 额外信息
  */
-const removeAll: (extra?: Extra) => boolean = (extra: Extra = { type: 'sessionStorage' }) => {
+export const removeAll: (extra?: Extra) => boolean = (extra: Extra = { type: 'sessionStorage' }) => {
   try {
     if (extra.type === 'localStorage' && !checkUndefined(localStorage)) {
       window.localStorage.clear()
@@ -141,11 +141,4 @@ const removeAll: (extra?: Extra) => boolean = (extra: Extra = { type: 'sessionSt
     console.log(err)
     return false
   }
-}
-
-export default {
-  setCookie,
-  getCookie,
-  removeCookie,
-  removeAll
 }
