@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
-import { getCookie, setCookie } from '@/utils'
 import { ThemeType } from '@/types'
 import { CookieEnum, defaultThemeConfig } from '@/constant'
 import { onMounted, ref } from 'vue'
-const { isObjectEmpty } = window.App.$utils
+import { isObjectEmpty } from "@/utils/modules/common.ts";
+import { getCookie, setCookie } from "@/utils/modules/cookie.ts";
 
 export const ThemeStore = defineStore('theme', () => {
   const theme = ref<ThemeType>(defaultThemeConfig)

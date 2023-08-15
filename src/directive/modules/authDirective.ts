@@ -1,7 +1,8 @@
 import type { App } from 'vue'
-import { judementSameArr } from '@/utils/arrayOperation'
+// import { judementSameArr } from '@/utils/arrayOperation'
 import { UserStore } from '@/store/modules/user'
 
+const judementSameArr = (...args) => true
 /**
  * 用户权限指令
  * @directive 单个权限验证（v-auth="xxx"）

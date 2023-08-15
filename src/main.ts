@@ -6,11 +6,15 @@ import { install } from '@/plugins'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import { directive } from '@/directive'
+// import Utils from '@/utils'
 
 install()
 
 const app = createApp(App)
 
-directive(app)
+app.use(store)
 
-app.use(ElementPlus).use(router).use(store).mount('#app')
+// console.log(Utils)
+directive(app) // 依赖于store
+
+app.use(ElementPlus).use(router).mount('#app')
