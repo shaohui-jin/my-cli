@@ -19,7 +19,7 @@ export default defineComponent({
         <div class="SLA-header-container">
           <div class="container__left">
             <el-image src={headerIcon} />
-            <el-image src="/vite.svg" />
+            <el-image src={import.meta.env.VITE_APP_BASE_PATH + 'vite.svg'} />
             <span>{this.title}</span>
           </div>
           <div class="container__right">
