@@ -1,6 +1,6 @@
 export * from './component.type'
 export * from './service.type'
 export * from './base.type'
-export * from './theme.type'
+export * from './store/index'
 // export * from './service.interface'
 export * from './router.type'

@@ -12,10 +12,7 @@ export const ThemeStore = defineStore('theme', () => {
   onMounted(() => {
     const hasThemeSetting = isObjectEmpty(theme)
     if (!hasInit.value && !hasThemeSetting) {
-      console.log('theme未初始化')
-      const themeConfig: ThemeType = JSON.parse(
-        getCookie(CookieEnum.CUSTOM_THEME, { type: 'localStorage' }) || '{}'
-      )
+      const themeConfig: ThemeType = JSON.parse(getCookie(CookieEnum.CUSTOM_THEME, { type: 'localStorage' }) || '{}')
       setTheme(isObjectEmpty(themeConfig) ? defaultThemeConfig : themeConfig)
     }
     return theme

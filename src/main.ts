@@ -5,7 +5,12 @@ import router from '@/router'
 import { install } from '@/plugins'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import { directive } from '@/directive'
 
 install()
 
-createApp(App).use(ElementPlus).use(router).use(store).mount('#app')
+const app = createApp(App)
+
+directive(app)
+
+app.use(ElementPlus).use(router).use(store).mount('#app')
