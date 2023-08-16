@@ -22,10 +22,12 @@ export const UserStore = defineStore('user', () => {
   // const getUserAuth = (): any[] => user.value.authList
   // const getUserAuthButton = (): string[] => user.value.authBtnList
   const clearUser = () => setUser(defaultUser)
+  const setUserToken = (token: string) => user.value.token = token
   return {
     user,
     getUser,
-    clearUser
+    clearUser,
+    setUserToken
     // setUser
     // getUserAuth,
     // getUserAuthButton,

@@ -1,31 +1,34 @@
-import { defineComponent } from 'vue'
-import { toRefs, reactive, computed } from 'vue'
-import Account from '@/views/login/component/account.vue'
-import Mobile from '@/views/login/component/mobile.vue'
-import Scan from '@/views/login/component/scan.vue'
+import { defineAsyncComponent, defineComponent } from 'vue'
+import { toRefs, reactive, ref } from 'vue'
 import { ThemeStore, ThemeType } from '@/store/modules/theme.ts'
 import './login.less'
+
+const Mobile = defineAsyncComponent(() => import('@/views/login/component/mobile.tsx'))
+const Scan = defineAsyncComponent(() => import('@/views/login/component/scan.vue'))
+const Account = defineAsyncComponent(() => import('@/views/login/component/account.tsx'))
 
 export default defineComponent({
   setup() {
     const themeStore = ThemeStore()
     const themeConfig: ThemeType = themeStore.themeConfig
     const state = reactive({
-      tabsActiveName: 'account',
+      // tabsActiveName: 'account',
       isTabPaneShow: true,
-      isScan: true
+      isScan: false
     })
+    const tabsActiveName = ref<string>('account')
     const handleScan = () => {
       state.isScan = !state.isScan
     }
     return {
       themeConfig,
       handleScan,
-      ...toRefs(state)
+      ...toRefs(state),
+      tabsActiveName
     }
   },
   render() {
-    const { themeConfig, handleScan, tabsActiveName, isScan } = this
+    const { themeConfig, handleScan, isScan } = this
     return (
       <>
         <div class="login-container">
@@ -41,20 +44,20 @@ export default defineComponent({
                 </>
               ) : (
                 <>
-                  <el-tabs v-model={tabsActiveName}>
+                  <el-tabs v-model={this.tabsActiveName}>
                     <el-tab-pane label="后台管理系统" name="account">
-                      {/*<Account />*/}
+                      <Account />
                     </el-tab-pane>
                     <el-tab-pane label="后台管理系统" name="mobile">
-                      {/*<Mobile />*/}
+                      <Mobile />
                     </el-tab-pane>
                   </el-tabs>
                 </>
               )}
-              <div class="login-content-main-sacn" onClick={handleScan}>
+              <div class="login-content-main-scan" onClick={handleScan}>
                 {isScan ? <ElementFullScreen size={'20px'} /> : <ElementPlatform />}
                 {/*<i class={['iconfont', isScan ? 'icon-diannao1' : 'icon-barcode-qr']}></i>*/}
-                <div class="login-content-main-sacn-delta"></div>
+                <div class="login-content-main-scan-delta"></div>
               </div>
             </div>
           </div>

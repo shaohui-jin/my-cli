@@ -1,6 +1,5 @@
 import { computed, defineComponent, watchEffect, ref, ComputedRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { routes } from '@/constant'
 import './navbar.less'
 import { Fold, Expand } from '@element-plus/icons-vue'
 import { Route } from '@/types'
@@ -31,7 +30,7 @@ export default defineComponent({
     const themeStore = ThemeStore()
     const isCollapse = ref<boolean>(false)
     watchEffect(() => {
-      isCollapse.value = themeStore.theme.sidebar.isCollapse
+      isCollapse.value = themeStore.themeConfig.sidebar.isCollapse
     })
     const handleCollapse = () => {
       themeStore.setThemeConfig({

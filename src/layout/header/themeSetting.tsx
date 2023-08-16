@@ -16,7 +16,7 @@ export default defineComponent({
   setup() {
     window.App.$console.info('SLAThemeSetting 组件渲染')
     const themeStore = ThemeStore()
-    const theme = ref<Record<string, any>>(flattenObject(themeStore.theme))
+    const theme = ref<Record<string, any>>(flattenObject(themeStore.themeConfig))
     watch(
       () => theme.value,
       value => {
