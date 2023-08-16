@@ -10,7 +10,7 @@ export default defineComponent({
   setup() {
     const visible = ref<boolean>(false)
     const themeSore = ThemeStore()
-    const title = computed(() => themeSore.getTheme().header.title)
+    const title = computed(() => themeSore.getThemeConfig().header.title)
     return { visible, title }
   },
   render() {

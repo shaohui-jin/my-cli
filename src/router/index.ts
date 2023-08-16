@@ -1,84 +1,57 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { routes } from '@/constant'
-import { Route } from '@/types'
-
-const defaultRoute: Route[] = [
-  {
-    path: '/',
-    redirect: '/home',
-    meta: {}
-  },
-  ...routes
-]
+import { staticRoutes } from '@/router/route.ts'
+import { UserStore } from '@/store/modules/user.ts'
+import { storeToRefs } from 'pinia'
+import { ThemeStore } from '@/store/modules/theme.ts'
+import { resetRoute } from '@/router/utils.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_APP_BASE_PATH), //路由模式的配置采用API调用的方式 不再是之前的字符串 此处采用的hash路由
-  routes: defaultRoute
+  routes: staticRoutes
 })
 
-// router.beforeEach(
-//   async (
-//     to: RouteLocationNormalized,
-//     from: RouteLocationNormalized,
-//     next: NavigationGuardNext,
-//   ) => {
-//     const token: string = getToken() as string
-//     if (token) {
-//       // 第一次加载路由列表并且该项目需要动态路由
-//       if (!isAddDynamicMenuRoutes) {
-//         try {
-//           //获取动态路由表
-//           const res: any = await UserApi.getPermissionsList({})
-//           if (res.code == 200) {
-//             isAddDynamicMenuRoutes = true
-//             const menu = res.data
-//             // 通过路由表生成标准格式路由
-//             const menuRoutes: any = fnAddDynamicMenuRoutes(
-//               menu.menuList || [],
-//               [],
-//             )
-//             mainRoutes.children = []
-//             mainRoutes.children?.unshift(...menuRoutes, ...Routes)
-//             // 动态添加路由
-//             router.addRoute(mainRoutes)
-//             // 注：这步很关键，不然导航获取不到路由
-//             router.options.routes.unshift(mainRoutes)
-//             // 本地存储按钮权限集合
-//             sessionStorage.setItem(
-//               'permissions',
-//               JSON.stringify(menu.permissions || '[]'),
-//             )
-//             if (to.path == '/' || to.path == '/login') {
-//               const firstName = menuRoutes.length && menuRoutes[0].name
-//               next({ name: firstName, replace: true })
-//             } else {
-//               next({ path: to.fullPath })
-//             }
-//           } else {
-//             sessionStorage.setItem('menuList', '[]')
-//             sessionStorage.setItem('permissions', '[]')
-//             next()
-//           }
-//         } catch (error) {
-//           console.log(
-//             `%c${error} 请求菜单列表和权限失败，跳转至登录页！！`,
-//             'color:orange',
-//           )
-//         }
-//       } else {
-//         if (to.path == '/' || to.path == '/login') {
-//           next(from)
-//         } else {
-//           next()
-//         }
-//       }
-//     } else {
-//       isAddDynamicMenuRoutes = false
-//       if (to.name != 'login') {
-//         next({ name: 'login' })
-//       }
-//       next()
-//     }
-//   },
-// )
+// isRequestRoutes 为 true，则开启后端控制路由，路径：`/src/store/modules/themeConfig.ts`
+// const { isRequestRoutes } = themeStore.themeConfig
+// 前端控制路由：初始化方法，防止刷新时路由丢失
+// if (!isRequestRoutes) initFrontEndControlRoutes()
+
+// 路由加载前
+router.beforeEach(async (to, from, next) => {
+  const userStore = UserStore()
+  // const themeStore = ThemeStore()
+  // NProgress.configure({ showSpinner: false })
+  // if (to.meta.title) NProgress.start()
+  const { user } = storeToRefs(userStore)
+  const { token } = user.value
+  if (!token) {
+    if (to.path === '/login') {
+      // 防止无token的时候无限循环
+      next()
+    } else {
+      next(`/login?redirect=${to.path}&params=${JSON.stringify(to.query ? to.query : to.params)}`)
+      userStore.clearUser()
+      resetRoute()
+      // NProgress.done()
+    }
+  } else if (token && to.path === '/login') {
+    next('/home')
+    // NProgress.done()
+  } else {
+    // if (store.state.routesList.routesList.length === 0) {
+    //   if (isRequestRoutes) {
+    //     // 后端控制路由：路由数据初始化，防止刷新时丢失
+    //     await initBackEndControlRoutes()
+    //     // 动态添加路由：防止非首页刷新时跳转回首页的问题
+    //     // 确保 addRoute() 时动态添加的路由已经被完全加载上去
+    //     next({ ...to, replace: true })
+    //   }
+    // } else {
+    next()
+    // }
+  }
+})
+// 路由加载后
+router.afterEach(() => {})
+
+// 导出路由
 export default router

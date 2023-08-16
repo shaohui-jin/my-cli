@@ -1,10 +1,10 @@
-import { defineAsyncComponent, defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import '@/assets/css/theme.less'
-
-const Layout = defineAsyncComponent(() => import('@/layout'))
+import { RouterView } from 'vue-router'
 
 export default defineComponent({
-  setup() {
-    return () => <Layout />
+  setup() {},
+  render() {
+    return <RouterView />
   }
 })

@@ -1,24 +1,33 @@
 import { defineStore } from 'pinia'
-import { UserType } from '@/types'
 import { ref } from 'vue'
 
+type UserType = {
+  token: string
+  userInfo: any
+  authList: any[] // 权限列表
+  authBtnList: string[] // 按钮权限列表
+}
+
+const defaultUser: UserType = {
+  token: '',
+  userInfo: {},
+  authList: [],
+  authBtnList: []
+}
 export const UserStore = defineStore('user', () => {
-  const user = ref<UserType>({
-    userInfo: {},
-    authList: [],
-    authBtnList: []
-  })
+  const user = ref<UserType>(defaultUser)
 
   const getUser = (): UserType => user.value
   const setUser = (userData: UserType) => (user.value = userData)
-  const getUserAuth = (): any[] => user.value.authList
-  const getUserAuthButton = (): string[] => user.value.authBtnList
-
+  // const getUserAuth = (): any[] => user.value.authList
+  // const getUserAuthButton = (): string[] => user.value.authBtnList
+  const clearUser = () => setUser(defaultUser)
   return {
     user,
     getUser,
-    getUserAuth,
-    getUserAuthButton,
-    setUser
+    clearUser
+    // setUser
+    // getUserAuth,
+    // getUserAuthButton,
   }
 })

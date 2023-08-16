@@ -16,7 +16,7 @@ export default defineComponent({
     const handleOpen = (key: string, keyPath: string[]) => console.log(key, keyPath)
     const handleClose = (key: string, keyPath: string[]) => console.log(key, keyPath)
     const themeSore = ThemeStore()
-    const isCollapse = computed(() => themeSore.getTheme().sidebar.isCollapse)
+    const isCollapse = computed(() => themeSore.getThemeConfig().sidebar.isCollapse)
     return { isCollapse, handleClose, handleOpen }
   },
   render() {

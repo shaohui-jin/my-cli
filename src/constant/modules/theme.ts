@@ -1,25 +1,4 @@
-import { ThemeType, BaseComponentItem } from '@/types'
-
-/**
- * 默认场景参数
- */
-export const defaultThemeConfig: ThemeType = {
-  sidebar: {
-    isCollapse: false
-  },
-  navbar: {
-    isBreadCrumb: true
-  },
-  header: {
-    title: '小石头潭记'
-  },
-  layout: {
-    headerHeight: 50,
-    navbarHeight: 30,
-    footerHeight: 40,
-    asideWidth: 250
-  }
-}
+import { BaseComponentItem } from '@/types'
 
 // 常用场景枚举
 export enum THEME_ENUM {

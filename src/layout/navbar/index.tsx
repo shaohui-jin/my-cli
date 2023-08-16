@@ -34,8 +34,8 @@ export default defineComponent({
       isCollapse.value = themeStore.theme.sidebar.isCollapse
     })
     const handleCollapse = () => {
-      themeStore.setTheme({
-        ...themeStore.getTheme(),
+      themeStore.setThemeConfig({
+        ...themeStore.getThemeConfig(),
         ...{ sidebar: { isCollapse: !isCollapse.value } }
       })
     }

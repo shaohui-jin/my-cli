@@ -22,7 +22,7 @@ export default defineComponent({
       value => {
         setTimeout(() => {
           const theme = unFlattenObject(value) as ThemeType
-          themeStore.setTheme(theme)
+          themeStore.setThemeConfig(theme)
           window.App.$console.info(`flattenObject:`, value)
           window.App.$console.info(`unFlattenObject:`, theme)
         }, 10)
@@ -34,8 +34,8 @@ export default defineComponent({
     const reset = () => {
       resetLoading.value = true
       setTimeout(() => {
-        themeStore.resetTheme()
-        theme.value = flattenObject(themeStore.getTheme())
+        themeStore.resetThemeConfig()
+        theme.value = flattenObject(themeStore.getThemeConfig())
         resetLoading.value = false
       }, 2000)
     }

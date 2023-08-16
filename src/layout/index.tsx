@@ -18,11 +18,11 @@ export default defineComponent({
     const isCollapse = ref<boolean>()
     const themeStore = ThemeStore()
     watchEffect(() => {
-      headerHeight.value = Number(themeStore.theme.layout.headerHeight)
-      navbarHeight.value = Number(themeStore.theme.layout.navbarHeight)
-      footerHeight.value = Number(themeStore.theme.layout.footerHeight)
-      asideWidth.value = Number(themeStore.theme.layout.asideWidth)
-      isCollapse.value = themeStore.theme.sidebar.isCollapse
+      headerHeight.value = Number(themeStore.themeConfig.layout.headerHeight)
+      navbarHeight.value = Number(themeStore.themeConfig.layout.navbarHeight)
+      footerHeight.value = Number(themeStore.themeConfig.layout.footerHeight)
+      asideWidth.value = Number(themeStore.themeConfig.layout.asideWidth)
+      isCollapse.value = themeStore.themeConfig.sidebar.isCollapse
     })
 
     return { headerHeight, footerHeight, asideWidth, navbarHeight }
