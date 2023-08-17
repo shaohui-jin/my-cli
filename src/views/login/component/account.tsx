@@ -1,9 +1,10 @@
-import { toRefs, reactive, defineComponent, computed, getCurrentInstance, onMounted } from 'vue'
+import { toRefs, reactive, defineComponent, computed, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import './account.less'
 import { formatAxis } from '@/utils/time.ts'
 import { UserStore } from '@/store/modules/user.ts'
+import { Position, User, Unlock } from '@element-plus/icons-vue'
 
 const signIn = (obj: any) => {
   return new Promise(resolve => {
@@ -110,8 +111,8 @@ export default defineComponent({
               autocomplete="off"
               v-slots={{
                 prefix: () => (
-                  <el-icon className="el-input__icon">
-                    <ElementUser />
+                  <el-icon>
+                    <User />
                   </el-icon>
                 )
               }}
@@ -125,20 +126,21 @@ export default defineComponent({
               autocomplete="off"
               v-slots={{
                 prefix: () => (
-                  <el-icon className="el-input__icon">
-                    <ElementUnlock />
+                  <el-icon>
+                    <Unlock />
                   </el-icon>
                 ),
-                suffix: () =>
-                  isShowPassword ? (
-                    <el-icon onClick={handleShowPassword}>
-                      <ElementOpen />
-                    </el-icon>
-                  ) : (
-                    <el-icon onClick={handleShowPassword}>
-                      <ElementTurnOff />
-                    </el-icon>
-                  )
+                suffix: () => (
+                  <i
+                    class={[
+                      'iconfont',
+                      'el-input__icon',
+                      'login-content-password',
+                      isShowPassword ? 'icon-xianshimima' : 'icon-yincangmima'
+                    ]}
+                    onClick={handleShowPassword}
+                  />
+                )
               }}
             />
           </el-form-item>
@@ -154,8 +156,8 @@ export default defineComponent({
                   autocomplete="off"
                   v-slots={{
                     prefix: () => (
-                      <el-icon className="el-input__icon">
-                        <ElementPosition />
+                      <el-icon>
+                        <Position />
                       </el-icon>
                     )
                   }}

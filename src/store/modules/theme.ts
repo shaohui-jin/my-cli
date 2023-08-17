@@ -99,8 +99,8 @@ const defaultThemeConfig: ThemeType = {
    */
   globalTitle: 'vue3-vite-work', // 网站主标题（菜单导航、浏览器当前网页标题）
   globalViceTitle: '帅气小辉', // 网站副标题（登录页顶部文字）
-  globalI18n: 'zh-cn', // 默认初始语言，可选值"<zh-cn|en|zh-tw>"
-  globalComponentSize: '' // 默认全局组件大小，可选值"<|medium|small|mini>"
+  globalI18n: 'zh-cn', // 默认初始语言
+  globalComponentSize: 'large' // 默认全局组件大小，可选值
 }
 
 // 场景类型， 已经使用的默认场景参数才写进来
@@ -113,33 +113,46 @@ export type ThemeType = {
    * 全局网站标题 / 副标题
    */
   globalViceTitle: string // 网站副标题（登录页顶部文字）
+  globalI18n: 'zh-cn' | 'en' | 'zh-tw' // 默认初始语言
+  globalComponentSize: 'large' | 'medium' | 'small' // 默认全局组件大小
 }
 
-export const ThemeStore = defineStore('theme', () => {
-  const themeConfig = ref<ThemeType>(defaultThemeConfig)
-  const hasInit = ref<boolean>(false)
+export const ThemeStore = defineStore(
+  'theme',
+  () => {
+    const themeConfig = ref<ThemeType>(defaultThemeConfig)
+    const hasInit = ref<boolean>(false)
 
-  onMounted(() => {
-    const hasThemeSetting = isObjectEmpty(themeConfig)
-    if (!hasInit.value && !hasThemeSetting) {
-      const themeConfig: ThemeType = JSON.parse(getCookie(CookieEnum.CUSTOM_THEME, { type: 'localStorage' }) || '{}')
-      setThemeConfig(isObjectEmpty(themeConfig) ? defaultThemeConfig : themeConfig)
+    onMounted(() => {
+      const hasThemeSetting = isObjectEmpty(themeConfig)
+      if (!hasInit.value && !hasThemeSetting) {
+        const themeConfig: ThemeType = JSON.parse(getCookie(CookieEnum.CUSTOM_THEME, { type: 'localStorage' }) || '{}')
+        setThemeConfig(isObjectEmpty(themeConfig) ? defaultThemeConfig : themeConfig)
+      }
+    })
+    const getThemeConfig = (): ThemeType => themeConfig.value
+    const setThemeConfig = (themeData: ThemeType) => {
+      themeConfig.value = themeData
+      setCookie(CookieEnum.CUSTOM_THEME, JSON.stringify(themeData), { type: 'localStorage' })
     }
-  })
-  const getThemeConfig = (): ThemeType => themeConfig.value
-  const setThemeConfig = (themeData: ThemeType) => {
-    themeConfig.value = themeData
-    setCookie(CookieEnum.CUSTOM_THEME, JSON.stringify(themeData), { type: 'localStorage' })
-  }
-  const resetThemeConfig = () => setThemeConfig(defaultThemeConfig)
+    const resetThemeConfig = () => setThemeConfig(defaultThemeConfig)
 
-  return {
-    themeConfig,
-    getThemeConfig,
-    setThemeConfig,
-    resetThemeConfig
+    return {
+      themeConfig,
+      getThemeConfig,
+      setThemeConfig,
+      resetThemeConfig
+    }
+  },
+  {
+    persist: true,
+    strategies: [
+      {
+        storage: localStorage
+      }
+    ]
   }
-})
+)
 
 // const aaa = () => ({
 //   state: (): { theme: ThemeType } => ({

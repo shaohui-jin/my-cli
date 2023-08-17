@@ -55,8 +55,7 @@ export default defineComponent({
                 </>
               )}
               <div class="login-content-main-scan" onClick={handleScan}>
-                {isScan ? <ElementFullScreen size={'20px'} /> : <ElementPlatform />}
-                {/*<i class={['iconfont', isScan ? 'icon-diannao1' : 'icon-barcode-qr']}></i>*/}
+                <i class={['iconfont', isScan ? 'icon-diannao1' : 'icon-barcode-qr']}></i>
                 <div class="login-content-main-scan-delta"></div>
               </div>
             </div>

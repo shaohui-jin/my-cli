@@ -1,4 +1,5 @@
 import { toRefs, reactive, defineComponent } from 'vue'
+import { Position } from  '@element-plus/icons-vue'
 import './mobile.less'
 
 export default defineComponent({
@@ -27,7 +28,7 @@ export default defineComponent({
               autocomplete="off"
               v-slots={{
                 prefix: () => {
-                  return <ElementPhone />
+                  return <i class="iconfont icon-dianhua el-input__icon"></i>
                 }
               }}
             />
@@ -45,8 +46,8 @@ export default defineComponent({
                   v-slots={{
                     prefix: () => {
                       return (
-                        <el-icon className="el-input__icon">
-                          <elementPosition />
+                        <el-icon>
+                          <Position />
                         </el-icon>
                       )
                     }
