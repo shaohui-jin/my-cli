@@ -1,5 +1,4 @@
 import { defineComponent, onBeforeMount } from 'vue'
-import '@/assets/css/theme.less'
 import { RouterView } from 'vue-router'
 import { setExternalResources } from '@/utils/init'
 

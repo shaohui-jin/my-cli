@@ -8,8 +8,6 @@ import 'element-plus/dist/index.css'
 import '@/assets/theme/index.less'
 import { directive } from '@/directive'
 
-// const themeStore = ThemeStore()
-
 installPlugins()
 
 const app = createApp(App)
@@ -17,9 +15,7 @@ const app = createApp(App)
 app.use(store)
 app.use(router)
 // app.use(ElementPlus)
-app.use(ElementPlus, { size: useStore().useThemeStore.themeConfig.globalComponentSize })
-// app.use(ElementPlus, { size: themeStore.themeConfig.globalComponentSize })
-// app.use(ElementPlus, { size: '' })
+app.use(ElementPlus, { size: useStore().useThemeStore.globalComponentSize })
 
 directive(app) // 依赖于store
 // installElSvg(app) // 依赖elementPlus

@@ -9,6 +9,8 @@ export interface ILoginData {
     address: string
     username: string
   }
+  authList: Array<string>
+  authBtnList: Array<string>
 }
 
 /**
@@ -20,7 +22,6 @@ export interface ILoginApiParams {
   username: string // 用户名
   password: string // 密码
   captcha: string // 验证码
-  uuid: string // 验证码uuid
 }
 
 /**
@@ -28,6 +29,6 @@ export interface ILoginApiParams {
  * --------------------------------------------------------------------------
  */
 export interface IUserApi {
-  // login: (params: ILoginApiParams) => Promise<StoreState.ResType<ILoginData>>
+  // 验证码登录
   login: (params: ILoginApiParams) => Promise<ILoginData>
 }

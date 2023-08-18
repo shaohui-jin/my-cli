@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { staticRoutes } from '@/router/route.ts'
-import { UserStore } from '@/store/modules/user.ts'
-import { storeToRefs } from 'pinia'
-import { ThemeStore } from '@/store/modules/theme.ts'
+import { useStore } from '@/store'
 import { resetRoute } from '@/router/utils.ts'
 
 const router = createRouter({
@@ -17,19 +15,17 @@ const router = createRouter({
 
 // 路由加载前
 router.beforeEach(async (to, from, next) => {
-  const userStore = UserStore()
   // const themeStore = ThemeStore()
   // NProgress.configure({ showSpinner: false })
   // if (to.meta.title) NProgress.start()
-  const { user } = storeToRefs(userStore)
-  const { token } = user.value
+  const token = useStore().useUserStore.getUserToken
   if (!token) {
     if (to.path === '/login') {
       // 防止无token的时候无限循环
       next()
     } else {
       next(`/login?redirect=${to.path}&params=${JSON.stringify(to.query ? to.query : to.params)}`)
-      userStore.clearUser()
+      useStore().$reset()
       resetRoute()
       // NProgress.done()
     }

@@ -18,7 +18,7 @@ export default defineComponent({
     const { ruleForm } = this
     return (
       <>
-        <el-form class="login-content-form-mobile">
+        <el-form class="login-content-form">
           <el-form-item class="login-animation-one">
             <el-input
               type="text"
@@ -55,7 +55,7 @@ export default defineComponent({
                 />
               </el-col>
               <el-col span={8}>
-                <el-button class="login-content-code">验证码</el-button>
+                <el-button class="login-content-code">获取验证码</el-button>
               </el-col>
             </el-row>
           </el-form-item>

@@ -1,6 +1,6 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
 import { toRefs, reactive, ref } from 'vue'
-import { ThemeStore, ThemeType } from '@/store/modules/theme.ts'
+import { useStore } from '@/store'
 import './login.less'
 
 const Mobile = defineAsyncComponent(() => import('@/views/login/component/mobile.tsx'))
@@ -9,10 +9,9 @@ const Account = defineAsyncComponent(() => import('@/views/login/component/accou
 
 export default defineComponent({
   setup() {
-    const themeStore = ThemeStore()
-    const themeConfig: ThemeType = themeStore.themeConfig
+    const { globalViceTitle } = useStore().useThemeStore
     const state = reactive({
-      // tabsActiveName: 'account',
+      tabsActiveName: 'account',
       isTabPaneShow: true,
       isScan: false
     })
@@ -21,19 +20,19 @@ export default defineComponent({
       state.isScan = !state.isScan
     }
     return {
-      themeConfig,
+      globalViceTitle,
       handleScan,
       ...toRefs(state),
       tabsActiveName
     }
   },
   render() {
-    const { themeConfig, handleScan, isScan } = this
+    const { globalViceTitle, handleScan, isScan } = this
     return (
       <>
         <div class="login-container">
           <div class="login-logo">
-            <span>{themeConfig.globalViceTitle}</span>
+            <span>{globalViceTitle}</span>
           </div>
           <div class="login-content">
             <div class="login-content-main">
@@ -45,10 +44,10 @@ export default defineComponent({
               ) : (
                 <>
                   <el-tabs v-model={this.tabsActiveName}>
-                    <el-tab-pane label="后台管理系统" name="account">
+                    <el-tab-pane label="帐号密码登录" name="account">
                       <Account />
                     </el-tab-pane>
-                    <el-tab-pane label="后台管理系统" name="mobile">
+                    <el-tab-pane label="手机号登录" name="mobile">
                       <Mobile />
                     </el-tab-pane>
                   </el-tabs>
@@ -60,10 +59,12 @@ export default defineComponent({
               </div>
             </div>
           </div>
-          {/*<div class="login-copyright">*/}
-          {/*  <div class="mb5 login-copyright-company">{{ $t('message.copyright.one5') }}</div>*/}
-          {/*  <div class="login-copyright-msg">{{ $t('message.copyright.two6') }}</div>*/}
-          {/*</div>*/}
+          <div class="login-copyright">
+            <div class="m-b-5 login-copyright-company">Copyright: JSH XXX Software Technology Co., Ltd</div>
+            <div class="login-copyright-msg">
+              Copyright: JSH XXX software technology Guangdong ICP preparation no.05010000
+            </div>
+          </div>
         </div>
       </>
     )

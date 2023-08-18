@@ -3,20 +3,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import './account.less'
 import { formatAxis } from '@/utils/time.ts'
-import { UserStore } from '@/store/modules/user.ts'
 import { Position, User, Unlock } from '@element-plus/icons-vue'
+import UserApi from '@/api/modules/user.ts'
+import { useStore } from '@/store'
+import { initFrontEndRoutes } from '@/router/frontEnd.ts'
 
-const signIn = (obj: any) => {
-  return new Promise(resolve => {
-    resolve(JSON.stringify(obj))
-  })
-}
-const initFrontEndControlRoutes = () => {}
-const initBackEndControlRoutes = () => {}
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any
-    const userStore = UserStore()
     const route = useRoute()
     const router = useRouter()
     const state = reactive({
@@ -39,24 +33,18 @@ export default defineComponent({
     const onSignIn = async () => {
       state.loading.signIn = true
 
-      signIn(state.ruleForm)
+      UserApi.login(state.ruleForm)
         .then(async res => {
-          userStore
-          console.log(userStore.user)
-          userStore.$reset()
-          console.log(userStore.user)
-          // Session.set('token', JSON.stringify(res))
-          // // 1、请注意执行顺序(存储用户信息到vuex)
-          // await store.dispatch('userInfos/setUserInfos', res)
-          // if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
-          //   // 前端控制路由，2、请注意执行顺序
-          //   await initFrontEndControlRoutes()
-          //   signInSuccess()
-          // } else {
-          //   // 模拟后端控制路由，添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
-          //   await initBackEndControlRoutes()
-          signInSuccess()
-          // }
+          window.App.$console.info('登录成功', res)
+          return
+          if (!useStore().useThemeStore.isRequestRoutes) {
+            await initFrontEndRoutes()
+            signInSuccess()
+          } else {
+            // /模拟后端控制路由，添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
+            // await initBackEndRoutes()
+            signInSuccess()
+          }
         })
         .catch(() => {
           return false
@@ -75,7 +63,7 @@ export default defineComponent({
       if (route.query?.redirect) {
         router.push({
           path: route.query?.redirect,
-          query: Object.keys(route.query?.params).length > 0 ? JSON.parse(route.query?.params) : ''
+          query: Object.keys(route.query.params).length > 0 ? JSON.parse(route.query.params) : ''
         })
       } else {
         router.push('/')
@@ -101,7 +89,7 @@ export default defineComponent({
     const { ruleForm, isShowPassword, loading, currentTime, handleShowPassword, onSignIn } = this
     return (
       <>
-        <el-form class="login-content-form-account">
+        <el-form class="login-content-form">
           <el-form-item class="login-animation-one">
             <el-input
               v-model={ruleForm.username}

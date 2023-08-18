@@ -4,14 +4,14 @@
 /* Button 按钮
 ------------------------------- */
 // text
-.el-button--text {
+.el-button.is-text {
 	color: var(--color-primary);
 	&:focus,
 	&:hover {
 		color: var(--color-primary-light-3);
 	}
 }
-.el-button--text:active {
+.el-button.is-text:active {
 	color: var(--color-primary-light-3);
 }
 // default
@@ -388,6 +388,9 @@
 /* Form 表单
 ------------------------------- */
 .el-form {
+	.el-form-item__content {
+		display: unset !important;
+	}
 	.el-form-item:last-of-type {
 		margin-bottom: 0 !important;
 	}

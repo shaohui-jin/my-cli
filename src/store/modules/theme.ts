@@ -1,29 +1,14 @@
 import { defineStore } from 'pinia'
 import { CookieEnum } from '@/constant'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref, toRefs } from 'vue'
 import { isObjectEmpty } from '@/utils/common.ts'
 import { getCookie, setCookie } from '@/utils/cookie.ts'
+import { useStore } from "@/store";
 
 /**
  * 默认场景参数
  */
 const defaultThemeConfig: ThemeType = {
-  // sidebar: {
-  //   isCollapse: false
-  // },
-  // navbar: {
-  //   isBreadCrumb: true
-  // },
-  // header: {
-  //   title: '小石头潭记'
-  // },
-  // layout: {
-  //   headerHeight: 50,
-  //   navbarHeight: 30,
-  //   footerHeight: 40,
-  //   asideWidth: 250
-  // },
-
   isDrawer: false, // 是否开启布局配置抽屉
   /**
    * 全局主题
@@ -114,85 +99,40 @@ export type ThemeType = {
    */
   globalViceTitle: string // 网站副标题（登录页顶部文字）
   globalI18n: 'zh-cn' | 'en' | 'zh-tw' // 默认初始语言
-  globalComponentSize: 'large' | 'medium' | 'small' // 默认全局组件大小
+  globalComponentSize: '' | 'default' | 'small' | 'large' // 默认全局组件大小
 }
 
 export const ThemeStore = defineStore(
   'theme',
   () => {
-    const themeConfig = ref<ThemeType>(defaultThemeConfig)
-    const hasInit = ref<boolean>(false)
+    window.App.$console.info('themeStore初始化')
+    let config = JSON.parse(getCookie(CookieEnum.CUSTOM_THEME, { type: 'localStorage' }) || '{}')
+    config = isObjectEmpty(config) ? defaultThemeConfig : config
+    // if (isObjectEmpty(config)) {
+    //   useStore().useThemeStore.$patch(defaultThemeConfig)
+    //   // setThemeConfig(defaultThemeConfig)
+    // } else {
+    //   useStore().useThemeStore.$patch(config)
+    //   // setThemeConfig(config)
+    // }
 
-    onMounted(() => {
-      const hasThemeSetting = isObjectEmpty(themeConfig)
-      if (!hasInit.value && !hasThemeSetting) {
-        const themeConfig: ThemeType = JSON.parse(getCookie(CookieEnum.CUSTOM_THEME, { type: 'localStorage' }) || '{}')
-        setThemeConfig(isObjectEmpty(themeConfig) ? defaultThemeConfig : themeConfig)
-      }
-    })
-    const getThemeConfig = (): ThemeType => themeConfig.value
-    const setThemeConfig = (themeData: ThemeType) => {
-      themeConfig.value = themeData
-      setCookie(CookieEnum.CUSTOM_THEME, JSON.stringify(themeData), { type: 'localStorage' })
-    }
-    const resetThemeConfig = () => setThemeConfig(defaultThemeConfig)
+    const themeConfig = reactive<ThemeType>(config)
+    const getThemeConfig = (): ThemeType => themeConfig
 
     return {
-      themeConfig,
-      getThemeConfig,
-      setThemeConfig,
-      resetThemeConfig
+      ...toRefs(themeConfig),
+      getThemeConfig
     }
   },
   {
-    persist: true,
-    strategies: [
-      {
-        storage: localStorage
-      }
-    ]
+    persist: {
+      enabled: true,
+      strategies: [
+        {
+          key: CookieEnum.CUSTOM_THEME,
+          storage: localStorage
+        }
+      ]
+    }
   }
 )
-
-// const aaa = () => ({
-//   state: (): { theme: ThemeType } => ({
-//     theme: {}
-//   }),
-//     // 开启数据缓存，装了piniaPluginPersist配置这个才生效
-//     persist: {
-//   enabled: true,
-//     strategies: [
-//     {
-//       storage: localStorage, // 默认存储在sessionStorage里
-//       paths: ['theme'] // 指定存储state，不写则存储所有
-//     }
-//   ]
-// },
-//   getters: {
-//     getThemeConfig: (state): ThemeType => {
-//       const hasInit = Object.keys(state.theme).length !== 0
-//       console.log(hasInit)
-//       if (!hasInit) {
-//         console.log('theme未初始化')
-//         const themeConfig: ThemeType = JSON.parse(
-//           getCookie(CookieEnum.CUSTOM_THEME, { type: 'localStorage' }) || '{}'
-//         )
-//         console.log(setThemeConfig)
-//         // 这里因为上面设置了localstorage的缓存，就不用setCookie了
-//         if (themeConfig) {
-//           this.setThemeConfig(themeConfig)
-//         } else {
-//           this.setThemeConfig(defaultThemeConfig)
-//         }
-//       }
-//       console.log('theme初始化')
-//       console.log(state.theme)
-//       return state.theme
-//     }
-//   },
-//   actions: {
-//     setThemeConfig(data: ThemeType) {
-//       state.theme = data
-//     }
-//   }
-// }

@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { reactive, toRefs, watchEffect } from 'vue'
+import { CookieEnum } from '@/constant'
+import { getCookie, setCookie } from '@/utils/cookie.ts'
 
-type UserType = {
+export type UserType = {
   token: string
   userInfo: any
-  authList: any[] // 权限列表
-  authBtnList: string[] // 按钮权限列表
+  authList: Array<string> // 权限列表
+  authBtnList: Array<string> // 按钮权限列表
 }
 
 const defaultUser: UserType = {
@@ -14,33 +16,32 @@ const defaultUser: UserType = {
   authList: [],
   authBtnList: []
 }
+
 export const UserStore = defineStore(
   'user',
   () => {
-    const user = ref<UserType>(defaultUser)
-
-    const getUser = (): UserType => user.value
-    const setUser = (userData: UserType) => (user.value = userData)
-    // const getUserAuth = (): any[] => user.value.authList
-    // const getUserAuthButton = (): string[] => user.value.authBtnList
-    const clearUser = () => setUser(defaultUser)
-    const setUserToken = (token: string) => (user.value.token = token)
+    const user = reactive<UserType>(defaultUser)
+    const getUser = (): UserType => user
+    const getUserToken = getCookie(CookieEnum.USER_TOKEN, { type: 'localStorage' }) || getUser().token
+    watchEffect(() => {
+      setCookie(CookieEnum.USER_TOKEN, user.token, { type: 'localStorage' })
+    })
     return {
-      user,
+      ...toRefs(user),
       getUser,
-      clearUser,
-      setUserToken
-      // setUser
-      // getUserAuth,
-      // getUserAuthButton,
+      getUserToken
     }
   },
   {
-    persist: true,
-    strategies: [
-      {
-        storage: localStorage
-      }
-    ]
+    persist: {
+      enabled: true,
+      strategies: [
+        {
+          key: CookieEnum.USER_INFO,
+          storage: window.localStorage
+          // paths: ['user']
+        }
+      ]
+    }
   }
 )

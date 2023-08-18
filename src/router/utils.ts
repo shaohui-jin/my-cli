@@ -1,6 +1,7 @@
 import router from '@/router/index.ts'
 import { dynamicRoutes } from '@/router/route.ts'
 import { RouteRecordRaw } from 'vue-router'
+import { useStore } from '@/store'
 
 /**
  * 定义404界面
@@ -16,7 +17,7 @@ const pathMatch = {
  * @param arr 传入路由菜单数据数组
  * @returns 返回处理后的一维路由菜单数组
  */
-function formatFlatteningRoutes(arr: any) {
+function flatRoutes(arr: any[]) {
   if (arr.length <= 0) return false
   for (let i = 0; i < arr.length; i++) {
     if (arr[i].children) {
@@ -27,13 +28,12 @@ function formatFlatteningRoutes(arr: any) {
 }
 
 /**
- * 一维数组处理成多级嵌套数组（只保留二级：也就是二级以上全部处理成只有二级，keep-alive 支持二级缓存）
+ * 一维数组处理成多级嵌套数组（只保留二级，keep-alive 支持二级缓存）
  * @description isKeepAlive 处理 `name` 值，进行缓存。顶级关闭，全部不缓存
- * @link 参考：https://v3.cn.vuejs.org/api/built-in-components.html#keep-alive
  * @param arr 处理后的一维路由菜单数组
  * @returns 返回将一维数组重新处理成 `定义动态路由（dynamicRoutes）` 的格式
  */
-export function formatTwoStageRoutes(arr: any) {
+export function formatTwoStageRoutes(arr: any[]) {
   if (arr.length <= 0) return false
   const newArr: any = []
   const cacheList: Array<string> = []
@@ -48,19 +48,18 @@ export function formatTwoStageRoutes(arr: any) {
         children: []
       })
     } else {
-      // 判断是否是动态路由（xx/:id/:name），用于 tagsView 等中使用
-      // 修复：https://gitee.com/lyt-top/vue-next-admin/issues/I3YX6G
+      // 判断是否是动态路由（xx/:id/:name）
       if (v.path.indexOf('/:') > -1) {
         v.meta['isDynamic'] = true
         v.meta['isDynamicPath'] = v.path
       }
       newArr[0].children.push({ ...v })
       // 存 name 值，keep-alive 中 include 使用，实现路由的缓存
-      // 路径：@/layout/routerView/parent.vue
       if (newArr[0].meta.isKeepAlive && v.meta.isKeepAlive) {
         cacheList.push(v.name)
-        store.dispatch('keepAliveNames/setCacheKeepAlive', cacheList)
+        useStore().useKeepAliveStore.$patch({ keepAliveNames: cacheList })
       }
+      console.log(useStore().useKeepAliveStore)
     }
   })
   return newArr
@@ -76,7 +75,7 @@ export function setCacheTagsViewRoutes() {
   // 添加到 vuex setTagsViewRoutes 中
   store.dispatch(
     'tagsViewRoutes/setTagsViewRoutes',
-    formatTwoStageRoutes(formatFlatteningRoutes(rolesRoutes))[0].children
+    formatTwoStageRoutes(flatRoutes(rolesRoutes))[0].children
   )
 }
 
@@ -149,7 +148,7 @@ export function setFilterRoute(chil: any) {
  * @returns 返回替换后的路由数组
  */
 export function setFilterRouteEnd() {
-  const filterRouteEnd: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes))
+  const filterRouteEnd: any = formatTwoStageRoutes(flatRoutes(dynamicRoutes))
   filterRouteEnd[0].children = [...setFilterRoute(filterRouteEnd[0].children), { ...pathMatch }]
   return filterRouteEnd
 }
