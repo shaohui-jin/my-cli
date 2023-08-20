@@ -1,6 +1,6 @@
 import { checkUndefined } from '@/utils/common.ts'
 
-interface Extra {
+export interface Extra {
   path?: string // 路径
   millisecond?: number // 分钟
   domain?: string // 域名

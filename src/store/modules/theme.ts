@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
 import { CookieEnum } from '@/constant'
-import { onMounted, reactive, ref, toRefs } from 'vue'
+import { reactive, toRefs } from 'vue'
 import { isObjectEmpty } from '@/utils/common.ts'
-import { getCookie, setCookie } from '@/utils/cookie.ts'
-import { useStore } from "@/store";
+import { getCookie } from '@/utils/cookie.ts'
 
 /**
  * 默认场景参数
@@ -105,7 +104,6 @@ export type ThemeType = {
 export const ThemeStore = defineStore(
   'theme',
   () => {
-    window.App.$console.info('themeStore初始化')
     let config = JSON.parse(getCookie(CookieEnum.CUSTOM_THEME, { type: 'localStorage' }) || '{}')
     config = isObjectEmpty(config) ? defaultThemeConfig : config
     // if (isObjectEmpty(config)) {

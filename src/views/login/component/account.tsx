@@ -1,4 +1,4 @@
-import { toRefs, reactive, defineComponent, computed, getCurrentInstance } from 'vue'
+import { toRefs, reactive, defineComponent, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import './account.less'
@@ -10,7 +10,6 @@ import { initFrontEndRoutes } from '@/router/frontEnd.ts'
 
 export default defineComponent({
   setup() {
-    const { proxy } = getCurrentInstance() as any
     const route = useRoute()
     const router = useRouter()
     const state = reactive({
@@ -36,7 +35,6 @@ export default defineComponent({
       UserApi.login(state.ruleForm)
         .then(async res => {
           window.App.$console.info('登录成功', res)
-          return
           if (!useStore().useThemeStore.isRequestRoutes) {
             await initFrontEndRoutes()
             signInSuccess()
@@ -60,22 +58,15 @@ export default defineComponent({
       // 登录成功，跳到转首页
       // 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
       // 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
-      if (route.query?.redirect) {
-        router.push({
-          path: route.query?.redirect,
-          query: Object.keys(route.query.params).length > 0 ? JSON.parse(route.query.params) : ''
-        })
-      } else {
-        router.push('/')
-      }
+      const path: string = ((route as any).query.redirect as string) || '/'
+      const query: any = JSON.parse((route as any).query.params || '{}')
+      router.push({ path, query })
+
       // 登录成功提示
       setTimeout(() => {
         // 关闭 loading
         state.loading.signIn = true
-        const signInText = t('message.signInText')
-        ElMessage.success(`${currentTimeInfo}，${signInText}`)
-        // 修复防止退出登录再进入界面时，需要刷新样式才生效的问题，初始化布局样式等(登录的时候触发，目前方案)
-        proxy.mittBus.emit('onSignInClick')
+        ElMessage.success(`${currentTimeInfo}，欢迎回来`)
       }, 300)
     }
     return {
@@ -86,7 +77,7 @@ export default defineComponent({
     }
   },
   render() {
-    const { ruleForm, isShowPassword, loading, currentTime, handleShowPassword, onSignIn } = this
+    const { ruleForm, isShowPassword, loading, handleShowPassword, onSignIn } = this
     return (
       <>
         <el-form class="login-content-form">

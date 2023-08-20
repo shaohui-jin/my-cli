@@ -1,5 +1,5 @@
 import { toRefs, reactive, defineComponent } from 'vue'
-import { Position } from  '@element-plus/icons-vue'
+import { Position } from '@element-plus/icons-vue'
 import './mobile.less'
 
 export default defineComponent({

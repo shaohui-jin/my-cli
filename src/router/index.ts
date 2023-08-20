@@ -1,24 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { staticRoutes } from '@/router/route.ts'
 import { useStore } from '@/store'
-import { resetRoute } from '@/router/utils.ts'
+import { resetRoute, staticRoutes } from '@/router/utils.ts'
+import { initFrontEndRoutes } from '@/router/frontEnd.ts'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_APP_BASE_PATH), //路由模式的配置采用API调用的方式 不再是之前的字符串 此处采用的hash路由
+  history: createWebHistory(import.meta.env.VITE_APP_BASE_PATH),
   routes: staticRoutes
 })
 
-// isRequestRoutes 为 true，则开启后端控制路由，路径：`/src/store/modules/themeConfig.ts`
-// const { isRequestRoutes } = themeStore.themeConfig
-// 前端控制路由：初始化方法，防止刷新时路由丢失
-// if (!isRequestRoutes) initFrontEndControlRoutes()
-
 // 路由加载前
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _, next) => {
   // const themeStore = ThemeStore()
   // NProgress.configure({ showSpinner: false })
   // if (to.meta.title) NProgress.start()
-  const token = useStore().useUserStore.getUserToken
+  // const token = useStore().useUserStore.token
+  const token = useStore().useUserStore.token
+
   if (!token) {
     if (to.path === '/login') {
       // 防止无token的时候无限循环
@@ -29,10 +26,16 @@ router.beforeEach(async (to, from, next) => {
       resetRoute()
       // NProgress.done()
     }
-  } else if (token && to.path === '/login') {
-    next('/home')
-    // NProgress.done()
   } else {
+    // isRequestRoutes 为 true，则开启后端控制路由，路径：`/src/store/modules/themeConfig.ts`
+    // const isRequestRoutes = useStore().useThemeStore.isRequestRoutes
+    // 前端控制路由：初始化方法，防止刷新时路由丢失
+    // if (isRequestRoutes === false) await initFrontEndRoutes()
+
+    if (to.path === '/login') {
+      // 防止无token的时候无限循环
+      next('/home')
+    }
     // if (store.state.routesList.routesList.length === 0) {
     //   if (isRequestRoutes) {
     //     // 后端控制路由：路由数据初始化，防止刷新时丢失

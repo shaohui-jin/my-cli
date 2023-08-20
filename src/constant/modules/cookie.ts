@@ -4,5 +4,9 @@ export enum CookieEnum {
   // 用户信息
   USER_INFO = 'SLA-USER-INFO',
   // 用户token
-  USER_TOKEN = 'SLA-USER-TOKEN'
+  USER_TOKEN = 'SLA-USER-TOKEN',
+  // 用户的路由
+  USER_ROLE_ROUTE = 'SLA-USER-ROLE-ROUTE',
+  // tagview
+  TAG_VIEW_ROUTE = 'SLA-TAG-VIEW-ROUTE'
 }

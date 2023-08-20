@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { reactive, toRefs, watchEffect } from 'vue'
 import { CookieEnum } from '@/constant'
-import { getCookie, setCookie } from '@/utils/cookie.ts'
+import { setCookie } from '@/utils/cookie.ts'
 
 export type UserType = {
   token: string
@@ -21,15 +21,13 @@ export const UserStore = defineStore(
   'user',
   () => {
     const user = reactive<UserType>(defaultUser)
-    const getUser = (): UserType => user
-    const getUserToken = getCookie(CookieEnum.USER_TOKEN, { type: 'localStorage' }) || getUser().token
+
     watchEffect(() => {
+      // setCookie(CookieEnum.USER_INFO, JSON.stringify(user), { type: 'localStorage' })
       setCookie(CookieEnum.USER_TOKEN, user.token, { type: 'localStorage' })
     })
     return {
-      ...toRefs(user),
-      getUser,
-      getUserToken
+      ...toRefs(user)
     }
   },
   {

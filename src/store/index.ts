@@ -3,6 +3,8 @@ import piniaPluginPersist from 'pinia-plugin-persist'
 import { ThemeStore } from './modules/theme.ts'
 import { UserStore } from './modules/user.ts'
 import { KeepAliveStore } from './modules/keepAlive.ts'
+import { RouteStore } from './modules/route.ts'
+import { TagViewStore } from './modules/tagsViewRoutes.ts'
 
 const store = createPinia()
   .use(({ store }) => {
@@ -18,10 +20,13 @@ export const useStore = () => ({
   useThemeStore: ThemeStore(),
   useUserStore: UserStore(),
   useKeepAliveStore: KeepAliveStore(),
+  useRouteStore: RouteStore(),
+  useTagViewStore: TagViewStore(),
   $reset: () => {
-    ThemeStore().$reset()
     UserStore().$reset()
     KeepAliveStore().$reset()
+    RouteStore().$reset()
+    TagViewStore().$reset()
   }
 })
 
