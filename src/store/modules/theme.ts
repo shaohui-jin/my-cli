@@ -36,9 +36,9 @@ const defaultThemeConfig: ThemeType = {
   /**
    * 界面设置
    */
-  isCollapse: false, // 是否开启菜单水平折叠效果
+  isCollapse: false,
   isUniqueOpened: false, // 是否开启菜单手风琴效果
-  isFixedHeader: false, // 是否开启固定 Header
+  isFixedHeader: false,
   isFixedHeaderChange: false, // 初始化变量，用于更新菜单 el-scrollbar 的高度，请勿删除
   isClassicSplitMenu: false, // 是否开启经典布局分割菜单（仅经典布局生效）
   isLockScreen: false, // 是否开启自动锁屏
@@ -49,9 +49,9 @@ const defaultThemeConfig: ThemeType = {
   isShowLogo: false, // 是否开启侧边栏 Logo
   isShowLogoChange: false, // 初始化变量，用于 el-scrollbar 的高度更新，请勿删除
   isBreadcrumb: true, // 是否开启 Breadcrumb，强制经典、横向布局不显示
-  isTagsview: true, // 是否开启 Tagsview
+  isTagView: true,
   isBreadcrumbIcon: false, // 是否开启 Breadcrumb 图标
-  isTagsviewIcon: false, // 是否开启 Tagsview 图标
+  isTagViewIcon: false, // 是否开启 Tagsview 图标
   isCacheTagsView: false, // 是否开启 TagsView 缓存
   isSortableTagsView: true, // 是否开启 TagsView 拖拽
   isShareTagsView: false, // 是否开启 TagsView 共用
@@ -60,7 +60,7 @@ const defaultThemeConfig: ThemeType = {
   isInvert: false, // 是否开启色弱模式
   isIsDark: false, // 是否开启深色模式
   isWartermark: false, // 是否开启水印
-  wartermarkText: 'small@小柒', // 水印文案
+  wartermarkText: '帅气小辉', // 水印文案
   /**
    * 其它设置
    */
@@ -73,32 +73,40 @@ const defaultThemeConfig: ThemeType = {
    * 注意：为了演示，切换布局时，颜色会被还原成默认，代码位置：@/layout/navBars/breadcrumb/setings.vue
    * 中的 `initSetLayoutChange(设置布局切换，重置主题样式)` 方法
    */
-  layout: 'defaults', // 布局切换：可选值"<defaults|classic|transverse|columns>"
-  /**
-   * 后端控制路由
-   */
-  isRequestRoutes: false, // 是否开启后端控制路由
-  /**
-   * 全局网站标题 / 副标题
-   */
-  globalTitle: 'vue3-vite-work', // 网站主标题（菜单导航、浏览器当前网页标题）
-  globalViceTitle: '帅气小辉', // 网站副标题（登录页顶部文字）
-  globalI18n: 'zh-cn', // 默认初始语言
-  globalComponentSize: 'large' // 默认全局组件大小，可选值
+  layout: 'default',
+  /** 后端控制路由  */
+  isRequestRoutes: false,
+  /** 全局网站标题 / 副标题 */
+  globalTitle: '小石头潭记',
+  globalViceTitle: '帅气小辉',
+  globalI18n: 'zh-cn',
+  globalComponentSize: 'large'
 }
 
 // 场景类型， 已经使用的默认场景参数才写进来
 export type ThemeType = {
-  /**
-   * 后端控制路由
-   */
-  isRequestRoutes: boolean // 是否开启后端控制路由
-  /**
-   * 全局网站标题 / 副标题
-   */
-  globalViceTitle: string // 网站副标题（登录页顶部文字）
-  globalI18n: 'zh-cn' | 'en' | 'zh-tw' // 默认初始语言
-  globalComponentSize: '' | 'default' | 'small' | 'large' // 默认全局组件大小
+  // 是否开启菜单水平折叠效果
+  isCollapse: boolean
+  // 是否开启固定 Header
+  isFixedHeader: boolean
+
+  // 是否开启 TagView
+  isTagView: boolean,
+
+  // 是否开启后端控制路由
+  isRequestRoutes: boolean
+
+  // 布局切换
+  layout: 'default' | 'classic' | 'transverse' | 'columns'
+
+  // 网站主标题（菜单导航、浏览器当前网页标题）
+  globalTitle: string
+  // 网站副标题（登录页顶部文字）
+  globalViceTitle: string
+  // 默认初始语言
+  globalI18n: 'zh-cn' | 'en' | 'zh-tw'
+  // 默认全局组件大小
+  globalComponentSize: '' | 'default' | 'small' | 'large'
 }
 
 export const ThemeStore = defineStore(

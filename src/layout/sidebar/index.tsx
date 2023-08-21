@@ -1,7 +1,6 @@
 import { defineComponent, defineAsyncComponent, computed } from 'vue'
-import { routes } from '@/constant'
-import { ThemeStore } from '@/store/modules/theme'
 import './sidebar.less'
+import { useStore } from "@/store";
 const SubMenu = defineAsyncComponent(() => import('@/layout/sidebar/components/subMenu.tsx'))
 
 export default defineComponent({
@@ -15,12 +14,12 @@ export default defineComponent({
   setup() {
     const handleOpen = (key: string, keyPath: string[]) => console.log(key, keyPath)
     const handleClose = (key: string, keyPath: string[]) => console.log(key, keyPath)
-    const themeSore = ThemeStore()
-    const isCollapse = computed(() => themeSore.getThemeConfig().sidebar.isCollapse)
-    return { isCollapse, handleClose, handleOpen }
+    const isCollapse = computed(() => useStore().useThemeStore.isCollapse)
+    const routes = useStore().useRouteStore.routesList
+    return { isCollapse, routes, handleClose, handleOpen }
   },
   render() {
-    const { isCollapse, handleOpen, handleClose } = this
+    const { isCollapse, handleOpen, handleClose, routes } = this
     const menuItems: JSX.Element[] = routes.map(menu => <SubMenu menu={menu} />)
     return (
       <>

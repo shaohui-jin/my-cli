@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useStore } from '@/store'
-import { resetRoute, staticRoutes } from '@/router/utils.ts'
-import { initFrontEndRoutes } from '@/router/frontEnd.ts'
+import { resetRoute, staticRoutes, dynamicRoutes } from '@/router/utils.ts'
+// import { initFrontEndRoutes } from '@/router/frontEnd.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_APP_BASE_PATH),
-  routes: staticRoutes
+  // routes: staticRoutes
+  routes: [...staticRoutes, ...dynamicRoutes]
 })
 
 // 路由加载前

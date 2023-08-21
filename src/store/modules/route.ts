@@ -5,6 +5,7 @@ import { RouteRecordRaw } from 'vue-router'
 
 export type RouteType = {
   routesList: RouteRecordRaw[]
+  tagsViewList: RouteRecordRaw[]
   // isColumnsMenuHover: boolean
   // isColumnsNavHover: boolean
 }
@@ -12,11 +13,12 @@ export const RouteStore = defineStore(
   'route',
   () => {
     const routeData = reactive<RouteType>({
-      routesList: []
+      routesList: [],
+      tagsViewList: []
       // isColumnsMenuHover: false,
       // isColumnsNavHover: false
     })
-    const setRoutesList = (data: Array<RouteRecordRaw>) => (routeData.routesList = data)
+    // const setRoutesList = (data: Array<RouteRecordRaw>) => (routeData.routesList = data)
 
     // 设置分栏布局，鼠标是否移入移出（菜单）
     // const setColumnsMenuHover = (bool: boolean) => (routeData.isColumnsMenuHover = bool)
@@ -24,8 +26,8 @@ export const RouteStore = defineStore(
     // const setColumnsNavHover = (bool: boolean) => (routeData.isColumnsNavHover = bool)
 
     return {
-      ...toRefs(routeData),
-      setRoutesList
+      ...toRefs(routeData)
+      // setRoutesList
       // setColumnsMenuHover,
       // setColumnsNavHover
     }

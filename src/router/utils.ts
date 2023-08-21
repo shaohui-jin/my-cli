@@ -20,7 +20,7 @@ import { useStore } from '@/store'
  * 定义动态路由
  * @returns 返回路由菜单数据
  */
-const dynamicRoutes: Array<RouteRecordRaw> = [
+export const dynamicRoutes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: '/',
@@ -315,10 +315,11 @@ export const filterHasRolesMenu = (routes: RouteRecordRaw[], roles: Array<string
  * @description 用于 tagsView、菜单搜索中：未过滤隐藏的(isHide)
  */
 export const storeMenuAndTagViewRoutes = () => {
-  useStore().useRouteStore.setRoutesList(
-    filterHasRolesMenu((dynamicRoutes as any)[0].children, useStore().useUserStore.authList)
+  useStore().useRouteStore.routesList = filterHasRolesMenu(
+    (dynamicRoutes as any)[0].children,
+    useStore().useUserStore.authList
   )
   // 获取所有有权限的路由，否则 tagsView、菜单搜索中无权限的路由也将显示
   const rolesRoutes = filterHasRolesMenu(dynamicRoutes, useStore().useUserStore.authList)
-  useStore().useTagViewStore.setTagsViewRoutes((unFlatRoutes(flatRoutes(rolesRoutes)) as any)[0].children)
+  useStore().useRouteStore.tagsViewList = (unFlatRoutes(flatRoutes(rolesRoutes)) as any)[0].children
 }

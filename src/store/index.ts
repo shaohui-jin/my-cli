@@ -21,12 +21,10 @@ export const useStore = () => ({
   useUserStore: UserStore(),
   useKeepAliveStore: KeepAliveStore(),
   useRouteStore: RouteStore(),
-  useTagViewStore: TagViewStore(),
   $reset: () => {
     UserStore().$reset()
     KeepAliveStore().$reset()
     RouteStore().$reset()
-    TagViewStore().$reset()
   }
 })
 

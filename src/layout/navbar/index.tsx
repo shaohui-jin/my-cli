@@ -1,10 +1,10 @@
 import { computed, defineComponent, watchEffect, ref, ComputedRef } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouteRecordRaw, useRoute, useRouter } from 'vue-router'
 import './navbar.less'
 import { Fold, Expand } from '@element-plus/icons-vue'
 import { Route } from '@/types'
-import { ThemeStore } from '@/store/modules/theme'
 import { flattenArray } from '@/utils/common'
+import { useStore } from '@/store'
 
 export default defineComponent({
   name: 'SLANavbar',
@@ -27,23 +27,21 @@ export default defineComponent({
     })
 
     // 是否收缩侧边栏
-    const themeStore = ThemeStore()
     const isCollapse = ref<boolean>(false)
     watchEffect(() => {
-      isCollapse.value = themeStore.themeConfig.sidebar.isCollapse
+      isCollapse.value = useStore().useThemeStore.isCollapse
     })
     const handleCollapse = () => {
-      themeStore.setThemeConfig({
-        ...themeStore.getThemeConfig(),
-        ...{ sidebar: { isCollapse: !isCollapse.value } }
-      })
+      useStore().useThemeStore.isCollapse = !useStore().useThemeStore.isCollapse
+      // themeStore.setThemeConfig({
+      //   ...themeStore.getThemeConfig(),
+      //   ...{ sidebar: { isCollapse: !isCollapse.value } }
+      // })
     }
 
     // 计算当前路由、上一页路由
-    const routesMap = ref<{ [path: string]: Route }>({})
-    ;(flattenArray(routes, 'children') as Route[]).forEach((route: Route) => {
-      routesMap.value[route.path] = route
-    })
+    const routesMap = ref<RouteRecordRaw[]>(useStore().useRouteStore.tagsViewList)
+
     const currentRoute: ComputedRef<Route> = computed((): Route => routesMap.value[current.value])
     const backRoute: ComputedRef<Route> = computed((): Route => routesMap.value[back.value])
     const showBack: ComputedRef<boolean> = computed(() => {
