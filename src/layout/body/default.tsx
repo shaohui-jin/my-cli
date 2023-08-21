@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 
 const Aside = defineAsyncComponent(() => import('@/layout/component/aside.vue'))
 const Header = defineAsyncComponent(() => import('@/layout/component/header.vue'))
-const Main = defineAsyncComponent(() => import('@/layout/component/main.vue'))
+const Main = defineAsyncComponent(() => import('@/layout/component/main.tsx'))
 
 export default defineComponent({
   setup() {

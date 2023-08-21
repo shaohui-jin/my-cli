@@ -55,7 +55,7 @@ const defaultThemeConfig: ThemeType = {
   isCacheTagsView: false, // 是否开启 TagsView 缓存
   isSortableTagsView: true, // 是否开启 TagsView 拖拽
   isShareTagsView: false, // 是否开启 TagsView 共用
-  isFooter: false, // 是否开启 Footer 底部版权信息
+  isFooter: true,
   isGrayscale: false, // 是否开启灰色模式
   isInvert: false, // 是否开启色弱模式
   isIsDark: false, // 是否开启深色模式
@@ -91,7 +91,9 @@ export type ThemeType = {
   isFixedHeader: boolean
 
   // 是否开启 TagView
-  isTagView: boolean,
+  isTagView: boolean
+  // 是否开启 Footer 底部版权信息
+  isFooter: boolean
 
   // 是否开启后端控制路由
   isRequestRoutes: boolean

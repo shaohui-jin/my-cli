@@ -25,6 +25,7 @@ export const useStore = () => ({
     UserStore().$reset()
     KeepAliveStore().$reset()
     RouteStore().$reset()
+    ThemeStore().$reset()
   }
 })
 

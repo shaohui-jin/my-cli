@@ -1,7 +1,7 @@
 import { defineComponent, defineAsyncComponent } from 'vue'
 
 const Header = defineAsyncComponent(() => import('@/layout/component/header.vue'))
-const Main = defineAsyncComponent(() => import('@/layout/component/main.vue'))
+const Main = defineAsyncComponent(() => import('@/layout/component/main.tsx'))
 
 export default defineComponent({
   render() {
