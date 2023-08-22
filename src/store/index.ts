@@ -4,7 +4,6 @@ import { ThemeStore } from './modules/theme.ts'
 import { UserStore } from './modules/user.ts'
 import { KeepAliveStore } from './modules/keepAlive.ts'
 import { RouteStore } from './modules/route.ts'
-import { TagViewStore } from './modules/tagsViewRoutes.ts'
 
 const store = createPinia()
   .use(({ store }) => {

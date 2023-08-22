@@ -5,14 +5,14 @@ import { useStore } from '@/store'
 /**
  * 路由meta对象参数说明
  * meta: {
- *      title:          菜单栏及 tagsView 栏、菜单搜索名称（国际化）
+ *      title:          菜单栏及 tagView 栏、菜单搜索名称（国际化）
  *      isLink：        是否超链接菜单，开启外链条件，`1、isLink:true 2、链接地址不为空`
  *      isHide：        是否隐藏此路由
  *      isKeepAlive：   是否缓存组件状态
- *      isAffix：       是否固定在 tagsView 栏上
+ *      isAffix：       是否固定在 tagView 栏上
  *      isIframe：      是否内嵌窗口，，开启条件，`1、isIframe:true 2、链接地址不为空`
  *      roles：         当前路由权限标识，取角色管理。控制路由显示、隐藏。超级管理员：admin 普通角色：common
- *      icon：          菜单、tagsView 图标，阿里：加 `iconfont xxx`，fontawesome：加 `fa xxx`
+ *      icon：          菜单、tagView 图标，阿里：加 `iconfont xxx`，fontawesome：加 `fa xxx`
  * }
  */
 
@@ -312,14 +312,14 @@ export const filterHasRolesMenu = (routes: RouteRecordRaw[], roles: Array<string
 /**
  * 设置递归过滤有权限的路由到 store routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
  * @description 用于左侧菜单、横向菜单的显示
- * @description 用于 tagsView、菜单搜索中：未过滤隐藏的(isHide)
+ * @description 用于 tagView、菜单搜索中：未过滤隐藏的(isHide)
  */
 export const storeMenuAndTagViewRoutes = () => {
   useStore().useRouteStore.routesList = filterHasRolesMenu(
     (dynamicRoutes as any)[0].children,
     useStore().useUserStore.authList
   )
-  // 获取所有有权限的路由，否则 tagsView、菜单搜索中无权限的路由也将显示
+  // 获取所有有权限的路由，否则 tagView、菜单搜索中无权限的路由也将显示
   const rolesRoutes = filterHasRolesMenu(dynamicRoutes, useStore().useUserStore.authList)
-  useStore().useRouteStore.tagsViewList = (unFlatRoutes(flatRoutes(rolesRoutes)) as any)[0].children
+  useStore().useRouteStore.tagViewList = (unFlatRoutes(flatRoutes(rolesRoutes)) as any)[0].children
 }

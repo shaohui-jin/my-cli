@@ -15,9 +15,7 @@ export default defineComponent({
         isDelayFooter.value = true
       }, 800)
     })
-    return {
-      isDelayFooter, msg
-    }
+    return { isDelayFooter, msg }
   },
   render() {
     const { isDelayFooter, msg } = this
@@ -27,7 +25,7 @@ export default defineComponent({
           <>
             <div class="layout-footer mt15">
               <div class="layout-footer-warp">
-                <div>{ msg }</div>
+                <div>{msg}</div>
                 <div class="mt5">123</div>
               </div>
             </div>

@@ -8,27 +8,22 @@ const Footer = defineAsyncComponent(() => import('@/layout/component/footer.tsx'
 export default defineComponent({
   setup() {
     const route = useRoute()
+    const isFooter = computed(() => useStore().useThemeStore.isFooter)
     const state = reactive({
       headerHeight: '',
       currentRouteMeta: {}
     })
 
-    const isFooter = computed(() => useStore().useThemeStore.isFooter)
-    // 设置 main 的高度
-    const initHeaderHeight = () => {
-      const isTagView = useStore().useThemeStore.isTagView
-      if (isTagView) return (state.headerHeight = `84px`)
-      else return (state.headerHeight = `50px`)
-    }
+    // 页面加载前
+    onBeforeMount(() => {
+      // initHeaderHeight()
+      initGetMeta()
+    })
     // 初始化获取当前路由 meta，用于设置 iframes padding
     const initGetMeta = () => {
       state.currentRouteMeta = route.meta
     }
-    // 页面加载前
-    onBeforeMount(() => {
-      initHeaderHeight()
-      initGetMeta()
-    })
+
     const layoutScrollbarRef = ref()
     // 监听 themeConfig 配置文件的变化，更新菜单 el-scrollbar 的高度
     watch(
@@ -42,6 +37,10 @@ export default defineComponent({
             layoutScrollbarRef.value.update()
           }
         }
+      },
+      {
+        deep: true,
+        immediate: true
       }
     )
     // 监听路由变化

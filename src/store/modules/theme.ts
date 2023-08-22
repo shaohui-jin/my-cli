@@ -8,99 +8,165 @@ import { getCookie } from '@/utils/cookie.ts'
  * 默认场景参数
  */
 const defaultThemeConfig: ThemeType = {
-  isDrawer: false, // 是否开启布局配置抽屉
-  /**
-   * 全局主题
-   */
-  primary: '#409eff', // 默认 primary 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  success: '#67c23a', // 默认 success 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  info: '#909399', // 默认 info 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  warning: '#e6a23c', // 默认 warning 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  danger: '#f56c6c', // 默认 danger 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  /**
-   * 菜单 / 顶栏
-   * 注意：v1.0.17 版本去除设置布局切换，重置主题样式（initSetLayoutChange），
-   * 切换布局需手动设置样式，设置的样式自动同步各布局，
-   * 代码位置：@/layout/navBars/breadcrumb/setings.vue
-   */
-  topBar: '#ffffff', // 默认顶栏导航背景颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  menuBar: '#545c64', // 默认菜单导航背景颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  columnsMenuBar: '#545c64', // 默认分栏菜单背景颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  topBarColor: '#606266', // 默认顶栏导航字体颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  menuBarColor: '#eaeaea', // 默认菜单导航字体颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  columnsMenuBarColor: '#e6e6e6', // 默认分栏菜单字体颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
-  isTopBarColorGradual: false, // 是否开启顶栏背景颜色渐变
-  isMenuBarColorGradual: false, // 是否开启菜单背景颜色渐变
-  isColumnsMenuBarColorGradual: false, // 是否开启分栏菜单背景颜色渐变
-  isMenuBarColorHighlight: false, // 是否开启菜单字体背景高亮
-  /**
-   * 界面设置
-   */
+  isDrawer: false,
+
+  primary: '#409eff',
+  success: '#67c23a',
+  info: '#909399',
+  warning: '#e6a23c',
+  danger: '#f56c6c',
+  topBar: '#ffffff',
+  menuBar: '#545c64',
+  columnsMenuBar: '#545c64',
+  topBarColor: '#606266',
+  menuBarColor: '#eaeaea',
+  columnsMenuBarColor: '#e6e6e6',
+
+  isTopBarColorGradual: false,
+  isMenuBarColorGradual: false,
+  isColumnsMenuBarColorGradual: false,
+  isMenuBarColorHighlight: false,
   isCollapse: false,
-  isUniqueOpened: false, // 是否开启菜单手风琴效果
+  isUniqueOpened: false,
   isFixedHeader: false,
-  isFixedHeaderChange: false, // 初始化变量，用于更新菜单 el-scrollbar 的高度，请勿删除
-  isClassicSplitMenu: false, // 是否开启经典布局分割菜单（仅经典布局生效）
-  isLockScreen: false, // 是否开启自动锁屏
-  lockScreenTime: 30, // 开启自动锁屏倒计时(s/秒)
-  /**
-   * 界面显示
-   */
-  isShowLogo: false, // 是否开启侧边栏 Logo
-  isShowLogoChange: false, // 初始化变量，用于 el-scrollbar 的高度更新，请勿删除
-  isBreadcrumb: true, // 是否开启 Breadcrumb，强制经典、横向布局不显示
+  isFixedHeaderChange: false,
+  isClassicSplitMenu: false,
+  isLockScreen: false,
+  lockScreenTime: 30,
+  isShowLogo: false,
+  isShowLogoChange: false,
+  isBreadcrumb: true,
   isTagView: true,
-  isBreadcrumbIcon: false, // 是否开启 Breadcrumb 图标
-  isTagViewIcon: false, // 是否开启 Tagsview 图标
-  isCacheTagsView: false, // 是否开启 TagsView 缓存
-  isSortableTagsView: true, // 是否开启 TagsView 拖拽
-  isShareTagsView: false, // 是否开启 TagsView 共用
+  isBreadcrumbIcon: false,
+  isTagViewIcon: false,
+  isCacheTagView: false,
+  isSortableTagView: true,
+  isShareTagView: false,
   isFooter: true,
-  isGrayscale: false, // 是否开启灰色模式
-  isInvert: false, // 是否开启色弱模式
-  isIsDark: false, // 是否开启深色模式
-  isWartermark: false, // 是否开启水印
-  wartermarkText: '帅气小辉', // 水印文案
-  /**
-   * 其它设置
-   */
-  tagsStyle: 'tags-style-five', // Tagsview 风格：可选值"<tags-style-one|tags-style-two|tags-style-three|tags-style-four|tags-style-five>"，定义的值与 `/src/layout/navBars/tagsView/tagsView.vue` 中的 class 同名
-  animation: 'slide-right', // 主页面切换动画：可选值"<slide-right|slide-left|opacitys>"
-  columnsAsideStyle: 'columns-round', // 分栏高亮风格：可选值"<columns-round|columns-card>"
-  columnsAsideLayout: 'columns-vertical', // 分栏布局风格：可选值"<columns-horizontal|columns-vertical>"
-  /**
-   * 布局切换
-   * 注意：为了演示，切换布局时，颜色会被还原成默认，代码位置：@/layout/navBars/breadcrumb/setings.vue
-   * 中的 `initSetLayoutChange(设置布局切换，重置主题样式)` 方法
-   */
+  isGrayscale: false,
+  isInvert: false,
+  isIsDark: false,
+  isWatermark: false,
+  watermarkText: '帅气小辉',
   layout: 'default',
-  /** 后端控制路由  */
+
+  tagStyle: 'tags-style-five',
+  animation: 'slide-right',
+  columnsAsideStyle: 'columns-round',
+  columnsAsideLayout: 'columns-vertical',
+
   isRequestRoutes: false,
-  /** 全局网站标题 / 副标题 */
+
   globalTitle: '小石头潭记',
   globalViceTitle: '帅气小辉',
   globalI18n: 'zh-cn',
   globalComponentSize: 'large'
 }
 
-// 场景类型， 已经使用的默认场景参数才写进来
-export type ThemeType = {
+/** 全局主题 */
+type ThemeOption = {
+  // 默认 primary 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  primary: string
+  // 默认 success 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  success: string
+  // 默认 info 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  info: string
+  // 默认 warning 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  warning: string
+  // 默认 danger 颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  danger: string
+  // 默认顶栏导航背景颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  topBar: string
+  // 默认菜单导航背景颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  menuBar: string
+  // 默认分栏菜单背景颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  columnsMenuBar: string
+  // 默认顶栏导航字体颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  topBarColor: string
+  // 默认菜单导航字体颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  menuBarColor: string
+  // 默认分栏菜单字体颜色，请注意：需要同时修改 `@/theme/common/var.scss` 对应的值
+  columnsMenuBarColor: string
+}
+
+/** 布局设置 */
+type LayoutOption = {
+  // 是否开启顶栏背景颜色渐变
+  isTopBarColorGradual: boolean
+  // 是否开启菜单背景颜色渐变
+  isMenuBarColorGradual: boolean
+  // 是否开启分栏菜单背景颜色渐变
+  isColumnsMenuBarColorGradual: boolean
+  // 是否开启菜单字体背景高亮
+  isMenuBarColorHighlight: boolean
   // 是否开启菜单水平折叠效果
   isCollapse: boolean
+  // 是否开启菜单手风琴效果
+  isUniqueOpened: boolean
   // 是否开启固定 Header
   isFixedHeader: boolean
-
+  // 初始化变量，用于更新菜单 el-scrollbar 的高度，请勿删除
+  isFixedHeaderChange: boolean
+  // 是否开启经典布局分割菜单（仅经典布局生效）
+  isClassicSplitMenu: boolean
+  // 是否开启自动锁屏
+  isLockScreen: boolean
+  // 开启自动锁屏倒计时(s/秒)
+  lockScreenTime: number
+  // 是否开启侧边栏 Logo
+  isShowLogo: boolean
+  // 初始化变量，用于 el-scrollbar 的高度更新，请勿删除
+  isShowLogoChange: boolean
+  // 是否开启 Breadcrumb，强制经典、横向布局不显示
+  isBreadcrumb: boolean
   // 是否开启 TagView
   isTagView: boolean
+  // 是否开启 Breadcrumb 图标
+  isBreadcrumbIcon: boolean
+  // 是否开启 TagView 图标
+  isTagViewIcon: boolean
+  // 是否开启 TagView 缓存
+  isCacheTagView: boolean
+  // 是否开启 TagView 拖拽
+  isSortableTagView: boolean
+  // 是否开启 TagView 共用
+  isShareTagView: boolean
   // 是否开启 Footer 底部版权信息
   isFooter: boolean
-
-  // 是否开启后端控制路由
-  isRequestRoutes: boolean
-
+  // 是否开启灰色模式
+  isGrayscale: boolean
+  // 是否开启色弱模式
+  isInvert: boolean
+  // 是否开启深色模式
+  isIsDark: boolean
+  // 是否开启水印
+  isWatermark: boolean
+  // 水印文案
+  watermarkText: string
   // 布局切换
   layout: 'default' | 'classic' | 'transverse' | 'columns'
+}
 
+/** 其它设置 */
+type OtherOption = {
+  // TagView 风格，定义的值与 `/src/layout/navBars/tagView/tagView.vue` 中的 class 同名
+  tagStyle: 'tags-style-one' | 'tags-style-two' | 'tags-style-three' | 'tags-style-four' | 'tags-style-five'
+  // 主页面切换动画
+  animation: 'slide-right' | 'slide-left' | 'opacitys'
+  // 分栏高亮风格
+  columnsAsideStyle: 'columns-round' | 'columns-card'
+  // 分栏布局风格
+  columnsAsideLayout: 'columns-horizontal' | 'columns-vertical'
+}
+
+/** 后端控制路由  */
+type RouteOption = {
+  // 是否开启后端控制路由
+  isRequestRoutes: boolean
+}
+
+/** 全局网站标题 / 副标题 */
+type GlobalOption = {
   // 网站主标题（菜单导航、浏览器当前网页标题）
   globalTitle: string
   // 网站副标题（登录页顶部文字）
@@ -110,6 +176,16 @@ export type ThemeType = {
   // 默认全局组件大小
   globalComponentSize: '' | 'default' | 'small' | 'large'
 }
+
+// 场景类型， 已经使用的默认场景参数才写进来
+export type ThemeType = ThemeOption &
+  OtherOption &
+  GlobalOption &
+  RouteOption &
+  LayoutOption & {
+    // 是否开启布局配置抽屉
+    isDrawer: boolean
+  }
 
 export const ThemeStore = defineStore(
   'theme',

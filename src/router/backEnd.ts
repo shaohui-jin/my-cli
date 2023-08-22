@@ -1,7 +1,7 @@
 // import { store } from '@/store/index.ts';
 // import { Session } from '@/utils/storage';
 // import { NextLoading } from '@/utils/loading';
-// import { setAddRoute, setFilterMenuAndCacheTagsViewRoutes } from '@/router/index';
+// import { setAddRoute, setFilterMenuAndCacheTagViewRoutes } from '@/router/index';
 // import { dynamicRoutes } from '@/router/route';
 // import { getMenuAdmin, getMenuTest } from '@/api/menu/index';
 //
@@ -20,7 +20,7 @@
 //  * @method store.dispatch('userInfos/setUserInfos') 触发初始化用户信息
 //  * @method store.dispatch('requestOldRoutes/setBackEndControlRoutes') 存储接口原始路由（未处理component），根据需求选择使用
 //  * @method setAddRoute 添加动态路由
-//  * @method setFilterMenuAndCacheTagsViewRoutes 设置递归过滤有权限的路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
+//  * @method setFilterMenuAndCacheTagViewRoutes 设置递归过滤有权限的路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
 //  */
 // export async function initBackEndControlRoutes() {
 // 	// 界面 loading 动画开始执行
@@ -38,7 +38,7 @@
 // 	// 添加动态路由
 // 	await setAddRoute();
 // 	// 设置递归过滤有权限的路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
-// 	setFilterMenuAndCacheTagsViewRoutes();
+// 	setFilterMenuAndCacheTagViewRoutes();
 // }
 //
 // /**

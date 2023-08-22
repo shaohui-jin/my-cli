@@ -1,7 +1,7 @@
 import { defineComponent, computed, defineAsyncComponent } from 'vue'
 import { useStore } from '@/store'
-const Aside = defineAsyncComponent(() => import('@/layout/component/aside.vue'))
-const Header = defineAsyncComponent(() => import('@/layout/component/header.vue'))
+const Aside = defineAsyncComponent(() => import('@/layout/component/aside.tsx'))
+const Header = defineAsyncComponent(() => import('@/layout/component/header.tsx'))
 const Main = defineAsyncComponent(() => import('@/layout/component/main.tsx'))
 // import ColumnsAside from '@/layout/component/columnsAside.vue';
 

@@ -6,6 +6,7 @@ import { installPlugins } from '@/utils/init'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import '@/assets/theme/index.less'
+import mitt from 'mitt'
 import { directive } from '@/directive'
 
 installPlugins()
@@ -21,3 +22,5 @@ directive(app) // 依赖于store
 // installElSvg(app) // 依赖elementPlus
 
 app.mount('#app')
+
+app.config.globalProperties.mittBus = mitt()

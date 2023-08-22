@@ -4,19 +4,26 @@ import { CookieEnum } from '@/constant'
 import { RouteRecordRaw } from 'vue-router'
 
 export type RouteType = {
+  // 路由
   routesList: RouteRecordRaw[]
-  tagsViewList: RouteRecordRaw[]
-  // isColumnsMenuHover: boolean
-  // isColumnsNavHover: boolean
+  // 是否悬在菜单上
+  isColumnsMenuHover: boolean
+  // 是否悬在子菜单上
+  isColumnsNavHover: boolean
+  // tagView
+  tagViewList: RouteRecordRaw[]
+  // tagView是否全屏
+  tagViewCurrenFull: boolean
 }
 export const RouteStore = defineStore(
   'route',
   () => {
     const routeData = reactive<RouteType>({
       routesList: [],
-      tagsViewList: []
-      // isColumnsMenuHover: false,
-      // isColumnsNavHover: false
+      isColumnsMenuHover: false,
+      isColumnsNavHover: false,
+      tagViewList: [],
+      tagViewCurrenFull: false
     })
     // const setRoutesList = (data: Array<RouteRecordRaw>) => (routeData.routesList = data)
 

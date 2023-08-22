@@ -1,10 +1,10 @@
 import { defineComponent, computed, defineAsyncComponent } from 'vue'
 import { useStore } from '@/store'
-const Aside = defineAsyncComponent(() => import('@/layout/component/aside.vue'))
-const Header = defineAsyncComponent(() => import('@/layout/component/header.vue'))
+const Aside = defineAsyncComponent(() => import('@/layout/component/aside.tsx'))
+const Header = defineAsyncComponent(() => import('@/layout/component/header.tsx'))
 const Main = defineAsyncComponent(() => import('@/layout/component/main.tsx'))
 
-// import TagsView from '@/layout/navBars/tagsView/tagsView.vue';
+// import TagView from '@/layout/navBars/tagView/tagView.vue';
 
 export default defineComponent({
   setup() {
@@ -15,12 +15,12 @@ export default defineComponent({
   render() {
     return (
       <>
-        <el-container class="layout-container flex-center">
+        <el-container class={['layout-container', 'flex-center']}>
           <Header />
           <el-container class="layout-main-height-50">
             <Aside />
-            <div class="flex-center layout-backtop">
-              {/*<TagsView v-if="isTagView" />*/}
+            <div class={['flex-center', 'layout-backtop']}>
+              {/*<TagView v-if="isTagView" />*/}
               <Main />
             </div>
           </el-container>

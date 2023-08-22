@@ -15,6 +15,7 @@
     "axios": "^1.4.0",
     "consola": "^3.2.3",
     "element-plus": "^2.3.7",
+    "mitt": "^3.0.1",
     "pinia": "^2.1.4",
     "pinia-plugin-persist": "^1.0.0",
     "qrcodejs2-fixes": "^0.0.2",
