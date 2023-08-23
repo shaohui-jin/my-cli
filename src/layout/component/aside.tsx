@@ -1,15 +1,6 @@
-import {
-  computed,
-  defineComponent,
-  reactive,
-  getCurrentInstance,
-  watch,
-  ref,
-  toRefs,
-  onBeforeMount,
-  defineAsyncComponent
-} from 'vue'
+import { computed, defineComponent, getCurrentInstance, watch, ref, onBeforeMount, defineAsyncComponent } from 'vue'
 import { useStore } from '@/store'
+import { RouteRecordRaw } from 'vue-router'
 
 const Vertical = defineAsyncComponent(() => import('@/layout/navMenu/vertical.tsx'))
 const Logo = defineAsyncComponent(() => import('@/layout/component/logo.tsx'))
@@ -17,19 +8,62 @@ const Logo = defineAsyncComponent(() => import('@/layout/component/logo.tsx'))
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any
-    const state: any = reactive({
-      menuList: [],
-      clientWidth: ''
+    const menuList = ref<RouteRecordRaw[]>([])
+    const clientWidth = ref<number>(0)
+
+    // 页面加载前
+    onBeforeMount(() => {
+      initMenuWidth(document.body.clientWidth)
+      setFilterRoutes()
+      proxy.mittBus.on('setSendColumnsChildren', (res: any) => {
+        menuList.value = res.children
+      })
+      proxy.mittBus.on('setSendClassicChildren', (res: any) => {
+        const { layout, isClassicSplitMenu } = useStore().useThemeStore
+        if (layout === 'classic' && isClassicSplitMenu) {
+          // menuList.value = []
+          menuList.value = res.children
+        }
+      })
+      proxy.mittBus.on('getBreadcrumbIndexSetFilterRoutes', () => {
+        setFilterRoutes()
+      })
+      proxy.mittBus.on('layoutMobileResize', (res: any) => {
+        initMenuWidth(res.clientWidth)
+        closeLayoutAsideMobileMode()
+      })
     })
+
+    // 设置菜单导航是否固定（移动端）
+    const initMenuWidth = (width: number) => (clientWidth.value = width)
+
+    // 设置/过滤路由（非静态路由/是否显示在菜单中）
+    const setFilterRoutes = () => {
+      if (useStore().useThemeStore.layout !== 'columns') {
+        menuList.value = filterRoutesFun(useStore().useRouteStore.routesList)
+      }
+    }
+
+    // 路由过滤递归函数
+    const filterRoutesFun = (arr: Array<object>) => {
+      return arr
+        .filter((item: any) => !item.meta.isHide)
+        .map((item: any) => {
+          item = Object.assign({}, item)
+          if (item.children) item.children = filterRoutesFun(item.children)
+          return item
+        })
+    }
 
     // 获取卡片全屏信息
     const tagViewCurrenFull = computed(() => useStore().useRouteStore.tagViewCurrenFull)
+
     // 设置菜单展开/收起时的宽度
     const setCollapseStyle = computed(() => {
       const { layout, isCollapse, menuBar } = useStore().useThemeStore
       const asideBrColor = ['#FFFFFF', '#FFF', '#fff', '#ffffff'].includes(menuBar) ? 'layout-el-aside-br-color' : ''
       // 判断是否是手机端
-      if (state.clientWidth <= 1000) {
+      if (clientWidth.value <= 1000) {
         if (isCollapse) {
           document.body.setAttribute('class', 'el-popup-parent--hidden')
           const asideEle = document.querySelector('.layout-container') as HTMLElement
@@ -61,6 +95,7 @@ export default defineComponent({
         }
       }
     })
+
     // 关闭移动端蒙版
     const closeLayoutAsideMobileMode = () => {
       const el = document.querySelector('.layout-aside-mobile-mode')
@@ -74,25 +109,7 @@ export default defineComponent({
       const { layout, isShowLogo } = useStore().useThemeStore
       return (isShowLogo && layout === 'default') || (isShowLogo && layout === 'columns')
     })
-    // 设置/过滤路由（非静态路由/是否显示在菜单中）
-    const setFilterRoutes = () => {
-      if (useStore().useThemeStore.layout === 'columns') return false
-      state.menuList = filterRoutesFun(useStore().useRouteStore.routesList)
-    }
-    // 路由过滤递归函数
-    const filterRoutesFun = (arr: Array<object>) => {
-      return arr
-        .filter((item: any) => !item.meta.isHide)
-        .map((item: any) => {
-          item = Object.assign({}, item)
-          if (item.children) item.children = filterRoutesFun(item.children)
-          return item
-        })
-    }
-    // 设置菜单导航是否固定（移动端）
-    const initMenuFixed = (clientWidth: number) => {
-      state.clientWidth = clientWidth
-    }
+
     // 鼠标移入、移出
     const onAsideEnterLeave = (bool: boolean) => {
       const { layout } = useStore().useThemeStore
@@ -115,36 +132,13 @@ export default defineComponent({
       if (layout === 'classic' && isClassicSplitMenu) return false
       setFilterRoutes()
     })
-    // 页面加载前
-    onBeforeMount(() => {
-      initMenuFixed(document.body.clientWidth)
-      setFilterRoutes()
-      // 此界面不需要取消监听(proxy.mittBus.off('setSendColumnsChildren))
-      // 因为切换布局时有的监听需要使用，取消了监听，某些操作将不生效
-      proxy.mittBus.on('setSendColumnsChildren', (res: any) => {
-        state.menuList = res.children
-      })
-      proxy.mittBus.on('setSendClassicChildren', (res: any) => {
-        const { layout, isClassicSplitMenu } = useStore().useThemeStore
-        if (layout === 'classic' && isClassicSplitMenu) {
-          state.menuList = []
-          state.menuList = res.children
-        }
-      })
-      proxy.mittBus.on('getBreadcrumbIndexSetFilterRoutes', () => {
-        setFilterRoutes()
-      })
-      proxy.mittBus.on('layoutMobileResize', (res: any) => {
-        initMenuFixed(res.clientWidth)
-        closeLayoutAsideMobileMode()
-      })
-    })
+
     return {
       setCollapseStyle,
       setShowLogo,
       tagViewCurrenFull,
       onAsideEnterLeave,
-      ...toRefs(state)
+      menuList
     }
   },
   render() {

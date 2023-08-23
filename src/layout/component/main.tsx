@@ -1,18 +1,17 @@
-import { defineComponent, defineAsyncComponent, reactive, ref, toRefs, onBeforeMount, watch, computed } from 'vue'
+import { defineComponent, defineAsyncComponent, ref, onBeforeMount, watch, computed } from 'vue'
 import { useStore } from '@/store'
-import { useRoute } from 'vue-router'
+import { RouteMeta, useRoute } from 'vue-router'
 
-// const LayoutParentView = defineAsyncComponent(() => import('@/layout/component/header.vue'))
+const View = defineAsyncComponent(() => import('@/layout/routerView/view.tsx'))
 const Footer = defineAsyncComponent(() => import('@/layout/component/footer.tsx'))
 
 export default defineComponent({
   setup() {
     const route = useRoute()
     const isFooter = computed(() => useStore().useThemeStore.isFooter)
-    const state = reactive({
-      headerHeight: '',
-      currentRouteMeta: {}
-    })
+
+    const headerHeight = ref<string>('')
+    const currentRouteMeta = ref<RouteMeta>({})
 
     // 页面加载前
     onBeforeMount(() => {
@@ -21,7 +20,7 @@ export default defineComponent({
     })
     // 初始化获取当前路由 meta，用于设置 iframes padding
     const initGetMeta = () => {
-      state.currentRouteMeta = route.meta
+      currentRouteMeta.value = route.meta
     }
 
     const layoutScrollbarRef = ref()
@@ -29,7 +28,7 @@ export default defineComponent({
     watch(
       () => useStore().useThemeStore,
       val => {
-        state.headerHeight = val.isTagsview ? '84px' : '50px'
+        headerHeight.value = val.isTagView ? '84px' : '50px'
         if (val.isFixedHeaderChange !== val.isFixedHeader) {
           if (!layoutScrollbarRef.value) {
             return false
@@ -47,16 +46,13 @@ export default defineComponent({
     watch(
       () => route.path,
       () => {
-        state.currentRouteMeta = route.meta
+        currentRouteMeta.value = route.meta
       }
     )
-    return {
-      isFooter,
-      ...toRefs(state)
-    }
+    return { isFooter, headerHeight, currentRouteMeta }
   },
   render() {
-    const { isFooter, currentRouteMeta, headerHeight  } = this
+    const { isFooter, currentRouteMeta, headerHeight } = this
     return (
       <>
         <el-main class="layout-main">
@@ -69,7 +65,7 @@ export default defineComponent({
               transition: 'padding 0.3s ease-in-out'
             }}
           >
-            {/*<LayoutParentView />*/}
+            <View />
             {isFooter ? <Footer /> : <div></div>}
           </el-scrollbar>
         </el-main>
