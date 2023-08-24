@@ -1,8 +1,32 @@
-import { defineComponent } from 'vue'
+import { defineComponent, computed, defineAsyncComponent } from 'vue'
+import { useStore } from '@/store'
+
+const NavBar = defineAsyncComponent(() => import('@/layout/navBar'))
 
 export default defineComponent({
-  setup() {},
+  setup() {
+    // 设置 header 的高度
+    const headerHeight = computed(() => {
+      const { isTagView, layout } = useStore().useThemeStore
+      return isTagView && layout !== 'classic' ? '84px' : '50px'
+    })
+    const tagViewCurrenFull = computed(() => useStore().useRouteStore.tagViewCurrenFull)
+    return { headerHeight, tagViewCurrenFull }
+  },
   render() {
-    return <>header.tsx</>
+    const { headerHeight, tagViewCurrenFull } = this
+    return (
+      <>
+        {tagViewCurrenFull ? (
+          <div></div>
+        ) : (
+          <>
+            <el-header class="layout-header" height={headerHeight}>
+              <NavBar />
+            </el-header>
+          </>
+        )}
+      </>
+    )
   }
 })

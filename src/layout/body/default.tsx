@@ -19,7 +19,7 @@ export default defineComponent({
       () => route.path,
       () => {
         // proxy.$refs.layoutDefaultsScrollbarRef.wrap$.scrollTop = 0
-        layoutDefaultsScrollbarRef.value.wrap$.scrollTop = 0
+        layoutDefaultsScrollbarRef.value.scrollTop = 0
       }
     )
     return {

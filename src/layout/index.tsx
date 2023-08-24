@@ -1,5 +1,4 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
-import './layout.less'
 import { useStore } from '@/store'
 
 const DefaultLayout = defineAsyncComponent(() => import('@/layout/body/default.tsx'))

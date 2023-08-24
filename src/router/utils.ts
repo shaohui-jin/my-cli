@@ -1,20 +1,30 @@
 import router from '@/router/index.ts'
-import { RouteRecordRaw } from 'vue-router'
+import { RouteRecordRaw as _RouteRecordRaw } from 'vue-router'
 import { useStore } from '@/store'
 
 /**
  * 路由meta对象参数说明
- * meta: {
- *      title:          菜单栏及 tagView 栏、菜单搜索名称（国际化）
- *      isLink：        是否超链接菜单，开启外链条件，`1、isLink:true 2、链接地址不为空`
- *      isHide：        是否隐藏此路由
- *      isKeepAlive：   是否缓存组件状态
- *      isAffix：       是否固定在 tagView 栏上
- *      isIframe：      是否内嵌窗口，，开启条件，`1、isIframe:true 2、链接地址不为空`
- *      roles：         当前路由权限标识，取角色管理。控制路由显示、隐藏。超级管理员：admin 普通角色：common
- *      icon：          菜单、tagView 图标，阿里：加 `iconfont xxx`，fontawesome：加 `fa xxx`
- * }
  */
+export type RouteRecordRaw = _RouteRecordRaw & {
+  meta: {
+    // 菜单栏及 tagView 栏、菜单搜索名称（国际化）
+    title: string
+    // 是否超链接菜单，开启外链条件，`1、isLink:true 2、链接地址不为空`
+    isLink: string
+    // 是否隐藏此路由
+    isHide: boolean
+    // 是否缓存组件状态
+    isKeepAlive: boolean
+    // 是否固定在 tagView 栏上
+    isAffix: boolean
+    // 是否内嵌窗口，，开启条件，`1、isIframe:true 2、链接地址不为空`
+    isIframe: boolean
+    // 当前路由权限标识，取角色管理。控制路由显示、隐藏。超级管理员：admin 普通角色：common
+    roles: Array<string>
+    // 菜单、tagView 图标，阿里：加 `iconfont xxx`，fontawesome：加 `fa xxx`
+    icon: string
+  }
+}
 
 /**
  * 定义动态路由
@@ -27,7 +37,14 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
     component: () => import('@/layout/index.tsx'),
     redirect: '/home',
     meta: {
-      isKeepAlive: true
+      title: 'home',
+      isLink: '',
+      isHide: false,
+      isKeepAlive: true,
+      isAffix: true,
+      isIframe: false,
+      roles: ['admin', 'common'],
+      icon: ''
     },
     children: [
       {
@@ -135,7 +152,14 @@ export const staticRoutes: Array<RouteRecordRaw> = [
     name: 'login',
     component: () => import('@/views/login/index.tsx'),
     meta: {
-      title: '登录'
+      title: '登录',
+      isLink: '',
+      isHide: false,
+      isKeepAlive: true,
+      isAffix: true,
+      isIframe: false,
+      roles: ['admin', 'common'],
+      icon: ''
     }
   }
   // {

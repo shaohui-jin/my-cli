@@ -1,8 +1,9 @@
 import {
   computed,
+  Transition,
+  KeepAlive,
   defineComponent,
-  toRefs,
-  reactive,
+  ref,
   getCurrentInstance,
   onBeforeMount,
   onUnmounted,
@@ -11,34 +12,29 @@ import {
 } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
+import { RouterView } from 'vue-router'
 
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any
     const route = useRoute()
-    const state: any = reactive({
-      refreshRouterViewKey: null,
-      keepAliveNameList: [],
-      keepAliveNameNewList: []
-    })
-    // 设置主界面切换动画
-    const setTransitionName = computed(() => {
-      return useStore().useThemeStore.animation
-    })
+    const refreshRouterViewKey = ref<string>('')
+    const keepAliveNameList = ref<string[]>([])
+    const keepAliveNameNewList = ref([])
 
-    // 获取组件缓存列表(name值)
-    const getKeepAliveNames = computed(() => {
-      return useStore().useKeepAliveStore.keepAliveNames
-    })
+    // 设置主界面切换动画
+    const transitionName = computed(() => useStore().useThemeStore.animation)
+
     // 页面加载前，处理缓存，页面刷新时路由缓存处理
     onBeforeMount(() => {
-      state.keepAliveNameList = getKeepAliveNames.value
+      const names = useStore().useKeepAliveStore.keepAliveNames
+      keepAliveNameList.value = names
       proxy.mittBus.on('onTagsViewRefreshRouterView', (fullPath: string) => {
-        state.keepAliveNameList = getKeepAliveNames.value.filter((name: string) => route.name !== name)
-        state.refreshRouterViewKey = null
+        keepAliveNameList.value = names.filter((name: string) => route.name !== name)
+        refreshRouterViewKey.value = ''
         nextTick(() => {
-          state.refreshRouterViewKey = fullPath
-          state.keepAliveNameList = getKeepAliveNames.value
+          refreshRouterViewKey.value = fullPath
+          keepAliveNameList.value = names
         })
       })
     })
@@ -50,26 +46,37 @@ export default defineComponent({
     watch(
       () => route.fullPath,
       () => {
-        state.refreshRouterViewKey = route.fullPath
+        refreshRouterViewKey.value = route.fullPath
       }
     )
     return {
-      getKeepAliveNames,
-      setTransitionName,
-      ...toRefs(state)
+      keepAliveNameNewList,
+      keepAliveNameList,
+      refreshRouterViewKey,
+      transitionName
     }
   },
   render() {
-    const { setTransitionName, keepAliveNameList, Component } = this
+    const { transitionName, keepAliveNameList, refreshRouterViewKey } = this
     return (
       <>
-        <router-view v-slot="{ Component }">
-          <transition name={setTransitionName} mode="out-in">
-            <keep-alive include={keepAliveNameList}>
-              <component is={Component} key={refreshRouterViewKey} class="w100" />
-            </keep-alive>
-          </transition>
-        </router-view>
+        <div class="h100">
+          <RouterView
+            v-slots={{
+              default: ({ Component: RouteComponent }: { Component: any }) => {
+                return (
+                  <>
+                    <Transition name={transitionName} mode="out-in">
+                      <KeepAlive include={keepAliveNameList}>
+                        <RouteComponent key={refreshRouterViewKey} class="w100" />
+                      </KeepAlive>
+                    </Transition>
+                  </>
+                )
+              }
+            }}
+          />
+        </div>
       </>
     )
   }
