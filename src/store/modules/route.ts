@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { reactive, toRefs } from 'vue'
 import { CookieEnum } from '@/constant'
-import { RouteRecordRaw } from 'vue-router'
+import { RouteRecordRaw } from '@/router/utils.ts'
 
 export type RouteType = {
   // 路由

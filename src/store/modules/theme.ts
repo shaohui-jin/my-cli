@@ -41,7 +41,7 @@ const defaultThemeConfig: ThemeType = {
   isTagViewIcon: false,
   isCacheTagView: false,
   isSortableTagView: true,
-  isShareTagView: false,
+  isShareTagView: true,
   isFooter: true,
   isGrayscale: false,
   isInvert: false,

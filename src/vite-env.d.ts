@@ -8,6 +8,8 @@ declare global {
   }
 }
 
+declare module 'sortablejs'
+
 interface Window {
   [App: string]: any
 }
