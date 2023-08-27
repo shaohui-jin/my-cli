@@ -9,6 +9,7 @@ declare global {
 }
 
 declare module 'sortablejs'
+declare module 'mitt'
 
 interface Window {
   [App: string]: any

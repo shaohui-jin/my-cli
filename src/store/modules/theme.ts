@@ -38,7 +38,7 @@ const defaultThemeConfig: ThemeType = {
   isBreadcrumb: true,
   isTagView: true,
   isBreadcrumbIcon: false,
-  isTagViewIcon: false,
+  isTagViewIcon: true,
   isCacheTagView: false,
   isSortableTagView: true,
   isShareTagView: true,
@@ -50,7 +50,8 @@ const defaultThemeConfig: ThemeType = {
   watermarkText: '帅气小辉',
   layout: 'default',
 
-  tagStyle: 'tags-style-five',
+  // tagStyle: 'tags-style-five',
+  tagStyle: 'tags-style-one',
   animation: 'slide-right',
   columnsAsideStyle: 'columns-round',
   columnsAsideLayout: 'columns-vertical',

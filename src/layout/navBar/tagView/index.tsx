@@ -17,6 +17,9 @@ import { isMobile, isObjectValueEqual } from '@/utils/common.ts'
 import Sortable from 'sortablejs'
 import { ElMessage } from 'element-plus'
 import { RouteRecordRaw } from '@/router/utils.ts'
+import { Close } from '@element-plus/icons-vue'
+import { getCookie, setCookie } from '@/utils/cookie.ts'
+import { CookieEnum } from '@/constant'
 
 export default defineComponent({
   setup() {
@@ -28,6 +31,8 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
 
+    // tagView的下标
+    const tagRefIndex = ref<number>(0)
     // 激活的路由
     const routeActive = ref<string>('')
     // 当前的路由地址
@@ -37,13 +42,8 @@ export default defineComponent({
     // 当前页面tagView的集合
     const tagViews = ref<RouteRecordRaw[]>([])
     // tagView的集合
-    const tagViewList = ref<RouteRecordRaw[]>([])
-
-    const state = reactive({
-      tagRefIndex: 0
-    })
-
-    const tagStyle = computed(() => useStore().useThemeStore.tagStyle)
+    // const tagViewList = ref<RouteRecordRaw[]>([])
+    const tagViewList = computed(() => useStore().useRouteStore.tagViewList)
 
     // 设置 tagView 高亮
     const isActive = (v: any) => {
@@ -55,29 +55,32 @@ export default defineComponent({
     }
 
     // 更新 tagViewList
-    const updateTagView = (tagViewList: Array<RouteRecordRaw>) => (useStore().useRouteStore.tagViewList = tagViewList)
+    const updateTagView = (list: RouteRecordRaw[] = tagViews.value) => {
+      useStore().useRouteStore.tagViewList = list
+    }
 
     // 获取 vuex 中的 tagsViewRoutes 列表
     const getTagViewRoutes = async () => {
       routeActive.value = await setTagViewHighlight(route)
       routePath.value = route.meta.isDynamic ? (route.meta.isDynamicPath as string) : route.path
       tagViews.value = []
-      tagViewList.value = useStore().useRouteStore.tagViewList
+      // tagViewList.value = getTagView()
       initTagView()
     }
 
     // vuex 中获取路由信息：如果是设置了固定的（isAffix），进行初始化显示
     const initTagView = async () => {
-      if (useStore().useRouteStore.tagViewList && useStore().useThemeStore.isCacheTagView) {
-        tagViews.value = useStore().useRouteStore.tagViewList
+      if (tagViewList.value && useStore().useThemeStore.isCacheTagView) {
+        tagViews.value = tagViewList.value
       } else {
-        await tagViewList.value.map((v: any) => {
+        tagViewList.value.map((v: any) => {
+          console.log(v)
           if (v.meta.isAffix && !v.meta.isHide) {
             v.url = setTagViewHighlight(v)
             tagViews.value.push({ ...v })
           }
         })
-        await addTagsView(route.path, route)
+        await addTagView(route.path, route)
       }
       // 初始化当前元素(li)的下标
       getTagsRefsIndex(useStore().useThemeStore.isShareTagView ? routePath.value : routeActive.value)
@@ -101,7 +104,7 @@ export default defineComponent({
         to.meta.isDynamic ? (findItem.params = to.params) : (findItem.query = to.query)
         findItem.url = setTagViewHighlight(findItem)
         tagViews.value.push({ ...findItem })
-        updateTagView(tagViews.value)
+        updateTagView()
       }
     }
     // 处理单标签时，第二次的值未覆盖第一次的 tagsViewList 值（Session Storage）
@@ -117,15 +120,18 @@ export default defineComponent({
         ) {
           to.meta.isDynamic ? (v.params = to.params) : (v.query = to.query)
           v.url = setTagViewHighlight(v)
-          updateTagView(tagViews.value)
+          updateTagView()
         }
       })
     }
-    // 1、添加 tagsView：未设置隐藏（isHide）也添加到在 tagsView 中（可开启多标签详情，单标签详情）
-    const addTagsView = (path: string, to?: any) => {
+    // 1、添加 tagView：未设置隐藏（isHide）也添加到在 tagView 中（可开启多标签详情，单标签详情）
+    const addTagView = (path: string, to?: any) => {
       // 防止拿取不到路由信息
       nextTick(async () => {
-        let item: RouteRecordRaw = {}
+        console.group('addTagView ---------------')
+        console.log('tagViewList', tagViewList.value)
+        console.log('to', to)
+        let item: RouteRecordRaw
         if (to && to.meta.isDynamic) {
           // 动态路由（xxx/:id/:name"）：参数不同，开启多个 tagView
           if (!useStore().useThemeStore.isShareTagView) await solveAddTagsView(path, to)
@@ -139,12 +145,15 @@ export default defineComponent({
           if (tagViews.value.some((v: any) => v.path === path)) return false
           item = tagViewList.value.find((v: any) => v.path === path)
         }
+        console.log('RouteRecordRaw', item)
+        console.groupEnd()
         if (item.meta.isLink && !item.meta.isIframe) return false
+
         if (to && to.meta.isDynamic) item.params = to?.params ? to?.params : route.params
         else item.query = to?.query ? to?.query : route.query
         item.url = setTagViewHighlight(item)
-        await tagViews.value.push({ ...item })
-        await updateTagView(tagViews.value)
+        tagViews.value.push({ ...item })
+        updateTagView()
       })
     }
     // 2、刷新当前 tagsView：
@@ -193,7 +202,7 @@ export default defineComponent({
           }
         }
       })
-      updateTagView(tagViews.value)
+      updateTagView()
     }
     // 4、关闭其它 tagsView：如果是设置了固定的（isAffix），不进行关闭
     const closeOtherTagsView = (path: string) => {
@@ -201,7 +210,7 @@ export default defineComponent({
       tagViewList.value.map((v: any) => {
         if (v.meta.isAffix && !v.meta.isHide) tagViews.value.push({ ...v })
       })
-      addTagsView(path, route)
+      addTagView(path, route)
     }
     // 5、关闭全部 tagsView：如果是设置了固定的（isAffix），不进行关闭
     const closeAllTagsView = () => {
@@ -212,7 +221,7 @@ export default defineComponent({
           router.push({ path: tagViews.value[tagViews.value.length - 1].path })
         }
       })
-      updateTagView(tagViews.value)
+      updateTagView()
     }
     // 6、开启当前页面全屏
     const openCurrenFullscreen = async (path: string) => {
@@ -226,7 +235,7 @@ export default defineComponent({
     // 当前项右键菜单点击，拿当前点击的路由路径对比 浏览器缓存中的 tagsView 路由数组，取当前点击项的详细路由信息
     // 防止 tagsView 非当前页演示时，操作异常
     const getCurrentRouteItem = (path: string, cParams: { [key: string]: any }) => {
-      const itemRoute = useStore().useRouteStore.tagViewList || tagViews.value
+      const itemRoute = tagViewList.value || tagViews.value
       return itemRoute.find((v: any) => {
         if (
           v.path === path &&
@@ -286,7 +295,7 @@ export default defineComponent({
     }
     // 当前的 tagsView 项点击时
     const onTagsClick = (v: any, k: number) => {
-      state.tagRefIndex = k
+      tagRefIndex.value = k
       router.push(v)
     }
     // 处理 tagView 高亮（多标签详情时使用，单标签详情未使用）
@@ -297,6 +306,7 @@ export default defineComponent({
       for (const i in params) {
         path += params[i]
       }
+      console.log(`${v.meta.isDynamic ? v.meta.isDynamicPath : v.path}-${path}`)
       // 判断是否是动态路由（xxx/:id/:name"）
       return `${v.meta.isDynamic ? v.meta.isDynamicPath : v.path}-${path}`
     }
@@ -315,9 +325,9 @@ export default defineComponent({
       nextTick(() => {
         if (tagRef.value.length <= 0) return false
         // 当前 li 元素
-        const liDom = tagRef.value[state.tagRefIndex]
+        const liDom = tagRef.value[tagRefIndex.value]
         // 当前 li 元素下标
-        const liIndex = state.tagRefIndex
+        const liIndex = tagRefIndex.value
         // 当前 ul 下 li 元素总长度
         const liLength = tagRef.value.length
         // 最前 li
@@ -334,9 +344,9 @@ export default defineComponent({
         // 当前滚动条偏移距离
         const scrollL = scrollRefs.scrollLeft
         // 上一个 tags li dom
-        const liPrevTag: any = tagRef.value[state.tagRefIndex - 1]
+        const liPrevTag: any = tagRef.value[tagRefIndex.value - 1]
         // 下一个 tags li dom
-        const liNextTag: any = tagRef.value[state.tagRefIndex + 1]
+        const liNextTag: any = tagRef.value[tagRefIndex.value + 1]
         // 上一个 tags li dom 的偏移距离
         let beforePrevL: any = ''
         // 下一个 tags li dom 的偏移距离
@@ -367,8 +377,8 @@ export default defineComponent({
     const getTagsRefsIndex = (path: string) => {
       nextTick(async () => {
         // await 使用该写法，防止拿取不到 tagsViewList 列表数据不完整
-        const tagsViewList = await tagViews.value
-        state.tagRefIndex = tagsViewList.findIndex((v: any) => {
+        const tagsViewList = tagViews.value
+        tagRefIndex.value = tagsViewList.findIndex((v: any) => {
           if (useStore().useThemeStore.isShareTagView) {
             return v.path === path
           } else {
@@ -384,9 +394,7 @@ export default defineComponent({
     const initSortable = async () => {
       const el = document.querySelector('.layout-navbar-tagView-ul') as HTMLElement
       if (!el) return false
-      console.log(el)
       sortable.value?.el && sortable.value.destroy()
-      console.log(el)
       sortable.value = new Sortable(el, {
         animation: 300,
         dataIdAttr: 'data-url',
@@ -459,14 +467,9 @@ export default defineComponent({
     // 路由更新时
     onBeforeRouteUpdate(async to => {
       routeActive.value = setTagViewHighlight(to)
-      routePath.value = to.meta.isDynamic ? to.meta.isDynamicPath : to.path
-      await addTagsView(to.path, to)
+      routePath.value = to.meta.isDynamic ? (to.meta.isDynamicPath as string) : to.path
+      await addTagView(to.path, to)
       getTagsRefsIndex(useStore().useThemeStore.isShareTagView ? routePath.value : routeActive.value)
-    })
-    // 监听路由的变化，动态赋值给 tagsView
-    watch(useStore().useRouteStore.tagViewList, val => {
-      if (val.length === tagViewList.value.length) return false
-      getTagViewRoutes()
     })
 
     const themeConfig = computed(() => useStore().useThemeStore)
@@ -484,13 +487,15 @@ export default defineComponent({
       closeCurrentTagsView,
       onCurrentContextmenuClick,
       themeConfig,
-      tagViewList
+      tagViewList,
+      tagViews
     }
   },
   render() {
     const {
       themeConfig,
       tagViewList,
+      tagViews,
       tagRef,
       onContextmenu,
       refreshCurrentTagView,
@@ -499,6 +504,7 @@ export default defineComponent({
       onHandleScroll,
       closeCurrentTagsView
     } = this
+    console.log(tagViewList, tagViews)
     return (
       <>
         <div
@@ -506,19 +512,21 @@ export default defineComponent({
         >
           <el-scrollbar
             ref="scrollbarRef"
-            nativeOnMousewheel={(event: any) => {
-              event.preventDefault()
-              onHandleScroll(event)
-            }}
+            // nativeOnMousewheel={(event: any) => {
+            //   event.preventDefault()
+            //   onHandleScroll(event)
+            // }}
           >
+            {JSON.stringify(tagViewList)}
             <ul class={{ 'layout-navbar-tagView-ul': true, [themeConfig.tagStyle]: true }} ref="tagUlRef">
-              {tagViewList.map((v, k) => {
+              {tagViewList.map((v: RouteRecordRaw, k) => {
                 return (
                   <>
                     <li
                       key={k}
                       class={{ 'layout-navbar-tagView-ul-li': true, 'is-active': isActive(v) }}
-                      data-url={v.url}
+                      // data-url={v.url}
+                      data-url={v.path}
                       onContextmenu={$event => {
                         $event.preventDefault()
                         onContextmenu(v, $event)
@@ -530,59 +538,56 @@ export default defineComponent({
                         }
                       }}
                     >
-                      {JSON.stringify(v)}
+                      {/*{ isActive(v).toString() }*/}
                       {isActive(v) ? (
                         <>
-                          <i class="iconfont icon-webicon318 layout-navbar-tagView-ul-li-iconfont font14"></i>
+                          <i class="iconfont icon-webicon318 layout-navbar-tagView-ul-li-iconfont font14" />
                         </>
                       ) : (
-                        <div></div>
+                        themeConfig.isTagViewIcon && (
+                          <i class={`iconfont ${v.meta.icon} layout-navbar-tagView-ul-li-iconfont`} />
+                        )
                       )}
-                      {!isActive(v) && themeConfig.isTagViewIcon ? (
-                        <el-icon name={v.meta.icon} class="layout-navbar-tagView-ul-li-iconfont" />
-                      ) : (
-                        <div></div>
-                      )}
+
                       <span>{v.meta.title}</span>
-                      {isActive(v) ? (
-                        <>
-                          <el-icon
-                            name="RefreshRight"
-                            class="ml5 layout-navbar-tagView-ul-li-refresh"
-                            onClick={(event: any) => {
-                              event.stopPropagation()
-                              refreshCurrentTagView(this.$route.fullPath)
-                            }}
-                          />
-                          {v.meta.isAffix ? (
-                            <></>
-                          ) : (
-                            <>
-                              <el-icon
-                                name="Close"
-                                class="layout-navbar-tagView-ul-li-icon layout-icon-active"
-                                onClick={(event: any) => {
-                                  event.stopPropagation()
-                                  closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)
-                                }}
-                              />
-                            </>
-                          )}
-                        </>
-                      ) : (
-                        <></>
-                      )}
+                      {/*{isActive(v) ? (*/}
+                      {/*  <>*/}
+                      {/*    <el-icon*/}
+                      {/*      name="RefreshRight"*/}
+                      {/*      class="ml5 layout-navbar-tagView-ul-li-refresh"*/}
+                      {/*      onClick={(event: any) => {*/}
+                      {/*        event.stopPropagation()*/}
+                      {/*        refreshCurrentTagView(this.$route.fullPath)*/}
+                      {/*      }}*/}
+                      {/*    />*/}
+                      {/*    {v.meta.isAffix ? (*/}
+                      {/*      <></>*/}
+                      {/*    ) : (*/}
+                      {/*      <>*/}
+                      {/*        <el-icon*/}
+                      {/*          name="Close"*/}
+                      {/*          class="layout-navbar-tagView-ul-li-icon layout-icon-active"*/}
+                      {/*          onClick={(event: any) => {*/}
+                      {/*            event.stopPropagation()*/}
+                      {/*            closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)*/}
+                      {/*          }}*/}
+                      {/*        />*/}
+                      {/*      </>*/}
+                      {/*    )}*/}
+                      {/*  </>*/}
+                      {/*) : (*/}
+                      {/*  <></>*/}
+                      {/*)}*/}
                       {v.meta.isAffix && (
-                        <>
-                          <el-icon
-                            name="Close"
-                            class="layout-navbar-tagView-ul-li-icon layout-icon-three"
-                            onClick={(event: any) => {
-                              event.stopPropagation()
-                              closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)
-                            }}
+                        <el-icon>
+                          <Close
+                            class="layout-navbar-tagview-ul-li-iconfont layout-icon-three"
+                            // onClick={(event: any) => {
+                            //   event.stopPropagation()
+                            //   closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)
+                            // }}
                           />
-                        </>
+                        </el-icon>
                       )}
                     </li>
                   </>

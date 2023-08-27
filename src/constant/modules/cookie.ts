@@ -7,6 +7,6 @@ export enum CookieEnum {
   USER_TOKEN = 'SLA-USER-TOKEN',
   // 用户的路由
   USER_ROLE_ROUTE = 'SLA-USER-ROLE-ROUTE',
-  // tagview
+  // user的tagView
   TAG_VIEW_ROUTE = 'SLA-TAG-VIEW-ROUTE'
 }

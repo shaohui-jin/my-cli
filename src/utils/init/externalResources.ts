@@ -1,7 +1,7 @@
 // 字体图标 url
 const cssCdnUrlList: Array<string> = [
   '//at.alicdn.com/t/font_2298093_y6u00apwst.css',
-  '//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
 ]
 // 第三方 js url
 const jsCdnUrlList: Array<string> = []
@@ -27,4 +27,3 @@ export function setJsCdn() {
     document.body.appendChild(link)
   })
 }
-
