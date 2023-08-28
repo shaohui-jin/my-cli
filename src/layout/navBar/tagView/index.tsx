@@ -9,7 +9,8 @@ import {
   reactive,
   ref,
   watch,
-  getCurrentInstance
+  getCurrentInstance,
+  defineAsyncComponent
 } from 'vue'
 import { useStore } from '@/store'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
@@ -17,16 +18,15 @@ import { isMobile, isObjectValueEqual } from '@/utils/common.ts'
 import Sortable from 'sortablejs'
 import { ElMessage } from 'element-plus'
 import { RouteRecordRaw } from '@/router/utils.ts'
-import { Close } from '@element-plus/icons-vue'
-import { getCookie, setCookie } from '@/utils/cookie.ts'
-import { CookieEnum } from '@/constant'
+import { Close, RefreshRight } from '@element-plus/icons-vue'
+
+const ContextMenu = defineAsyncComponent(() => import('@/layout/navBar/tagView/contextMenu.tsx'))
 
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any
     const tagRef = ref([])
     const scrollbarRef = ref()
-    const contextmenuRef = ref()
     const tagUlRef = ref()
     const route = useRoute()
     const router = useRouter()
@@ -284,20 +284,28 @@ export default defineComponent({
       }
     }
 
-    const dropdown = ref<Record<'x' | 'y', string>>({ x: '', y: '' })
 
-    // 右键点击时：传 x,y 坐标值到子组件中（props）
-    const onContextmenu = (v: any, e: any) => {
-      const { clientX, clientY } = e
-      dropdown.value.x = clientX
-      dropdown.value.y = clientY
-      contextmenuRef.value.openContextmenu(v)
+    // 下拉菜单元素
+    const contextMenuRef = ref()
+    // 下拉菜单坐标
+    const dropDown = ref<Record<'x' | 'y', number>>({ x: 0, y: 0 })
+    // 右键点击事件：传 x,y 坐标值到子组件中
+    const onContextmenu = ($event: MouseEvent, v: RouteRecordRaw) => {
+      const { clientX, clientY } = $event
+      $event.preventDefault()
+      dropDown.value = {
+        x: clientX,
+        y: clientY
+      }
+      contextMenuRef.value.openContextMenu(v)
     }
-    // 当前的 tagsView 项点击时
-    const onTagsClick = (v: any, k: number) => {
+
+    // 当前的 tagView 项点击时
+    const onTagClick = (v: RouteRecordRaw, k: number) => {
       tagRefIndex.value = k
-      router.push(v)
+      router.push(v.path)
     }
+
     // 处理 tagView 高亮（多标签详情时使用，单标签详情未使用）
     const setTagViewHighlight = (v: any) => {
       const params = v.query && Object.keys(v.query).length > 0 ? v.query : v.params
@@ -477,11 +485,12 @@ export default defineComponent({
       isActive,
       onContextmenu,
       getTagViewRoutes,
-      onTagsClick,
+      onTagClick,
       tagRef,
-      contextmenuRef,
+      contextMenuRef,
       scrollbarRef,
       tagUlRef,
+      dropDown,
       onHandleScroll,
       refreshCurrentTagView,
       closeCurrentTagsView,
@@ -497,14 +506,15 @@ export default defineComponent({
       tagViewList,
       tagViews,
       tagRef,
+      dropDown,
       onContextmenu,
       refreshCurrentTagView,
       isActive,
-      onTagsClick,
+      onTagClick,
       onHandleScroll,
-      closeCurrentTagsView
+      closeCurrentTagsView,
+      onCurrentContextmenuClick
     } = this
-    console.log(tagViewList, tagViews)
     return (
       <>
         <div
@@ -512,12 +522,11 @@ export default defineComponent({
         >
           <el-scrollbar
             ref="scrollbarRef"
-            // nativeOnMousewheel={(event: any) => {
-            //   event.preventDefault()
-            //   onHandleScroll(event)
-            // }}
+            nativeOnMousewheel={(event: any) => {
+              event.preventDefault()
+              onHandleScroll(event)
+            }}
           >
-            {JSON.stringify(tagViewList)}
             <ul class={{ 'layout-navbar-tagView-ul': true, [themeConfig.tagStyle]: true }} ref="tagUlRef">
               {tagViewList.map((v: RouteRecordRaw, k) => {
                 return (
@@ -525,20 +534,15 @@ export default defineComponent({
                     <li
                       key={k}
                       class={{ 'layout-navbar-tagView-ul-li': true, 'is-active': isActive(v) }}
-                      // data-url={v.url}
-                      data-url={v.path}
-                      onContextmenu={$event => {
-                        $event.preventDefault()
-                        onContextmenu(v, $event)
-                      }}
-                      onClick={() => onTagsClick(v, k)}
+                      data-url={v.url}
+                      onContextmenu={$event => onContextmenu($event, v)}
+                      onClick={() => onTagClick(v, k)}
                       ref={el => {
                         if (el) {
                           tagRef[k] = el
                         }
                       }}
                     >
-                      {/*{ isActive(v).toString() }*/}
                       {isActive(v) ? (
                         <>
                           <i class="iconfont icon-webicon318 layout-navbar-tagView-ul-li-iconfont font14" />
@@ -548,45 +552,42 @@ export default defineComponent({
                           <i class={`iconfont ${v.meta.icon} layout-navbar-tagView-ul-li-iconfont`} />
                         )
                       )}
-
                       <span>{v.meta.title}</span>
-                      {/*{isActive(v) ? (*/}
-                      {/*  <>*/}
-                      {/*    <el-icon*/}
-                      {/*      name="RefreshRight"*/}
-                      {/*      class="ml5 layout-navbar-tagView-ul-li-refresh"*/}
-                      {/*      onClick={(event: any) => {*/}
-                      {/*        event.stopPropagation()*/}
-                      {/*        refreshCurrentTagView(this.$route.fullPath)*/}
-                      {/*      }}*/}
-                      {/*    />*/}
-                      {/*    {v.meta.isAffix ? (*/}
-                      {/*      <></>*/}
-                      {/*    ) : (*/}
-                      {/*      <>*/}
-                      {/*        <el-icon*/}
-                      {/*          name="Close"*/}
-                      {/*          class="layout-navbar-tagView-ul-li-icon layout-icon-active"*/}
-                      {/*          onClick={(event: any) => {*/}
-                      {/*            event.stopPropagation()*/}
-                      {/*            closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)*/}
-                      {/*          }}*/}
-                      {/*        />*/}
-                      {/*      </>*/}
-                      {/*    )}*/}
-                      {/*  </>*/}
-                      {/*) : (*/}
-                      {/*  <></>*/}
-                      {/*)}*/}
+                      {isActive(v) && (
+                        <>
+                          <el-icon
+                            class={['ml5', 'layout-navbar-tagView-ul-li-refresh']}
+                            onClick={(event: any) => {
+                              event.stopPropagation()
+                              refreshCurrentTagView(this.$route.fullPath)
+                            }}
+                          >
+                            <RefreshRight />
+                          </el-icon>
+                          {!v.meta.isAffix && (
+                            <>
+                              <el-icon
+                                class={['layout-navbar-tagView-ul-li-icon', 'layout-icon-active']}
+                                onClick={(event: any) => {
+                                  event.stopPropagation()
+                                  closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)
+                                }}
+                              >
+                                <Close />
+                              </el-icon>
+                            </>
+                          )}
+                        </>
+                      )}
                       {v.meta.isAffix && (
-                        <el-icon>
-                          <Close
-                            class="layout-navbar-tagview-ul-li-iconfont layout-icon-three"
-                            // onClick={(event: any) => {
-                            //   event.stopPropagation()
-                            //   closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)
-                            // }}
-                          />
+                        <el-icon
+                          class={['layout-navbar-tagView-ul-li-iconfont', 'layout-icon-three']}
+                          onClick={(event: any) => {
+                            event.stopPropagation()
+                            closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)
+                          }}
+                        >
+                          <Close />
                         </el-icon>
                       )}
                     </li>
@@ -595,6 +596,11 @@ export default defineComponent({
               })}
             </ul>
           </el-scrollbar>
+          <ContextMenu
+            dropDown={dropDown}
+            ref="contextMenuRef"
+            onContextMenuClick={item => onCurrentContextmenuClick(item)}
+          />
         </div>
       </>
     )
