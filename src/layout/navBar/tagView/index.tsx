@@ -13,7 +13,7 @@ import {
   defineAsyncComponent
 } from 'vue'
 import { useStore } from '@/store'
-import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteUpdate, RouteLocationNormalizedLoaded, Router, useRoute, useRouter } from 'vue-router'
 import { isMobile, isObjectValueEqual } from '@/utils/common.ts'
 import Sortable from 'sortablejs'
 import { ElMessage } from 'element-plus'
@@ -28,8 +28,8 @@ export default defineComponent({
     const tagRef = ref([])
     const scrollbarRef = ref()
     const tagUlRef = ref()
-    const route = useRoute()
-    const router = useRouter()
+    const route: RouteLocationNormalizedLoaded = useRoute()
+    const router: Router = useRouter()
 
     // tagView的下标
     const tagRefIndex = ref<number>(0)
@@ -42,7 +42,6 @@ export default defineComponent({
     // 当前页面tagView的集合
     const tagViews = ref<RouteRecordRaw[]>([])
     // tagView的集合
-    // const tagViewList = ref<RouteRecordRaw[]>([])
     const tagViewList = computed(() => useStore().useRouteStore.tagViewList)
 
     // 设置 tagView 高亮
@@ -59,34 +58,62 @@ export default defineComponent({
       useStore().useRouteStore.tagViewList = list
     }
 
-    // 获取 vuex 中的 tagsViewRoutes 列表
-    const getTagViewRoutes = async () => {
-      routeActive.value = await setTagViewHighlight(route)
-      routePath.value = route.meta.isDynamic ? (route.meta.isDynamicPath as string) : route.path
+    /**
+     * @desc 获取 store 中的 tagsViewRoutes 列表
+     */
+    const getTagViewRoutes = (): void => {
+      routeActive.value = handleRoutePath(route)
+      // todo: 设置动态路由的时候 isDynamicPath 就是 path，其实并不需要 route.meta.isDynamic ? (route.meta.isDynamicPath as string) : route.path
+      routePath.value = route.path
       tagViews.value = []
-      // tagViewList.value = getTagView()
       initTagView()
     }
 
-    // vuex 中获取路由信息：如果是设置了固定的（isAffix），进行初始化显示
-    const initTagView = async () => {
+    /**
+     * @desc 处理 tagView 激活的路由 path
+     * @desc (多标签详情时使用，单标签详情未使用）
+     * @param v 路由
+     * @return 处理后的路由地址
+     * @example
+     * handleRoutePath({ path: '/demo/define?a=1&b=2' })
+     * return '/demo/define-12
+     */
+    const handleRoutePath = (v: RouteLocationNormalizedLoaded): string => {
+      const params = v.query && Object.keys(v.query).length > 0 ? v.query : v.params
+      if (!params || Object.keys(params).length <= 0) {
+        return v.path
+      } else {
+        let path = ''
+        for (const i in params) {
+          path += params[i]
+        }
+        // 判断是否是动态路由（xxx/:id/:name"）
+        return `${v.meta.isDynamic ? v.meta.isDynamicPath : v.path}-${path}`
+      }
+    }
+
+    /**
+     * @desc store 中获取路由信息：如果是设置了固定的（isAffix），进行初始化显示
+     */
+    const initTagView = () => {
       if (tagViewList.value && useStore().useThemeStore.isCacheTagView) {
         tagViews.value = tagViewList.value
       } else {
         tagViewList.value.map((v: any) => {
           console.log(v)
           if (v.meta.isAffix && !v.meta.isHide) {
-            v.url = setTagViewHighlight(v)
+            v.url = handleRoutePath(v)
             tagViews.value.push({ ...v })
           }
         })
-        await addTagView(route.path, route)
+        addTagView(route.path, route)
       }
       // 初始化当前元素(li)的下标
       getTagsRefsIndex(useStore().useThemeStore.isShareTagView ? routePath.value : routeActive.value)
     }
+
     // 处理可开启多标签详情，单标签详情（动态路由（xxx/:id/:name"），普通路由处理）
-    const solveAddTagsView = async (path: string, to?: any) => {
+    const solveAddTagsView = (path: string, to?: any) => {
       const isDynamicPath = to.meta.isDynamic ? to.meta.isDynamicPath : path
       const current = tagViews.value.filter(
         (v: any) =>
@@ -102,7 +129,7 @@ export default defineComponent({
         if (findItem.meta.isAffix) return false
         if (findItem.meta.isLink && !findItem.meta.isIframe) return false
         to.meta.isDynamic ? (findItem.params = to.params) : (findItem.query = to.query)
-        findItem.url = setTagViewHighlight(findItem)
+        findItem.url = handleRoutePath(findItem)
         tagViews.value.push({ ...findItem })
         updateTagView()
       }
@@ -119,7 +146,7 @@ export default defineComponent({
           )
         ) {
           to.meta.isDynamic ? (v.params = to.params) : (v.query = to.query)
-          v.url = setTagViewHighlight(v)
+          v.url = handleRoutePath(v)
           updateTagView()
         }
       })
@@ -127,21 +154,21 @@ export default defineComponent({
     // 1、添加 tagView：未设置隐藏（isHide）也添加到在 tagView 中（可开启多标签详情，单标签详情）
     const addTagView = (path: string, to?: any) => {
       // 防止拿取不到路由信息
-      nextTick(async () => {
+      nextTick(() => {
         console.group('addTagView ---------------')
         console.log('tagViewList', tagViewList.value)
         console.log('to', to)
         let item: RouteRecordRaw
         if (to && to.meta.isDynamic) {
           // 动态路由（xxx/:id/:name"）：参数不同，开启多个 tagView
-          if (!useStore().useThemeStore.isShareTagView) await solveAddTagsView(path, to)
-          else await singleAddTagsView(path, to)
+          if (!useStore().useThemeStore.isShareTagView) solveAddTagsView(path, to)
+          else singleAddTagsView(path, to)
           if (tagViews.value.some((v: any) => v.path === to.meta.isDynamicPath)) return false
           item = tagViewList.value.find((v: any) => v.path === to.meta.isDynamicPath)
         } else {
           // 普通路由：参数不同，开启多个 tagView
-          if (!useStore().useThemeStore.isShareTagView) await solveAddTagsView(path, to)
-          else await singleAddTagsView(path, to)
+          if (!useStore().useThemeStore.isShareTagView) solveAddTagsView(path, to)
+          else singleAddTagsView(path, to)
           if (tagViews.value.some((v: any) => v.path === path)) return false
           item = tagViewList.value.find((v: any) => v.path === path)
         }
@@ -151,7 +178,7 @@ export default defineComponent({
 
         if (to && to.meta.isDynamic) item.params = to?.params ? to?.params : route.params
         else item.query = to?.query ? to?.query : route.query
-        item.url = setTagViewHighlight(item)
+        item.url = handleRoutePath(item)
         tagViews.value.push({ ...item })
         updateTagView()
       })
@@ -284,7 +311,6 @@ export default defineComponent({
       }
     }
 
-
     // 下拉菜单元素
     const contextMenuRef = ref()
     // 下拉菜单坐标
@@ -297,7 +323,10 @@ export default defineComponent({
         x: clientX,
         y: clientY
       }
-      contextMenuRef.value.openContextMenu(v)
+      console.log(contextMenuRef.value)
+
+      proxy.$refs.contextMenuRef.openContextMenu(v)
+      // contextMenuRef.value.openContextMenu(v)
     }
 
     // 当前的 tagView 项点击时
@@ -306,18 +335,6 @@ export default defineComponent({
       router.push(v.path)
     }
 
-    // 处理 tagView 高亮（多标签详情时使用，单标签详情未使用）
-    const setTagViewHighlight = (v: any) => {
-      const params = v.query && Object.keys(v.query).length > 0 ? v.query : v.params
-      if (!params || Object.keys(params).length <= 0) return v.path
-      let path = ''
-      for (const i in params) {
-        path += params[i]
-      }
-      console.log(`${v.meta.isDynamic ? v.meta.isDynamicPath : v.path}-${path}`)
-      // 判断是否是动态路由（xxx/:id/:name"）
-      return `${v.meta.isDynamic ? v.meta.isDynamicPath : v.path}-${path}`
-    }
     // 更新滚动条显示
     const updateScrollbar = () => {
       scrollbarRef.value.update()
@@ -399,7 +416,7 @@ export default defineComponent({
     }
 
     // 初始化 tagView 拖拽功能
-    const initSortable = async () => {
+    const initSortable = () => {
       const el = document.querySelector('.layout-navbar-tagView-ul') as HTMLElement
       if (!el) return false
       sortable.value?.el && sortable.value.destroy()
@@ -444,7 +461,7 @@ export default defineComponent({
           tagViews.value = []
           tagViewList.value.map((v: any) => {
             if (v.meta.isAffix && !v.meta.isHide) {
-              v.url = setTagViewHighlight(v)
+              v.url = handleRoutePath(v)
               tagViews.value.push({ ...v })
             }
           })
@@ -468,18 +485,24 @@ export default defineComponent({
     })
     // 页面加载时
     onMounted(() => {
-      // 初始化 vuex 中的 tagsViewRoutes 列表
       getTagViewRoutes()
       initSortable()
     })
     // 路由更新时
-    onBeforeRouteUpdate(async to => {
-      routeActive.value = setTagViewHighlight(to)
+    onBeforeRouteUpdate(to => {
+      routeActive.value = handleRoutePath(to)
       routePath.value = to.meta.isDynamic ? (to.meta.isDynamicPath as string) : to.path
-      await addTagView(to.path, to)
+      addTagView(to.path, to)
       getTagsRefsIndex(useStore().useThemeStore.isShareTagView ? routePath.value : routeActive.value)
     })
-
+    // 监听路由的变化，动态赋值给 tagsView
+    watch(
+      () => useStore().useRouteStore.tagViewList,
+      val => {
+        if (val.length === tagViewList.value.length) return false
+        getTagViewRoutes()
+      }
+    )
     const themeConfig = computed(() => useStore().useThemeStore)
     return {
       isActive,
@@ -527,7 +550,10 @@ export default defineComponent({
               onHandleScroll(event)
             }}
           >
-            <ul class={{ 'layout-navbar-tagView-ul': true, [themeConfig.tagStyle]: true }} ref="tagUlRef">
+            <ul
+              ref="tagUlRef"
+              class={{ 'layout-navbar-tagView-ul': true, [themeConfig.tagStyle]: true }}
+            >
               {tagViewList.map((v: RouteRecordRaw, k) => {
                 return (
                   <>

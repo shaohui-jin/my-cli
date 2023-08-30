@@ -76,6 +76,7 @@ export default defineComponent({
     watch(
       () => props.dropDown,
       ({ x }) => {
+        console.log('props.dropDown', props.dropDown)
         if (x + 117 > document.documentElement.clientWidth) {
           pointer.value = {
             x: document.documentElement.clientWidth - 117 - 5,
@@ -105,6 +106,7 @@ export default defineComponent({
         isShow.value = true
       }, 10)
     }
+
     // 关闭右键菜单
     const closeContextmenu = () => (isShow.value = false)
 
@@ -113,8 +115,8 @@ export default defineComponent({
 
     // 页面卸载时，移除右键菜单监听事件
     onUnmounted(() => document.body.removeEventListener('click', closeContextmenu))
-
     return {
+      openContextMenu,
       pointer,
       isShow,
       arrowLeft,

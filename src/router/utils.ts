@@ -23,6 +23,10 @@ export type RouteRecordRaw = _RouteRecordRaw & {
     roles: Array<string>
     // 菜单、tagView 图标，阿里：加 `iconfont xxx`，fontawesome：加 `fa xxx`
     icon: string
+    // 是否动态菜单
+    isDynamic?: boolean
+    // 动态菜单地址
+    isDynamicPath?: string
   }
 }
 

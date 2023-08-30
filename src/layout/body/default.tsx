@@ -1,4 +1,4 @@
-import { defineComponent, computed, watch, defineAsyncComponent, ref } from 'vue'
+import { defineComponent, computed, watch, defineAsyncComponent, getCurrentInstance } from 'vue'
 import { useStore } from '@/store'
 import { useRoute } from 'vue-router'
 
@@ -8,18 +8,18 @@ const Main = defineAsyncComponent(() => import('@/layout/component/main.tsx'))
 
 export default defineComponent({
   setup() {
-    // const { proxy } = getCurrentInstance() as any
-    const layoutDefaultsScrollbarRef = ref()
+    const { proxy } = getCurrentInstance() as any
+    // const layoutDefaultScrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
     const route = useRoute()
-    const isFixedHeader = computed(() => {
-      return useStore().useThemeStore.isFixedHeader
-    })
+    // 是否开启固定 Header
+    const isFixedHeader = computed(() => useStore().useThemeStore.isFixedHeader)
+
     // 监听路由的变化
     watch(
       () => route.path,
       () => {
-        // proxy.$refs.layoutDefaultsScrollbarRef.wrap$.scrollTop = 0
-        layoutDefaultsScrollbarRef.value.scrollTop = 0
+        proxy.$refs.layoutDefaultScrollbarRef.setScrollTop(0)
+        // layoutDefaultScrollbarRef.value.scrollTop = 0
       }
     )
     return {
@@ -36,13 +36,13 @@ export default defineComponent({
             {isFixedHeader ? (
               <>
                 <Header />
-                <el-scrollbar ref="layoutDefaultsScrollbarRef" class={{ 'layout-backtop': isFixedHeader }}>
+                <el-scrollbar ref="layoutDefaultScrollbarRef" class={{ 'layout-backtop': isFixedHeader }}>
                   <Main />
                 </el-scrollbar>
               </>
             ) : (
               <>
-                <el-scrollbar ref="layoutDefaultsScrollbarRef" class={{ 'layout-backtop': isFixedHeader }}>
+                <el-scrollbar ref="layoutDefaultScrollbarRef" class={{ 'layout-backtop': isFixedHeader }}>
                   <Header />
                   <Main />
                 </el-scrollbar>
