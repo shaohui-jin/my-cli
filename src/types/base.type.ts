@@ -3,6 +3,7 @@
 // import { SHOW_PARENT } from "rc-tree-select";
 //
 export type ObjectType = Record<string, any>
+export type ObjectStringType = Record<string, string>
 //
 // interface RcFile extends File {
 //   uid: string;

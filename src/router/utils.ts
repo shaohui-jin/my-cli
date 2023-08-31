@@ -1,6 +1,7 @@
 import router from '@/router/index.ts'
 import { RouteRecordRaw as _RouteRecordRaw } from 'vue-router'
 import { useStore } from '@/store'
+import { ObjectStringType } from '@/types'
 
 /**
  * 路由meta对象参数说明
@@ -28,6 +29,10 @@ export type RouteRecordRaw = _RouteRecordRaw & {
     // 动态菜单地址
     isDynamicPath?: string
   }
+  // 处理后的url(themeConfig中的isShareTagView 为false时存在)
+  url?: string
+  query?: ObjectStringType
+  params?: ObjectStringType
 }
 
 /**
