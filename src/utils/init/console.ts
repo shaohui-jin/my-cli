@@ -17,4 +17,21 @@ export default class AdvancedConsole {
   static error(...args: any[]) {
     console.error(...args)
   }
+  @logDecorator
+  static table(label: string, obj: any) {
+    window.App.$console.info(label)
+    console.table(obj)
+  }
+  @logDecorator
+  static group(...args: any[]) {
+    console.group(...args)
+  }
+  @logDecorator
+  static groupCollapsed(...args: any[]) {
+    console.groupCollapsed(...args)
+  }
+  @logDecorator
+  static groupEnd() {
+    console.groupEnd()
+  }
 }
