@@ -115,53 +115,64 @@ export default defineComponent({
       getTagsRefsIndex(useStore().useThemeStore.isShareTagView ? routePath.value : routeActive.value)
     }
 
-    // 处理可开启多标签详情，单标签详情（动态路由（xxx/:id/:name"），普通路由处理）
-    const addShareTagView = (path: string, to: any) => {
-      // const isDynamicPath = to.meta.isDynamic ? to.meta.isDynamicPath : path
+    /**
+     * @desc TagView 共用时的添加路由
+     * @desc 单标签详情（动态路由（xxx/:id/:name"），普通路由处理）
+     * @param to
+     */
+    const addShareTagView = (to: any) => {
+      window.App.$console.groupCollapsed('TagView 非共用时的添加路由 ---------------')
+      window.App.$console.table('tagViews', tagViews.value)
+      window.App.$console.table('tagViewList', tagViewList.value)
+      window.App.$console.table('to', to)
+
+      // 构造tagView
+      const { meta, name, path } = to
+      const item: any = { meta, name, path, url: path }
+      item.meta.isDynamic ? (item['params'] = to.params) : (item['query'] = to.query)
+      item.url = handleRoutePath(item)
+
+      // 共用时，只存在唯一的 path， 即搜索出来只有一个或零个
+      const index = tagViews.value.findIndex((v: RouteRecordRaw) => v.path === to.path)
+      if (index > -1) {
+        tagViews.value[index] = { ...item }
+      } else {
+        tagViews.value.push({ ...item })
+      }
+      updateTagView()
+      window.App.$console.groupEnd()
+    }
+
+    /**
+     * @desc TagView 非共用时的添加路由
+     * @desc 单标签详情（动态路由（xxx/:id/:name"），普通路由处理）
+     * @param to
+     */
+    const addNotShareTagView = (to: any) => {
+      window.App.$console.groupCollapsed('TagView 非共用时的添加路由 ---------------')
+      window.App.$console.table('tagViews', tagViews.value)
+      window.App.$console.table('tagViewList', tagViewList.value)
+      window.App.$console.table('to', to)
+
+      // 非公用就是判断是否有完全一致的路由，没有就新增
       const obj: Record<string, string> = {}
-      const current = tagViews.value.filter(
-        (v: RouteRecordRaw) =>
-          v.path === path &&
+      const tag = tagViews.value.find(
+        (v: any) =>
+          v.path === to.path &&
           isObjectValueEqual(
             to.meta?.isDynamic ? v?.params || obj : v?.query || obj,
             to.meta?.isDynamic ? to?.params || obj : to?.query || obj
           )
-        // isObjectValueEqual(
-        //   to.meta.isDynamic ? (v.params ? v.params : null) : v.query ? v.query : null,
-        //   to.meta.isDynamic ? (to?.params ? to?.params : null) : to?.query ? to?.query : null
-        // )
       )
-      if (current.length === 0) {
-        const item = tagViewList.value.find((v: RouteRecordRaw) => v.path === path)
-        if (item.meta.isAffix) return false
-        if (item.meta.isLink && !item.meta.isIframe) return false
-        to.meta.isDynamic ? (item.params = to.params) : (item.query = to.query)
+      if (!tag) {
+        const { meta, name, path } = to
+        const item: any = { meta, name, path, url: path }
+        item.meta.isDynamic ? (item['params'] = to.params) : (item['query'] = to.query)
         item.url = handleRoutePath(item)
         tagViews.value.push({ ...item })
         updateTagView()
+        window.App.$console.groupEnd()
       }
-    }
-    // 处理单标签时，第二次的值未覆盖第一次的 tagsViewList 值（Session Storage）
-    const addNotShareTagView = (path: string, to: any) => {
-      // const isDynamicPath = to.meta.isDynamic ? to.meta.isDynamicPath : path
-      const obj: Record<string, string> = {}
-      tagViews.value.forEach((v: any) => {
-        if (
-          v.path === path &&
-          !isObjectValueEqual(
-            to.meta?.isDynamic ? v?.params || obj : v?.query || obj,
-            to.meta?.isDynamic ? to?.params || obj : to?.query || obj
-          )
-          // !isObjectValueEqual(
-          //   to.meta.isDynamic ? (v.params ? v.params : null) : v.query ? v.query : null,
-          //   to.meta.isDynamic ? (to?.params ? to?.params : null) : to?.query ? to?.query : null
-          // )
-        ) {
-          to.meta.isDynamic ? (v.params = to.params) : (v.query = to.query)
-          v.url = handleRoutePath(v)
-          updateTagView()
-        }
-      })
     }
 
     /**
@@ -169,33 +180,30 @@ export default defineComponent({
      * @desc 未设置隐藏（isHide）也添加到在 tagView 中（可开启多标签详情，单标签详情）
      * @param to 路由元素
      */
-    const addTagView = (to: RouteLocationNormalizedLoaded) => {
+    const addTagView = (to: any) => {
       // 防止拿取不到路由信息
       // nextTick(() => {
-      console.group('addTagView ---------------')
-      console.log('tagViewList', tagViewList.value)
-      console.log('to', to)
+
       // 动态路由（xxx/:id/:name"）：参数不同，开启多个 tagView
       // 普通路由：参数不同，开启多个 tagView
-      const path = to.path
       if (useStore().useThemeStore.isShareTagView) {
-        addShareTagView()
+        addShareTagView(to)
       } else {
-        addNotShareTagView()
+        addNotShareTagView(to)
       }
 
-      let item: RouteRecordRaw
-      if (tagViews.value.some((v: any) => v.path === path)) return false
-      item = tagViewList.value.find((v: any) => v.path === path)
-      console.log('RouteRecordRaw', item)
-      console.groupEnd()
-      if (item.meta.isLink && !item.meta.isIframe) return false
-
-      if (to && to.meta.isDynamic) item.params = to?.params ? to?.params : route.params
-      else item.query = to?.query ? to?.query : route.query
-      item.url = handleRoutePath(item)
-      tagViews.value.push({ ...item })
-      updateTagView()
+      // let item: RouteRecordRaw
+      // if (tagViews.value.some((v: any) => v.path === path)) return false
+      // item = tagViewList.value.find((v: any) => v.path === path)
+      // console.log('RouteRecordRaw', item)
+      // console.groupEnd()
+      // if (item.meta.isLink && !item.meta.isIframe) return false
+      //
+      // if (to && to.meta.isDynamic) item.params = to?.params ? to?.params : route.params
+      // else item.query = to?.query ? to?.query : route.query
+      // item.url = handleRoutePath(item)
+      // tagViews.value.push({ ...item })
+      // updateTagView()
       // })
     }
 
