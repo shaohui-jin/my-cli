@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import { authDirective } from './modules/authDirective'
+import { clickOutside } from './modules/clickOutside'
 import { wavesDirective, dragDirective } from './modules/customDirective'
 
 /**
@@ -15,4 +16,6 @@ export function directive(app: App) {
   wavesDirective(app)
   // 自定义拖动指令
   dragDirective(app)
+  // 点击外部指令
+  clickOutside(app)
 }

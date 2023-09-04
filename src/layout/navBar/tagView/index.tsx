@@ -6,14 +6,12 @@ import {
   computed,
   defineComponent,
   nextTick,
-  reactive,
   ref,
-  watch,
   getCurrentInstance,
   defineAsyncComponent
 } from 'vue'
 import { useStore } from '@/store'
-import { onBeforeRouteUpdate, RouteLocationNormalizedLoaded, Router, useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteUpdate, Router, useRoute, useRouter } from 'vue-router'
 import { isMobile, isObjectValueEqual } from '@/utils/common.ts'
 import Sortable from 'sortablejs'
 import { ElMessage } from 'element-plus'
@@ -43,8 +41,12 @@ export default defineComponent({
     // 缓存中的tagView的集合
     const tagViewList = computed(() => useStore().useRouteStore.tagViewList)
 
-    // 设置 tagView 高亮
-    const isActive = (v: any) => {
+    /**
+     * @desc 判断是否 tagView 高亮
+     * @param v
+     * @return 是否是当前路由
+     */
+    const isActive = (v: any): boolean => {
       if (useStore().useThemeStore.isShareTagView) {
         return v.path === routePath.value
       } else {
@@ -52,7 +54,10 @@ export default defineComponent({
       }
     }
 
-    // 更新 tagViewList
+    /**
+     * @desc 更新 tagViewList
+     * @param list
+     */
     const updateTagView = (list: RouteRecordRaw[] = tagViews.value) => {
       useStore().useRouteStore.tagViewList = list
     }
@@ -124,7 +129,7 @@ export default defineComponent({
       window.App.$console.groupCollapsed('TagView 非共用时的添加路由 ---------------')
       window.App.$console.table('tagViews', tagViews.value)
       window.App.$console.table('tagViewList', tagViewList.value)
-      window.App.$console.table('to', to)
+      window.App.$console.log(`routeName: ${to.name}, routePath: ${to.path}, routeMeta: ${JSON.stringify(to.meta)}`)
 
       // 构造tagView
       const { meta, name, path } = to
@@ -152,7 +157,7 @@ export default defineComponent({
       window.App.$console.groupCollapsed('TagView 非共用时的添加路由 ---------------')
       window.App.$console.table('tagViews', tagViews.value)
       window.App.$console.table('tagViewList', tagViewList.value)
-      window.App.$console.table('to', to)
+      window.App.$console.log(`routeName: ${to.name}, routePath: ${to.path}, routeMeta: ${JSON.stringify(to.meta)}`)
 
       // 非公用就是判断是否有完全一致的路由，没有就新增
       const obj: Record<string, string> = {}
@@ -181,9 +186,6 @@ export default defineComponent({
      * @param to 路由元素
      */
     const addTagView = (to: any) => {
-      // 防止拿取不到路由信息
-      // nextTick(() => {
-
       // 动态路由（xxx/:id/:name"）：参数不同，开启多个 tagView
       // 普通路由：参数不同，开启多个 tagView
       if (useStore().useThemeStore.isShareTagView) {
@@ -191,20 +193,6 @@ export default defineComponent({
       } else {
         addNotShareTagView(to)
       }
-
-      // let item: RouteRecordRaw
-      // if (tagViews.value.some((v: any) => v.path === path)) return false
-      // item = tagViewList.value.find((v: any) => v.path === path)
-      // console.log('RouteRecordRaw', item)
-      // console.groupEnd()
-      // if (item.meta.isLink && !item.meta.isIframe) return false
-      //
-      // if (to && to.meta.isDynamic) item.params = to?.params ? to?.params : route.params
-      // else item.query = to?.query ? to?.query : route.query
-      // item.url = handleRoutePath(item)
-      // tagViews.value.push({ ...item })
-      // updateTagView()
-      // })
     }
 
     // 2、刷新当前 tagsView：
@@ -342,19 +330,16 @@ export default defineComponent({
     // 右键点击事件：传 x,y 坐标值到子组件中
     const onContextmenu = (event: MouseEvent, v: RouteRecordRaw) => {
       const { clientX, clientY } = event
-      event.preventDefault()
-      dropDown.value = {
-        x: clientX,
-        y: clientY
-      }
+      dropDown.value.y = clientY
+      dropDown.value.x = clientX
       proxy.$refs.contextMenuRef.openContextMenu(v)
-      // contextMenuRef.value.openContextMenu(v)
+      event.preventDefault()
     }
 
     // 当前的 tagView 项点击时
-    const onTagClick = (v: RouteRecordRaw, k: number) => {
-      tagRefIndex.value = k
-      router.push(v.path)
+    const onTagClick = (route: any, index: number) => {
+      tagRefIndex.value = index
+      router.push(route.path)
     }
     // 更新滚动条显示
     const updateScrollbar = () => {
@@ -543,7 +528,8 @@ export default defineComponent({
       onCurrentContextmenuClick,
       themeConfig,
       tagViewList,
-      tagViews
+      tagViews,
+      routeActive
     }
   },
   render() {
@@ -552,14 +538,15 @@ export default defineComponent({
       tagViewList,
       tagViews,
       tagRef,
-      dropDown,
       onContextmenu,
       refreshCurrentTagView,
       isActive,
       onTagClick,
+      dropDown,
       onHandleScroll,
       closeCurrentTagsView,
-      onCurrentContextmenuClick
+      onCurrentContextmenuClick,
+      routeActive
     } = this
     return (
       <>
@@ -568,11 +555,12 @@ export default defineComponent({
         >
           <el-scrollbar
             ref="scrollbarRef"
-            nativeOnMousewheel={(event: any) => {
-              event.preventDefault()
-              onHandleScroll(event)
-            }}
+            // nativeOnMousewheel={(event: any) => {
+            //   event.preventDefault()
+            //   onHandleScroll(event)
+            // }}
           >
+            { routeActive.toString() }
             <ul ref="tagUlRef" class={{ 'layout-navbar-tagView-ul': true, [themeConfig.tagStyle]: true }}>
               {tagViewList.map((v: RouteRecordRaw, k) => {
                 return (
@@ -581,13 +569,13 @@ export default defineComponent({
                       key={k}
                       class={{ 'layout-navbar-tagView-ul-li': true, 'is-active': isActive(v) }}
                       data-url={v.url}
-                      onContextmenu={$event => onContextmenu($event, v)}
+                      onContextmenu={event => onContextmenu(event, v)}
                       onClick={() => onTagClick(v, k)}
-                      ref={el => {
-                        if (el) {
-                          tagRef[k] = el
-                        }
-                      }}
+                      // ref={el => {
+                      //   if (el) {
+                      //     tagRef[k] = el
+                      //   }
+                      // }}
                     >
                       {isActive(v) ? (
                         <>

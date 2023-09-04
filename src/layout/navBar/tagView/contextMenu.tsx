@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted, onUnmounted, watch, Transition } from 'vue'
+import { defineComponent, ref, computed, Transition } from 'vue'
 import { RefreshRight, Close, CircleClose, FolderDelete } from '@element-plus/icons-vue'
 type ContextMenu = {
   id: number
@@ -66,34 +66,57 @@ export default defineComponent({
     // 是否显示
     const isShow = ref<boolean>(false)
     const item = ref<object>({})
-    const arrowLeft = ref<number>(10)
-
-    // 坐标
-    const pointer = ref<Record<'x' | 'y', number>>({ x: 0, y: 0 })
+    // const arrowLeft = ref<number>(10)
+    //
+    // // 坐标
+    // const pointer = ref<Record<'x' | 'y', number>>({ x: 0, y: 0 })
 
     // 父级传过来的坐标 x,y 值
     // 监听下拉菜单位置
-    watch(
-      () => props.dropDown,
-      ({ x }) => {
-        console.log('props.dropDown', props.dropDown)
-        if (x + 117 > document.documentElement.clientWidth) {
-          pointer.value = {
-            x: document.documentElement.clientWidth - 117 - 5,
-            y: props.dropDown.y
-          }
-          arrowLeft.value = 117 - (document.documentElement.clientWidth - x)
-        } else {
-          pointer.value = props.dropDown
-          arrowLeft.value = 10
-        }
-      },
-      {
-        deep: true,
-        immediate: true
-      }
-    )
+    // watch(
+    //   () => props.dropDown,
+    //   ({ x, y }) => {
+    //     console.log('props.dropDown', props.dropDown)
+    //     if (x + 117 > document.documentElement.clientWidth) {
+    //       console.log(12321)
+    //       pointer.value = {
+    //         x: document.documentElement.clientWidth - 117 - 5,
+    //         y: y
+    //       }
+    //       arrowLeft.value = 117 - (document.documentElement.clientWidth - x)
+    //     } else {
+    //       console.log(444)
+    //       pointer.value = { x, y }
+    //       arrowLeft.value = 10
+    //     }
+    //   },
+    //   {
+    //     deep: true,
+    //     immediate: true
+    //   }
+    // )
 
+    const arrowLeft = computed(() => {
+      const { x } = props.dropDown
+      if (x + 117 > document.documentElement.clientWidth) {
+        return 117 - (document.documentElement.clientWidth - x)
+      } else {
+        return 10
+      }
+    })
+
+    // 坐标
+    const pointer = computed(() => {
+      const { x, y } = props.dropDown
+      if (x + 117 > document.documentElement.clientWidth) {
+        return {
+          x: document.documentElement.clientWidth - 117 - 5,
+          y: y
+        }
+      } else {
+        return { x, y }
+      }
+    })
     // 当前项菜单点击
     const contextMenuClick = (id: number) => emit('contextMenuClick', Object.assign({}, { id }, item.value))
 
@@ -111,10 +134,10 @@ export default defineComponent({
     const closeContextmenu = () => (isShow.value = false)
 
     // 监听页面监听进行右键菜单的关闭
-    onMounted(() => document.body.addEventListener('click', closeContextmenu))
+    // onMounted(() => document.body.addEventListener('click', closeContextmenu))
 
     // 页面卸载时，移除右键菜单监听事件
-    onUnmounted(() => document.body.removeEventListener('click', closeContextmenu))
+    // onUnmounted(() => document.body.removeEventListener('click', closeContextmenu))
     return {
       openContextMenu,
       pointer,
@@ -126,7 +149,7 @@ export default defineComponent({
     }
   },
   render() {
-    const { isShow, arrowLeft, contextMenus, pointer, contextMenuClick } = this
+    const { isShow, arrowLeft, contextMenus, pointer, contextMenuClick, closeContextmenu } = this
     return (
       <>
         <Transition name="el-zoom-in-center">
@@ -149,6 +172,7 @@ export default defineComponent({
                           aria-disabled="false"
                           tabindex="-1"
                           key={k}
+                          v-click-outside:true={closeContextmenu}
                           onClick={() => contextMenuClick(v.id)}
                         >
                           {v.icon()}
