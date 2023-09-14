@@ -63,39 +63,14 @@ export default defineComponent({
         icon: () => <i class="iconfont icon-fullscreen font14" />
       }
     ])
+
     // 是否显示
     const isShow = ref<boolean>(false)
+
+    // 当前tab的路由
     const item = ref<object>({})
-    // const arrowLeft = ref<number>(10)
-    //
-    // // 坐标
-    // const pointer = ref<Record<'x' | 'y', number>>({ x: 0, y: 0 })
 
-    // 父级传过来的坐标 x,y 值
-    // 监听下拉菜单位置
-    // watch(
-    //   () => props.dropDown,
-    //   ({ x, y }) => {
-    //     console.log('props.dropDown', props.dropDown)
-    //     if (x + 117 > document.documentElement.clientWidth) {
-    //       console.log(12321)
-    //       pointer.value = {
-    //         x: document.documentElement.clientWidth - 117 - 5,
-    //         y: y
-    //       }
-    //       arrowLeft.value = 117 - (document.documentElement.clientWidth - x)
-    //     } else {
-    //       console.log(444)
-    //       pointer.value = { x, y }
-    //       arrowLeft.value = 10
-    //     }
-    //   },
-    //   {
-    //     deep: true,
-    //     immediate: true
-    //   }
-    // )
-
+    // 左侧距离
     const arrowLeft = computed(() => {
       const { x } = props.dropDown
       if (x + 117 > document.documentElement.clientWidth) {
@@ -105,7 +80,7 @@ export default defineComponent({
       }
     })
 
-    // 坐标
+    // 顶部坐标
     const pointer = computed(() => {
       const { x, y } = props.dropDown
       if (x + 117 > document.documentElement.clientWidth) {
@@ -117,13 +92,14 @@ export default defineComponent({
         return { x, y }
       }
     })
+
     // 当前项菜单点击
-    const contextMenuClick = (id: number) => emit('contextMenuClick', Object.assign({}, { id }, item.value))
+    const contextMenuClick = (id: number) => emit('contextMenuClick', { id, ...item.value })
 
     // 打开右键菜单：判断是否固定，固定则不显示关闭按钮
-    const openContextMenu = (item: any) => {
-      item.value = item
-      item.meta.isAffix ? (contextMenus.value[1].affix = true) : (contextMenus.value[1].affix = false)
+    const openContextMenu = (route: any) => {
+      item.value = route
+      route.meta.isAffix ? (contextMenus.value[1].affix = true) : (contextMenus.value[1].affix = false)
       closeContextmenu()
       setTimeout(() => {
         isShow.value = true
@@ -133,27 +109,14 @@ export default defineComponent({
     // 关闭右键菜单
     const closeContextmenu = () => (isShow.value = false)
 
-    // 监听页面监听进行右键菜单的关闭
-    // onMounted(() => document.body.addEventListener('click', closeContextmenu))
-
-    // 页面卸载时，移除右键菜单监听事件
-    // onUnmounted(() => document.body.removeEventListener('click', closeContextmenu))
-    return {
-      openContextMenu,
-      pointer,
-      isShow,
-      arrowLeft,
-      contextMenus,
-      closeContextmenu,
-      contextMenuClick
-    }
+    return { pointer, isShow, arrowLeft, contextMenus, openContextMenu, closeContextmenu, contextMenuClick }
   },
   render() {
     const { isShow, arrowLeft, contextMenus, pointer, contextMenuClick, closeContextmenu } = this
     return (
       <>
         <Transition name="el-zoom-in-center">
-          {isShow && (
+          {isShow ? (
             <div
               aria-hidden="true"
               class="el-dropdown__popper el-popper is-light is-pure custom-contextmenu"
@@ -185,6 +148,8 @@ export default defineComponent({
               </ul>
               <div class="el-popper__arrow" style={{ left: `${arrowLeft}px` }}></div>
             </div>
+          ) : (
+            <div></div>
           )}
         </Transition>
       </>
