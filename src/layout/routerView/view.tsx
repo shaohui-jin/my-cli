@@ -29,7 +29,7 @@ export default defineComponent({
     onBeforeMount(() => {
       const names = useStore().useKeepAliveStore.keepAliveNames
       keepAliveNameList.value = names
-      proxy.mittBus.on('onTagsViewRefreshRouterView', (fullPath: string) => {
+      proxy.mittBus.on('onTagViewRefreshRouterView', (fullPath: string) => {
         keepAliveNameList.value = names.filter((name: string) => route.name !== name)
         refreshRouterViewKey.value = ''
         nextTick(() => {
@@ -40,7 +40,7 @@ export default defineComponent({
     })
     // 页面卸载时
     onUnmounted(() => {
-      proxy.mittBus.off('onTagsViewRefreshRouterView')
+      proxy.mittBus.off('onTagViewRefreshRouterView')
     })
     // 监听路由变化，防止 tagsView 多标签时，切换动画消失
     watch(

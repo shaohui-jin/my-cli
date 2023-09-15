@@ -12,7 +12,7 @@ import {
 } from 'vue'
 import { useStore } from '@/store'
 import { onBeforeRouteUpdate, Router, useRoute, useRouter } from 'vue-router'
-import { isMobile, isObjectValueEqual } from '@/utils/common.ts'
+import { isMobile, isObjectValueEqual, isObjectEmpty } from '@/utils/common.ts'
 import Sortable from 'sortablejs'
 import { ElMessage } from 'element-plus'
 import { RouteRecordRaw } from '@/router/utils.ts'
@@ -195,39 +195,83 @@ export default defineComponent({
       }
     }
 
-    // 2、刷新当前 tagsView：
-    const refreshCurrentTagView = (fullPath: string) => {
-      proxy.mittBus.emit('onTagsViewRefreshRouterView', fullPath)
+    /**
+     * @desc 当前项右键菜单点击
+     * @param item
+     */
+    const onCurrentContextmenuClick = async (item: any) => {
+      const obj: Record<string, string> = {}
+      // 取当前点击项的详细路由信息
+      const itemRoute = tagViewList.value || tagViews.value
+      const route: any = itemRoute.find(
+        (v: any) =>
+          v.path === item.path &&
+          isObjectValueEqual(
+            v.meta.isDynamic ? v?.params || obj : v?.query || obj,
+            item.meta.isDynamic ? item?.params || obj : item?.query || obj
+          )
+      )
+      const { path, name, params, query, meta, url } = route
+      const isShareTagView = useStore().useThemeStore.isShareTagView
+      switch (item.id) {
+        case 0:
+          // 右键菜单的时候的刷新要多一步跳转过去
+          if (meta.isDynamic) await router.push({ name, params })
+          else await router.push({ path, query })
+          // 然后才是刷新当前的页面组件
+          refreshCurrentTagView(route.fullPath)
+          break
+        // 关闭当前
+        case 1:
+          closeCurrentTagView(isShareTagView ? path : url)
+          break
+        // 关闭其它
+        case 2:
+          closeOtherTagView(route)
+          break
+        // 关闭全部
+        case 3:
+          closeAllTagView()
+          break
+        // 开启当前页面全屏
+        case 4:
+          openCurrenFullscreen(isShareTagView ? path : url)
+          break
+      }
     }
-    // 3、关闭当前 tagsView：如果是设置了固定的（isAffix），不可以关闭
-    const closeCurrentTagsView = (path: string) => {
+    /**
+     * 刷新当前 tagView， 并未无跳转
+     * @param fullPath
+     */
+    const refreshCurrentTagView = (fullPath: string) => {
+      proxy.mittBus.emit('onTagViewRefreshRouterView', fullPath)
+    }
+    /**
+     * 关闭当前 tagView：如果是设置了固定的（isAffix），不可以关闭
+     * @param path
+     */
+    const closeCurrentTagView = (path: string) => {
+      const isShareTagView = useStore().useThemeStore.isShareTagView
       tagViews.value.map((v: any, k: number, arr: any) => {
+        // 固定的不管, 其实不加也没太大影响，因为菜单没有关闭的按钮
         if (!v.meta.isAffix) {
-          if (useStore().useThemeStore.isShareTagView ? v.path === path : v.url === path) {
+          // 如果共用的话就判断path相同，不共用才是判断处理参数后的 url
+          // 移除掉tagView的记录
+          if (path === (isShareTagView ? v.path : v.url)) {
             tagViews.value.splice(k, 1)
             setTimeout(() => {
-              if (
-                tagViews.value.length === k && useStore().useThemeStore.isShareTagView
-                  ? routePath.value === path
-                  : routeActive.value === path
-              ) {
-                // 最后一个且高亮时
-                if (arr[arr.length - 1].meta.isDynamic) {
-                  // 动态路由（xxx/:id/:name"）
-                  if (k !== arr.length) router.push({ name: arr[k].name, params: arr[k].params })
-                  else router.push({ name: arr[arr.length - 1].name, params: arr[arr.length - 1].params })
+              // 判断删掉的是不是当前的，如果是的话，需要跳转到别的页面
+              if (path === (isShareTagView ? routePath.value : routeActive.value)) {
+                // 如果关闭的是最后一个tagView的话 tagViews.value.length === k 是因为删了一个，所以导致数组下标和数组长度相同了
+                if (tagViews.value.length === k) {
+                  if (arr[k - 1].meta.isDynamic) {
+                    // 动态路由（xxx/:id/:name"）
+                    router.push({ name: arr[k - 1].name, params: arr[k - 1].params })
+                  } else {
+                    // 普通路由
+                    router.push({ path: arr[k - 1].path, query: arr[k - 1].query })
+                  }
                 } else {
-                  // 普通路由
-                  if (k !== arr.length) router.push({ path: arr[k].path, query: arr[k].query })
-                  else router.push({ path: arr[arr.length - 1].path, query: arr[arr.length - 1].query })
-                }
-              } else {
-                // 非最后一个且高亮时，跳转到下一个
-                if (
-                  tagViews.value.length !== k && useStore().useThemeStore.isShareTagView
-                    ? routePath.value === path
-                    : routeActive.value === path
-                ) {
                   if (arr[k].meta.isDynamic) {
                     // 动态路由（xxx/:id/:name"）
                     router.push({ name: arr[k].name, params: arr[k].params })
@@ -243,84 +287,44 @@ export default defineComponent({
       })
       updateTagView()
     }
-    // 4、关闭其它 tagsView：如果是设置了固定的（isAffix），不进行关闭
-    const closeOtherTagsView = (path: string) => {
+    /**
+     * @desc 关闭其它 tagView：如果是设置了固定的（isAffix），不进行关闭
+     * @param route
+     */
+    const closeOtherTagView = (route: any) => {
+      const { path, name, params, query, meta } = route
       tagViews.value = []
       tagViewList.value.map((v: any) => {
         if (v.meta.isAffix && !v.meta.isHide) tagViews.value.push({ ...v })
       })
-      addTagView(path, route)
+      if (meta.isDynamic) {
+        router.push({ name, params })
+      } else {
+        router.push({ path, query })
+      }
     }
-    // 5、关闭全部 tagsView：如果是设置了固定的（isAffix），不进行关闭
-    const closeAllTagsView = () => {
+    /**
+     * 关闭全部 tagsView：如果是设置了固定的（isAffix），不进行关闭
+     */
+    const closeAllTagView = () => {
       tagViews.value = []
       tagViewList.value.map((v: any) => {
         if (v.meta.isAffix && !v.meta.isHide) {
           tagViews.value.push({ ...v })
-          router.push({ path: tagViews.value[tagViews.value.length - 1].path })
         }
       })
+      router.push({ path: tagViews.value[tagViews.value.length - 1].path })
       updateTagView()
     }
     // 6、开启当前页面全屏
-    const openCurrenFullscreen = async (path: string) => {
-      const item = tagViews.value.find((v: any) =>
-        useStore().useThemeStore.isShareTagView ? v.path === path : v.url === path
-      )
-      if (item.meta.isDynamic) await router.push({ name: item.name, params: item.params })
-      else await router.push({ name: item.name, query: item.query })
-      useStore().useRouteStore.tagViewCurrenFull = true
-    }
-    // 当前项右键菜单点击，拿当前点击的路由路径对比 浏览器缓存中的 tagsView 路由数组，取当前点击项的详细路由信息
-    // 防止 tagsView 非当前页演示时，操作异常
-    const getCurrentRouteItem = (path: string, cParams: { [key: string]: any }) => {
-      const itemRoute = tagViewList.value || tagViews.value
-      return itemRoute.find((v: any) => {
-        if (
-          v.path === path &&
-          isObjectValueEqual(
-            v.meta.isDynamic ? (v.params ? v.params : null) : v.query ? v.query : null,
-            cParams && Object.keys(cParams ? cParams : {}).length > 0 ? cParams : null
-          )
-        ) {
-          return v
-        } else if (v.path === path && Object.keys(cParams ? cParams : {}).length <= 0) {
-          return v
-        }
-      })
-    }
-    // 当前项右键菜单点击
-    const onCurrentContextmenuClick = async item => {
-      const cParams = item.meta.isDynamic ? item.params : item.query
-      if (!getCurrentRouteItem(item.path, cParams))
-        return ElMessage({ type: 'warning', message: '请正确输入路径及完整参数（query、params）' })
-      const { path, name, params, query, meta, url } = getCurrentRouteItem(item.path, cParams)
-      switch (item.contextMenuClickId) {
-        case 0:
-          // 刷新当前
-          if (meta.isDynamic) await router.push({ name, params })
-          else await router.push({ path, query })
-          refreshCurrentTagView(route.fullPath)
-          break
-        case 1:
-          // 关闭当前
-          closeCurrentTagsView(useStore().useThemeStore.isShareTagView ? path : url)
-          break
-        case 2:
-          // 关闭其它
-          if (meta.isDynamic) await router.push({ name, params })
-          else await router.push({ path, query })
-          closeOtherTagsView(path)
-          break
-        case 3:
-          // 关闭全部
-          closeAllTagsView()
-          break
-        case 4:
-          // 开启当前页面全屏
-          openCurrenFullscreen(useStore().useThemeStore.isShareTagView ? path : url)
-          break
+    const openCurrenFullscreen = (path: string) => {
+      const item: any = tagViews.value.find((v: any) => useStore().useThemeStore.isShareTagView ? v.path === path : v.url === path)
+      if (item.meta.isDynamic) {
+        router.push({ name: item.name, params: item.params })
+      } else {
+        router.push({ name: item.name, query: item.query })
       }
+      useStore().useRouteStore.tagViewCurrenFull = true
     }
 
     // 下拉菜单元素
@@ -524,7 +528,7 @@ export default defineComponent({
       dropDown,
       onHandleScroll,
       refreshCurrentTagView,
-      closeCurrentTagsView,
+      closeCurrentTagView,
       onCurrentContextmenuClick,
       themeConfig,
       tagViewList,
@@ -544,7 +548,7 @@ export default defineComponent({
       onTagClick,
       dropDown,
       onHandleScroll,
-      closeCurrentTagsView,
+      closeCurrentTagView,
       onCurrentContextmenuClick,
       routeActive
     } = this
@@ -560,7 +564,7 @@ export default defineComponent({
             //   onHandleScroll(event)
             // }}
           >
-            { routeActive.toString() }
+            {routeActive.toString()}
             <ul ref="tagUlRef" class={{ 'layout-navbar-tagView-ul': true, [themeConfig.tagStyle]: true }}>
               {tagViewList.map((v: RouteRecordRaw, k) => {
                 return (
@@ -604,7 +608,7 @@ export default defineComponent({
                                 class={['layout-navbar-tagView-ul-li-icon', 'layout-icon-active']}
                                 onClick={(event: any) => {
                                   event.stopPropagation()
-                                  closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)
+                                  closeCurrentTagView(themeConfig.isShareTagView ? v.path : v.url as string)
                                 }}
                               >
                                 <Close />
@@ -618,7 +622,7 @@ export default defineComponent({
                           class={['layout-navbar-tagView-ul-li-iconfont', 'layout-icon-three']}
                           onClick={(event: any) => {
                             event.stopPropagation()
-                            closeCurrentTagsView(themeConfig.isShareTagView ? v.path : v.url)
+                            closeCurrentTagView(themeConfig.isShareTagView ? v.path : v.url as string)
                           }}
                         >
                           <Close />
