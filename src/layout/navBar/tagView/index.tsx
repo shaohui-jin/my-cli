@@ -12,9 +12,8 @@ import {
 } from 'vue'
 import { useStore } from '@/store'
 import { onBeforeRouteUpdate, Router, useRoute, useRouter } from 'vue-router'
-import { isMobile, isObjectValueEqual, isObjectEmpty } from '@/utils/common.ts'
+import { isMobile, isObjectValueEqual } from '@/utils/common.ts'
 import Sortable from 'sortablejs'
-import { ElMessage } from 'element-plus'
 import { RouteRecordRaw } from '@/router/utils.ts'
 import { Close, RefreshRight } from '@element-plus/icons-vue'
 import { ObjectStringType } from '@/types'
@@ -318,7 +317,9 @@ export default defineComponent({
     }
     // 6、开启当前页面全屏
     const openCurrenFullscreen = (path: string) => {
-      const item: any = tagViews.value.find((v: any) => useStore().useThemeStore.isShareTagView ? v.path === path : v.url === path)
+      const item: any = tagViews.value.find((v: any) =>
+        useStore().useThemeStore.isShareTagView ? v.path === path : v.url === path
+      )
       if (item.meta.isDynamic) {
         router.push({ name: item.name, params: item.params })
       } else {
@@ -540,17 +541,13 @@ export default defineComponent({
     const {
       themeConfig,
       tagViewList,
-      tagViews,
-      tagRef,
       onContextmenu,
       refreshCurrentTagView,
       isActive,
       onTagClick,
       dropDown,
-      onHandleScroll,
       closeCurrentTagView,
-      onCurrentContextmenuClick,
-      routeActive
+      onCurrentContextmenuClick
     } = this
     return (
       <>
@@ -564,7 +561,6 @@ export default defineComponent({
             //   onHandleScroll(event)
             // }}
           >
-            {routeActive.toString()}
             <ul ref="tagUlRef" class={{ 'layout-navbar-tagView-ul': true, [themeConfig.tagStyle]: true }}>
               {tagViewList.map((v: RouteRecordRaw, k) => {
                 return (
@@ -608,7 +604,7 @@ export default defineComponent({
                                 class={['layout-navbar-tagView-ul-li-icon', 'layout-icon-active']}
                                 onClick={(event: any) => {
                                   event.stopPropagation()
-                                  closeCurrentTagView(themeConfig.isShareTagView ? v.path : v.url as string)
+                                  closeCurrentTagView(themeConfig.isShareTagView ? v.path : (v.url as string))
                                 }}
                               >
                                 <Close />
@@ -622,7 +618,7 @@ export default defineComponent({
                           class={['layout-navbar-tagView-ul-li-iconfont', 'layout-icon-three']}
                           onClick={(event: any) => {
                             event.stopPropagation()
-                            closeCurrentTagView(themeConfig.isShareTagView ? v.path : v.url as string)
+                            closeCurrentTagView(themeConfig.isShareTagView ? v.path : (v.url as string))
                           }}
                         >
                           <Close />

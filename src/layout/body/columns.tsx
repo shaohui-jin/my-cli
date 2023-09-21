@@ -11,6 +11,7 @@ export default defineComponent({
     return { isFixedHeader }
   },
   render() {
+    const { isFixedHeader } = this
     return (
       <>
         <el-container class="layout-container">

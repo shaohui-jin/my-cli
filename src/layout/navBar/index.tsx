@@ -2,7 +2,7 @@ import { defineAsyncComponent, defineComponent, computed } from 'vue'
 import { useStore } from '@/store'
 
 const TagView = defineAsyncComponent(() => import('@/layout/navBar/tagView'))
-const Breadcrumb = defineAsyncComponent(() => import('@/layout/navBar/breadcrumb'))
+const Navigation = defineAsyncComponent(() => import('@/layout/navBar/navigation/index.tsx'))
 export default defineComponent({
   setup() {
     const isTagView = computed(() => {
@@ -17,9 +17,9 @@ export default defineComponent({
     const { isTagView } = this
     return (
       <>
-        <div class="layout-navbars-container">
-          <Breadcrumb />
-          {isTagView ? <TagView /> : <div></div>}
+        <div class="layout-navbar-container">
+          <Navigation />
+          {isTagView && <TagView />}
         </div>
       </>
     )

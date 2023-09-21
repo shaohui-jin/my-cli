@@ -7,8 +7,20 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
+    ElBadge: typeof import('element-plus/es')['ElBadge']
+    ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
+    ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElDropdown: typeof import('element-plus/es')['ElDropdown']
+    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
+    ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
+    ElEmpty: typeof import('element-plus/es')['ElEmpty']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
+    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

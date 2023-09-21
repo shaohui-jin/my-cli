@@ -46,7 +46,7 @@ export const unFlattenObject = (obj: ObjectType): ObjectType => {
  * @param prefix 标识
  * @return 扁平化后的数组
  */
-export const flattenArray = (arr: any[], prefix = ''): any[] => {
+export const flattenArray = (arr: any[], prefix = 'children'): any[] => {
   return arr.reduce((result, item): any[] => {
     result = result.concat(item)
     const checkData = prefix ? item[prefix] : item

@@ -92,7 +92,15 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
         path: '/demo',
         name: '代码演示',
         meta: {
-          type: 'demo'
+          type: 'demo',
+          title: '代码演示',
+          isLink: '',
+          isHide: false,
+          isKeepAlive: true,
+          isAffix: false,
+          isIframe: false,
+          roles: ['admin', 'common'],
+          icon: ''
         },
         // component: () => import('@/views/home'),
         children: [

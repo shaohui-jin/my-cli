@@ -3,8 +3,7 @@ import { useStore } from '@/store'
 const Aside = defineAsyncComponent(() => import('@/layout/component/aside.tsx'))
 const Header = defineAsyncComponent(() => import('@/layout/component/header.tsx'))
 const Main = defineAsyncComponent(() => import('@/layout/component/main.tsx'))
-
-// import TagView from '@/layout/navBars/tagView/tagView.vue';
+const TagView = defineAsyncComponent(() => import('@/layout/navBar/tagView'))
 
 export default defineComponent({
   setup() {
@@ -20,11 +19,11 @@ export default defineComponent({
           <el-container class="layout-main-height-50">
             <Aside />
             <div class={['flex-center', 'layout-backtop']}>
-              {/*<TagView v-if="isTagView" />*/}
+              {this.isTagView && <TagView />}
               <Main />
             </div>
           </el-container>
-          <el-backtop target=".layout-backtop .el-main .el-scrollbar__wrap"></el-backtop>
+          {/*<el-backtop target=".layout-backtop .el-main .el-scrollbar__wrap"></el-backtop>*/}
         </el-container>
       </>
     )

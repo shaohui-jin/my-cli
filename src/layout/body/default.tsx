@@ -22,9 +22,7 @@ export default defineComponent({
         // layoutDefaultScrollbarRef.value.scrollTop = 0
       }
     )
-    return {
-      isFixedHeader
-    }
+    return { isFixedHeader }
   },
   render() {
     const { isFixedHeader } = this

@@ -31,10 +31,10 @@ export const RouteStore = defineStore(
     // const setColumnsMenuHover = (bool: boolean) => (routeData.isColumnsMenuHover = bool)
 
     // const setColumnsNavHover = (bool: boolean) => (routeData.isColumnsNavHover = bool)
-
+    const getRoutesList = () => routeData.routesList
     return {
-      ...toRefs(routeData)
-      // setRoutesList
+      ...toRefs(routeData),
+      getRoutesList
       // setColumnsMenuHover,
       // setColumnsNavHover
     }

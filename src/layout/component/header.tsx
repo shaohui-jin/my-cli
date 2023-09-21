@@ -1,7 +1,7 @@
 import { defineComponent, computed, defineAsyncComponent } from 'vue'
 import { useStore } from '@/store'
 
-const NavBar = defineAsyncComponent(() => import('@/layout/navBar'))
+const NavBar = defineAsyncComponent(() => import('@/layout/navBar/index.tsx'))
 
 export default defineComponent({
   setup() {
