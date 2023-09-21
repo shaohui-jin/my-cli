@@ -2,8 +2,9 @@ import { ref, computed, getCurrentInstance, onMounted, defineComponent, Transiti
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { Expand, Fold } from '@element-plus/icons-vue'
-import { flattenArray } from "@/utils/common.ts";
-import { RouteRecordRaw } from "@/router/utils.ts";
+import { flattenArray } from '@/utils/common.ts'
+import { RouteRecordRaw } from '@/router/utils.ts'
+
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any
@@ -12,7 +13,6 @@ export default defineComponent({
     const breadcrumbList = ref<Array<any>>([])
     const routeSplit = ref<Array<any>>([])
 
-    // 获取布局配置信息
     const getThemeConfig = computed(() => useStore().useThemeStore)
 
     /**
@@ -27,12 +27,17 @@ export default defineComponent({
         return isBreadcrumb ? '' : 'none'
       }
     })
-    // 面包屑点击时
+
+    /**
+     * @desc 面包屑点击时
+     * @param redirect
+     * @param path
+     * @param event
+     */
     const onBreadcrumbClick = ({ redirect, path }: any, event: any) => {
       event.preventDefault()
       redirect ? router.push(redirect) : router.push(path)
     }
-    // 展开/收起左侧菜单点击
     /**
      * @desc 展开/收起左侧菜单点击
      */

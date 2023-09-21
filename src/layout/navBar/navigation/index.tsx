@@ -8,6 +8,7 @@ import { useRoute } from 'vue-router'
 
 const Logo = defineAsyncComponent(() => import('@/layout/logo'))
 const Breadcrumb = defineAsyncComponent(() => import('@/layout/navBar/navigation/breadcrumb.tsx'))
+const User = defineAsyncComponent(() => import('@/layout/navBar/navigation/user.tsx'))
 
 export default defineComponent({
   setup() {
@@ -88,7 +89,7 @@ export default defineComponent({
         {showLogo && <Logo />}
         <Breadcrumb />
         {/*{isLayoutTransverse && <Horizontal menuList={this.menuList} />}*/}
-        {/*<User />*/}
+        <User />
       </div>
     )
   }

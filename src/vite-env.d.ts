@@ -10,6 +10,7 @@ declare global {
 
 declare module 'sortablejs'
 declare module 'mitt'
+declare module 'screenfull'
 
 interface Window {
   [App: string]: any
