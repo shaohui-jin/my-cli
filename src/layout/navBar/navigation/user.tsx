@@ -1,4 +1,4 @@
-import { defineComponent, getCurrentInstance, onMounted, ref, reactive, toRefs, computed, Transition } from 'vue'
+import { defineComponent, defineAsyncComponent, getCurrentInstance, onMounted, ref, computed, Transition } from 'vue'
 import { Search, Bell, ArrowDown } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
@@ -7,13 +7,14 @@ import screenfull from 'screenfull'
 import UserApi from '@/api/modules/user.ts'
 
 // const SearchBox = defineAsyncComponent(() => import('@/layout/navbar/navgation/search.vue'))
+const UserNews = defineAsyncComponent(() => import('@/layout/navbar/navigation/userNews.tsx'))
+
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any
     const router = useRouter()
     const searchRef = ref()
     const isScreenFull = ref<boolean>(false)
-    const isShowUserNewsPopover = ref<boolean>(false)
     const disabledI18n = ref<string>('zh-cn')
     const disabledSize = ref<string>('mini')
 
@@ -108,7 +109,6 @@ export default defineComponent({
     return {
       userInfo,
       layoutUserFlexNum,
-      isShowUserNewsPopover,
       isScreenFull,
       disabledSize,
       onLayoutSettingClick,
@@ -122,7 +122,6 @@ export default defineComponent({
     const {
       userInfo,
       layoutUserFlexNum,
-      isShowUserNewsPopover,
       isScreenFull,
       disabledSize,
       onLayoutSettingClick,
@@ -178,14 +177,13 @@ export default defineComponent({
             <el-popover
               placement="bottom"
               trigger="hover"
-              visible={isShowUserNewsPopover}
               width={300}
               popper-class="el-popover-pupop-user-news"
               v-slots={{
                 reference: () => {
                   return (
                     <>
-                      <el-badge is-dot onClick={() => (this.isShowUserNewsPopover = !this.isShowUserNewsPopover)}>
+                      <el-badge is-dot>
                         <el-icon title={'消息'}>
                           <Bell />
                         </el-icon>
@@ -195,10 +193,7 @@ export default defineComponent({
                 }
               }}
             >
-              <Transition name="el-zoom-in-top">
-                123123
-                {/*<UserNews v-show="isShowUserNewsPopover" />*/}
-              </Transition>
+              <UserNews />
             </el-popover>
           </div>
           <div class="layout-navbar-breadcrumb-user-icon mr10" onClick={onScreenFullClick}>
@@ -206,7 +201,6 @@ export default defineComponent({
               title={isScreenFull ? '关全屏' : '开全屏'}
               class={['iconfont', isScreenFull ? 'icon-tuichuquanping' : 'icon-fullscreen']}
             ></i>
-            { isScreenFull } { this.isScreenFull }
           </div>
           <el-dropdown
             show-timeout={70}
@@ -238,7 +232,6 @@ export default defineComponent({
               </el-icon>
             </span>
           </el-dropdown>
-          123123
           {/*<Search ref="searchRef" />*/}
         </div>
       </>
