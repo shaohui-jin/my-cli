@@ -1,7 +1,19 @@
-import { defineComponent, onBeforeMount, onMounted, onUnmounted, nextTick, watch, getCurrentInstance, ref } from 'vue'
+import {
+  defineComponent,
+  onBeforeMount,
+  onMounted,
+  onUnmounted,
+  nextTick,
+  watch,
+  getCurrentInstance,
+  ref,
+  defineAsyncComponent
+} from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import { setExternalResources } from '@/utils/init'
 import { useStore } from '@/store'
+
+const Setting = defineAsyncComponent(() => import('@/layout/navBar/navigation/setting.tsx'))
 
 export default defineComponent({
   setup() {
@@ -52,13 +64,14 @@ export default defineComponent({
     return { themeConfig }
   },
   render() {
+    const { themeConfig} = this
     return (
       <>
         {/*<el-config-provider locale="zh-cn">*/}
         <RouterView />
         {/*<RouterView v-show={this.themeConfig.lockScreenTime !== 0} />*/}
         {/*{themeConfig.isLockScreen && <LockScreen />}*/}
-        {/*<SettingRef ref="settingRef" v-show="themeConfig.lockScreenTime !== 0" />*/}
+        <Setting ref="settingRef" v-show="themeConfig.lockScreenTime !== 0" />
         {/*<CloseFull />*/}
         {/*</el-config-provider>*/}
       </>
