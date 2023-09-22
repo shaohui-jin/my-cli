@@ -17,7 +17,6 @@ export interface ILoginData {
  * 接口参数Types
  * --------------------------------------------------------------------------
  */
-// 登录参数
 export interface ILoginApiParams {
   username: string // 用户名
   password: string // 密码
@@ -31,4 +30,6 @@ export interface ILoginApiParams {
 export interface IUserApi {
   // 验证码登录
   login: (params: ILoginApiParams) => Promise<ILoginData>
+  // 用户退出登录
+  signOut: () => Promise
 }

@@ -85,7 +85,7 @@ export default defineComponent({
   render() {
     const { showLogo, isLayoutTransverse, menuList } = this
     return (
-      <div class="layout-navbars-breadcrumb-index">
+      <div class="layout-navbar-breadcrumb-index">
         {showLogo && <Logo />}
         <Breadcrumb />
         {/*{isLayoutTransverse && <Horizontal menuList={this.menuList} />}*/}

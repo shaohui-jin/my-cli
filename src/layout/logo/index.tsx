@@ -25,14 +25,14 @@ export default defineComponent({
         {this.showLogo ? (
           <>
             <div class="layout-logo" onClick={this.onThemeConfigChange}>
-              <img src={userLogo} class="layout-logo-medium-img" />
+              <img src={'/ms-icon-144.png'} class="layout-logo-medium-img" />
               <span>{this.globalTitle}</span>
             </div>
           </>
         ) : (
           <>
             <div class="layout-logo-size" onClick={this.onThemeConfigChange}>
-              <img src={userLogo} class="layout-logo-size-img" />
+              <img src={'/ms-icon-144.png'} class="layout-logo-size-img" />
             </div>
           </>
         )}

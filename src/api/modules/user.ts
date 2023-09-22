@@ -1,21 +1,20 @@
 import { ILoginApiParams, ILoginData, IUserApi } from '@/api/types/user'
 import { useStore } from '@/store'
 import { UserType } from '@/store/modules/user.ts'
+import { resetRoute } from '@/router/utils.ts'
 
 // admin 页面权限标识，对应路由 meta.roles，用于控制路由的显示/隐藏
 export const adminRoles: Array<string> = ['admin']
 // admin 按钮权限标识
 export const adminAuthBtnList: Array<string> = ['btn.add', 'btn.del', 'btn.edit', 'btn.link']
 // admin 头像
-export const adminPhoto: string =
-  'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1813762643,1914315241&fm=26&gp=0.jpg'
+export const adminPhoto: string = '/ms-icon-144.png'
 // test 页面权限标识，对应路由 meta.roles，用于控制路由的显示/隐藏
 export const testRoles: Array<string> = ['common']
 // test 按钮权限标识
 export const testAuthBtnList: Array<string> = ['btn.add', 'btn.link']
 // test 头像
-export const testPhoto: string =
-  'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=317673774,2961727727&fm=26&gp=0.jpg'
+export const testPhoto: string = '/ms-icon-144.png'
 export const token: string = 'this is token'
 
 const UserApi: IUserApi = {
@@ -41,25 +40,14 @@ const UserApi: IUserApi = {
       useStore().useUserStore.$patch(loginData)
       resolve(loginData)
     })
+  },
+  signOut: () => {
+    return new Promise<void>(resolve => {
+      useStore().$reset() // 清除缓存/token等
+      resetRoute() // 删除/重置路由
+      resolve()
+    })
   }
 }
 
 export default UserApi
-
-/**
- * 用户退出登录
- */
-// export function signOut(params: object) {
-// 	return request({
-// 		url: '/user/signOut',
-// 		method: 'post',
-// 		data: params,
-// 	});
-// }
-// export function signOut() {
-//   return new Promise<void>((resolve, reject) => {
-//     Session.clear(); // 清除缓存/token等
-//     resetRoute(); // 删除/重置路由
-//     resolve()
-//   })
-// }
