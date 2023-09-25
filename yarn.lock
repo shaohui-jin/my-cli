@@ -1188,6 +1188,15 @@
   "resolved" "https://registry.npmmirror.com/chrome-trace-event/-/chrome-trace-event-1.0.3.tgz"
   "version" "1.0.3"
 
+"clipboard@^2.0.6":
+  "integrity" "sha512-C+0bbOqkezLIsmWSvlsXS0Q0bmkugu7jcfMIACB+RDEntIzQIkdr148we28AfSloQLRdZlYL/QYyrq05j/3Faw=="
+  "resolved" "https://registry.npmmirror.com/clipboard/-/clipboard-2.0.11.tgz"
+  "version" "2.0.11"
+  dependencies:
+    "good-listener" "^1.2.2"
+    "select" "^1.1.2"
+    "tiny-emitter" "^2.0.0"
+
 "color-convert@^1.9.0":
   "integrity" "sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg=="
   "resolved" "https://registry.npmmirror.com/color-convert/-/color-convert-1.9.3.tgz"
@@ -1335,6 +1344,11 @@
   "integrity" "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ=="
   "resolved" "https://registry.npmmirror.com/delayed-stream/-/delayed-stream-1.0.0.tgz"
   "version" "1.0.0"
+
+"delegate@^3.1.2":
+  "integrity" "sha512-IofjkYBZaZivn0V8nnsMJGBr4jVLxHDheKSW88PyxS5QC4Vo9ZbZVvhzlSxY87fVq3STR6r+4cGepyHkcWOQSw=="
+  "resolved" "https://registry.npmmirror.com/delegate/-/delegate-3.2.0.tgz"
+  "version" "3.2.0"
 
 "dir-glob@^3.0.1":
   "integrity" "sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA=="
@@ -1805,6 +1819,13 @@
     "ignore" "^5.2.0"
     "merge2" "^1.4.1"
     "slash" "^3.0.0"
+
+"good-listener@^1.2.2":
+  "integrity" "sha512-goW1b+d9q/HIwbVYZzZ6SsTr4IgE+WA44A0GmPIQstuOrgsFcT7VEJ48nmr9GaRtNu0XTKacFLGnBPAM6Afouw=="
+  "resolved" "https://registry.npmmirror.com/good-listener/-/good-listener-1.2.2.tgz"
+  "version" "1.2.2"
+  dependencies:
+    "delegate" "^3.1.2"
 
 "graceful-fs@^4.1.2", "graceful-fs@^4.1.6", "graceful-fs@^4.2.0", "graceful-fs@^4.2.4", "graceful-fs@^4.2.9":
   "integrity" "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ=="
@@ -2734,6 +2755,11 @@
   "resolved" "https://registry.npmmirror.com/scule/-/scule-1.0.0.tgz"
   "version" "1.0.0"
 
+"select@^1.1.2":
+  "integrity" "sha512-OwpTSOfy6xSs1+pwcNrv0RBMOzI39Lp3qQKUTPVVPRjCdNa5JH/oPRiqsesIskK8TVgmRiHwO4KXlV2Li9dANA=="
+  "resolved" "https://registry.npmmirror.com/select/-/select-1.1.2.tgz"
+  "version" "1.1.2"
+
 "semver@^5.6.0":
   "integrity" "sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g=="
   "resolved" "https://registry.npmmirror.com/semver/-/semver-5.7.2.tgz"
@@ -2945,6 +2971,11 @@
   "resolved" "https://registry.npmmirror.com/text-table/-/text-table-0.2.0.tgz"
   "version" "0.2.0"
 
+"tiny-emitter@^2.0.0":
+  "integrity" "sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q=="
+  "resolved" "https://registry.npmmirror.com/tiny-emitter/-/tiny-emitter-2.1.0.tgz"
+  "version" "2.1.0"
+
 "titleize@^3.0.0":
   "integrity" "sha512-KxVu8EYHDPBdUYdKZdKtU2aj2XfEx9AfjXxE/Aj0vT06w2icA09Vus1rh6eSu1y01akYg6BjIK/hxyLJINoMLQ=="
   "resolved" "https://registry.npmmirror.com/titleize/-/titleize-3.0.0.tgz"
@@ -3149,6 +3180,13 @@
     "rollup" "^3.27.1"
   optionalDependencies:
     "fsevents" "~2.3.2"
+
+"vue-clipboard3@^2.0.0":
+  "integrity" "sha512-Q9S7dzWGax7LN5iiSPcu/K1GGm2gcBBlYwmMsUc5/16N6w90cbKow3FnPmPs95sungns4yvd9/+JhbAznECS2A=="
+  "resolved" "https://registry.npmmirror.com/vue-clipboard3/-/vue-clipboard3-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "clipboard" "^2.0.6"
 
 "vue-demi@*", "vue-demi@>=0.14.5":
   "integrity" "sha512-o9NUVpl/YlsGJ7t+xuqJKx8EBGf1quRhCiT6D/J0pfwmk9zUwYkC7yrF4SZCe6fETvSM3UNL2edcbYrSyc4QHA=="

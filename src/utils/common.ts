@@ -1,5 +1,8 @@
 import { ObjectType } from '@/types'
 import { nextTick } from 'vue'
+import useClipboard from 'vue-clipboard3'
+import { ElMessage } from 'element-plus'
+import { formatDate } from '@/utils/time.ts'
 
 /**
  * desc: 对象扁平化
@@ -210,4 +213,89 @@ export const isMobile = () => {
   return !!navigator.userAgent.match(
     /('phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone')/i
   )
+}
+
+const { toClipboard } = useClipboard()
+
+/**
+ * @desc 百分比格式化
+ * @param row
+ * @param column
+ * @param cellValue
+ */
+export const percentFormat = (row: any, column: number, cellValue: any) => {
+  return cellValue ? `${cellValue}%` : '-'
+}
+
+/**
+ * @desc 列表日期时间格式化
+ * @param row
+ * @param column
+ * @param cellValue
+ */
+export const dateFormatYMD = (row: any, column: number, cellValue: any) => {
+  if (!cellValue) return '-'
+  return formatDate(new Date(cellValue), 'YYYY-mm-dd')
+}
+
+/**
+ * @desc 列表日期时间格式化
+ * @param row
+ * @param column
+ * @param cellValue
+ */
+export const dateFormatYMDHMS = (row: any, column: number, cellValue: any) => {
+  if (!cellValue) return '-'
+  return formatDate(new Date(cellValue), 'YYYY-mm-dd HH:MM:SS')
+}
+
+/**
+ * @desc 列表日期时间格式化
+ * @param row
+ * @param column
+ * @param cellValue
+ */
+export const dateFormatHMS = (row: any, column: number, cellValue: any) => {
+  if (!cellValue) return '-'
+  let time = 0
+  if (typeof row === 'number') time = row
+  if (typeof cellValue === 'number') time = cellValue
+  return formatDate(new Date(time * 1000), 'HH:MM:SS')
+}
+
+/**
+ * @desc 小数格式化
+ * @param value
+ * @param scale
+ */
+export const scaleFormat = (value: any = 0, scale: number = 4) => {
+  return Number.parseFloat(value).toFixed(scale)
+}
+
+/**
+ * @desc 小数格式化
+ * @param value
+ */
+export const scale2Format = (value: any = 0) => {
+  return Number.parseFloat(value).toFixed(2)
+}
+
+/**
+ * @desc 点击复制文本
+ * @param text
+ */
+export const copyText = (text: string) => {
+  return new Promise((resolve, reject) => {
+    try {
+      //复制
+      toClipboard(text)
+      //下面可以设置复制成功的提示框等操作
+      ElMessage.success(t('message.layout.copyTextSuccess'))
+      resolve(text)
+    } catch (e) {
+      //复制失败
+      ElMessage.error(t('message.layout.copyTextError'))
+      reject(e)
+    }
+  })
 }

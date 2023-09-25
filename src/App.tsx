@@ -21,7 +21,7 @@ export default defineComponent({
     const settingRef = ref()
     const route = useRoute()
     const router = useRouter()
-    const themeConfig = useStore().useThemeStore.themeConfig
+    const themeConfig = useStore().useThemeStore
     onBeforeMount(() => {
       // 设置批量第三方 icon 图标
       setExternalResources.cssCdn()
@@ -61,17 +61,18 @@ export default defineComponent({
         })
       }
     )
-    return { themeConfig }
+    return { themeConfig, settingRef }
   },
   render() {
-    const { themeConfig} = this
+    const { themeConfig, settingRef} = this
     return (
       <>
         {/*<el-config-provider locale="zh-cn">*/}
         <RouterView />
         {/*<RouterView v-show={this.themeConfig.lockScreenTime !== 0} />*/}
         {/*{themeConfig.isLockScreen && <LockScreen />}*/}
-        <Setting ref="settingRef" v-show="themeConfig.lockScreenTime !== 0" />
+        {/*{themeConfig.lockScreenTime !== 0 && <Setting ref="settingRef" />}*/}
+        <Setting ref="settingRef" />
         {/*<CloseFull />*/}
         {/*</el-config-provider>*/}
       </>
