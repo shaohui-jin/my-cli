@@ -61,7 +61,7 @@ const defaultThemeConfig: ThemeType = {
   globalTitle: '小石头潭记',
   globalViceTitle: '帅气小辉',
   globalI18n: 'zh-cn',
-  globalComponentSize: 'large'
+  globalComponentSize: ''
 }
 
 /** 全局主题 */

@@ -6,21 +6,30 @@ import Watermark from '@/utils/watermark.ts'
 import { getCookie, setCookie } from '@/utils/cookie.ts'
 import { copyText } from '@/utils/common.ts'
 import { CopyDocument, RefreshRight } from '@element-plus/icons-vue'
+import { ThemeType } from '@/store/modules/theme.ts'
+import { isMobile as _isMobile } from '@/utils/common.ts';
 
 type BaseSettingItem = {
   // 属性值
-  key: string
+  key: keyof ThemeType
   // 属性名
   label: string
   // render函数
   render?: any
-} & (({ type: 'color' } & ColorItem) | ({ type: 'select' } & SelectItem))
+  style?: any
+  disabled?: boolean
+} & (
+  | ({ type: 'color' } & ColorItem)
+  | ({ type: 'select' } & SelectItem)
+  | ({ type: 'switch' } & SwitchItem)
+  | ({ type: 'input' } & InputItem)
+  )
 
 type ColorItem = { onChange: () => void }
+type SelectItem = { onClick: () => void }
+type SwitchItem = { onChange: () => void }
+type InputItem = { onInput: () => void }
 
-type SelectItem = {
-  func: Record<'onChange' | 'onClick', any>
-}
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any
@@ -161,9 +170,9 @@ export default defineComponent({
     }
     // 4、界面显示 --> 水印文案
     const onWaterMarkTextInput = (val: string) => {
-      themeConfig.value.wartermarkText = verifyAndSpace(val)
-      if (themeConfig.value.wartermarkText === '') return false
-      if (themeConfig.value.isWartermark) Watermark.set(themeConfig.value.wartermarkText)
+      themeConfig.value.watermarkText = verifyAndSpace(val)
+      if (themeConfig.value.watermarkText === '') return false
+      if (themeConfig.value.isWatermark) Watermark.set(themeConfig.value.watermarkText)
       setLocalThemeConfig()
     }
     // 5、布局切换
@@ -253,7 +262,7 @@ export default defineComponent({
           themeConfig.value.isDrawer = false
           initLayoutChangeFun()
           onMenuBarHighlightChange()
-          isMobile.value = isMobile()
+          isMobile.value = _isMobile()
         })
         setTimeout(() => {
           // 修复防止退出登录再进入界面时，需要刷新样式才生效的问题，初始化布局样式等(登录的时候触发，目前方案)
@@ -279,16 +288,26 @@ export default defineComponent({
     })
 
     const globalTheme = ref<BaseSettingItem[]>([
-      { label: 'primary', key: 'primary' },
-      { label: 'success', key: 'success' },
-      { label: 'info', key: 'info' },
-      { label: 'warning', key: 'warning' },
-      { label: 'danger', key: 'danger' }
+      { label: 'primary', key: 'primary', type: 'color' },
+      { label: 'success', key: 'success', type: 'color' },
+      { label: 'info', key: 'info', type: 'color' },
+      { label: 'warning', key: 'warning', type: 'color' },
+      { label: 'danger', key: 'danger', type: 'color' }
     ])
 
-    const globalMenu = ref<BaseSettingItem>([
-      { label: '顶栏背景', key: 'topBar', onChange: () => onBgColorPickerChange('topBar'), type: 'color' },
-      { label: '菜单背景', key: 'menuBar', onChange: () => onBgColorPickerChange('menuBar'), type: 'color' },
+    const globalMenu = ref<BaseSettingItem[]>([
+      {
+        label: '顶栏背景',
+        key: 'topBar',
+        onChange: () => onBgColorPickerChange('topBar'),
+        type: 'color'
+      },
+      {
+        label: '菜单背景',
+        key: 'menuBar',
+        onChange: () => onBgColorPickerChange('menuBar'),
+        type: 'color'
+      },
       {
         label: '分栏菜单背景',
         key: 'columnsMenuBar',
@@ -313,8 +332,18 @@ export default defineComponent({
         onChange: () => onBgColorPickerChange('columnsMenuBarColor'),
         type: 'color'
       },
-      { label: '顶栏背景渐变', key: 'isTopBarColorGradual', onChange: () => onTopBarGradualChange(), type: 'switch' },
-      { label: '菜单背景渐变', key: 'isMenuBarColorGradual', onChange: () => onMenuBarGradualChange(), type: 'switch' },
+      {
+        label: '顶栏背景渐变',
+        key: 'isTopBarColorGradual',
+        onChange: () => onTopBarGradualChange(),
+        type: 'switch'
+      },
+      {
+        label: '菜单背景渐变',
+        key: 'isMenuBarColorGradual',
+        onChange: () => onMenuBarGradualChange(),
+        type: 'switch'
+      },
       {
         label: '分栏菜单背景渐变',
         key: 'isColumnsMenuBarColorGradual',
@@ -328,16 +357,104 @@ export default defineComponent({
         type: 'switch'
       }
     ])
+    const globalPageSetting = ref<BaseSettingItem[]>([
+      {
+        label: '侧边栏 Logo',
+        key: 'isShowLogo',
+        type: 'switch',
+        onChange: () => onIsShowLogoChange()
+      },
+      {
+        label: '开启 Breadcrumb',
+        key: 'isBreadcrumb',
+        type: 'switch',
+        style: { opacity: themeConfig.value.layout === 'classic' || themeConfig.value.layout === 'transverse' ? 0.5 : 1 },
+        disabled: themeConfig.value.layout === 'classic' || themeConfig.value.layout === 'transverse',
+        onChange: () => onIsShowLogoChange(),
+      },
+      {
+        label: '开启 Breadcrumb 图标',
+        key: 'isBreadcrumbIcon',
+        type: 'switch',
+        onChange: () => setLocalThemeConfig()
+      },
+      {
+        label: '开启 TagView',
+        key: 'isTagView',
+        type: 'switch',
+        onChange: () => setLocalThemeConfig()
+      },
+      {
+        label: '开启 TagView 图标',
+        key: 'isTagViewIcon',
+        type: 'switch',
+        onChange: () => setLocalThemeConfig()
+      },
+      {
+        label: '开启 TagView 缓存',
+        key: 'isCacheTagView',
+        type: 'switch',
+        onChange: () => setLocalThemeConfig()
+      },
+      {
+        label: '开启 TagView 拖拽',
+        key: 'isSortableTagView',
+        type: 'switch',
+        style: { opacity: isMobile.value ? 0.5 : 1 },
+        disabled: isMobile.value,
+        onChange: () => onSortableTagsViewChange()
+      },
+      {
+        label: '开启 TagView 共用',
+        key: 'isShareTagView',
+        type: 'switch',
+        onChange: () => onShareTagsViewChange()
+      },
+      {
+        label: '开启 Footer',
+        key: 'isFooter',
+        type: 'switch',
+        onChange: () => setLocalThemeConfig()
+      },
+      {
+        label: '灰色模式',
+        key: 'isGrayscale',
+        type: 'switch',
+        onChange: () => onAddFilterChange('grayscale')
+      },
+      {
+        label: '色弱模式',
+        key: 'isInvert',
+        type: 'switch',
+        onChange: () => onAddFilterChange('invert')
+      },
+      {
+        label: '深色模式',
+        key: 'isIsDark',
+        type: 'switch',
+        onChange: () => onAddDarkChange()
+      },
+      {
+        label: '开启水印',
+        key: 'isWatermark',
+        type: 'switch',
+        onChange: () => onWaterMarkChange()
+      },
+      {
+        label: '水印文案',
+        key: 'watermarkText',
+        type: 'input',
+        style: { width: '90px' },
+        disabled: isMobile.value,
+        onInput: () => onWaterMarkChange()
+      }
+    ])
     return {
       globalTheme,
       globalMenu,
+      globalPageSetting,
       openDrawer,
       onColorPickerChange,
-      onBgColorPickerChange,
-      onTopBarGradualChange,
-      onMenuBarGradualChange,
-      onColumnsMenuBarGradualChange,
-      onMenuBarHighlightChange,
       onThemeConfigChange,
       onIsFixedHeaderChange,
       onIsShowLogoChange,
@@ -362,12 +479,8 @@ export default defineComponent({
     const {
       globalTheme,
       globalMenu,
+      globalPageSetting,
       onColorPickerChange,
-      onBgColorPickerChange,
-      onTopBarGradualChange,
-      onMenuBarGradualChange,
-      onColumnsMenuBarGradualChange,
-      onMenuBarHighlightChange,
       onThemeConfigChange,
       onIsFixedHeaderChange,
       onIsShowLogoChange,
@@ -420,15 +533,8 @@ export default defineComponent({
                     <div class="layout-breadcrumb-setting-bar-flex">
                       <div class="layout-breadcrumb-setting-bar-flex-label">{e.label}</div>
                       <div class="layout-breadcrumb-setting-bar-flex-value">
-                        {e.type === 'color' ? (
-                          <>
-                            <el-color-picker v-model={themeConfig[e.key]} onChange={() => e.onChange()} />
-                          </>
-                        ) : (
-                          <>
-                            <el-switch v-model={themeConfig[e.key]} onChange={() => e.onChange()}></el-switch>
-                          </>
-                        )}
+                        {e.type === 'color' && <el-color-picker v-model={themeConfig[e.key]} onChange={() => e.onChange()} />}
+                        {e.type === 'switch' && <el-switch v-model={themeConfig[e.key]} onChange={() => e.onChange()}></el-switch>}
                       </div>
                     </div>
                   </>
