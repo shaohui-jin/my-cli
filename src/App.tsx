@@ -34,15 +34,10 @@ export default defineComponent({
         proxy.mittBus.on('openSettingDrawer', () => {
           settingRef.value.openDrawer()
         })
-        // 设置 i18n，App.vue 中的 el-config-provider
-        proxy.mittBus.on('getI18nConfig', (locale: string) => {
-          state.i18nLocale = locale
-        })
       })
     })
     onUnmounted(() => {
       proxy.mittBus.off('openSettingDrawer', () => {})
-      proxy.mittBus.off('getI18nConfig', () => {})
     })
 
     /**

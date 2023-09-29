@@ -2,7 +2,7 @@ import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   setup() {
-    const newsList = ref<Array[{ [T: string]: string }]>([
+    const newsList = ref<{ [T: string]: string }[]>([
       {
         label: '关于版本发布的通知',
         value: 'my-visual-screen，基于 vue3 + CompositionAPI + typescript + vite + element plus，正式发布时间：待定！',

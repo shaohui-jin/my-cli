@@ -7,7 +7,7 @@ import { getCookie, setCookie } from '@/utils/cookie.ts'
 import { copyText } from '@/utils/common.ts'
 import { CopyDocument, RefreshRight } from '@element-plus/icons-vue'
 import { ThemeType } from '@/store/modules/theme.ts'
-import { isMobile as _isMobile } from '@/utils/common.ts';
+import { isMobile as _isMobile } from '@/utils/common.ts'
 
 type BaseSettingItem = {
   // 属性值
@@ -16,19 +16,27 @@ type BaseSettingItem = {
   label: string
   // render函数
   render?: any
+  // 整体style
   style?: any
+  // 元素style
+  elStyle?: any
   disabled?: boolean
 } & (
   | ({ type: 'color' } & ColorItem)
   | ({ type: 'select' } & SelectItem)
   | ({ type: 'switch' } & SwitchItem)
   | ({ type: 'input' } & InputItem)
-  )
+  | ({ type: 'input-number' } & InputNumberItem)
+)
 
-type ColorItem = { onChange: () => void }
-type SelectItem = { onClick: () => void }
+type ColorItem = { onChange?: () => void }
+type SelectItem = {
+  onChange: () => void
+  options: { [k in 'label' | 'value']: string }[]
+}
 type SwitchItem = { onChange: () => void }
-type InputItem = { onInput: () => void }
+type InputItem = { onInput: (str: string) => void }
+type InputNumberItem = { onChange: () => void }
 
 export default defineComponent({
   setup() {
@@ -176,7 +184,7 @@ export default defineComponent({
       setLocalThemeConfig()
     }
     // 5、布局切换
-    const onSetLayout = (layout: string) => {
+    const onSetLayout = (layout: 'default' | 'classic' | 'transverse' | 'columns') => {
       setCookie('oldLayout', JSON.stringify(layout), { type: 'localStorage' })
       if (themeConfig.value.layout === layout) return false
       themeConfig.value.layout = layout
@@ -247,7 +255,7 @@ export default defineComponent({
       nextTick(() => {
         // 判断当前布局是否不相同，不相同则初始化当前布局的样式，防止监听窗口大小改变时，布局配置logo、菜单背景等部分布局失效问题
         if (!getCookie('frequency', { type: 'localStorage' })) initLayoutChangeFun()
-        setCookie('frequency', 1, { type: 'localStorage' })
+        setCookie('frequency', '1', { type: 'localStorage' })
         // 修复防止退出登录再进入界面时，需要刷新样式才生效的问题，初始化布局样式等(登录的时候触发，目前方案)
         proxy.mittBus.on('onSignInClick', () => {
           initSetStyle()
@@ -294,7 +302,6 @@ export default defineComponent({
       { label: 'warning', key: 'warning', type: 'color' },
       { label: 'danger', key: 'danger', type: 'color' }
     ])
-
     const globalMenu = ref<BaseSettingItem[]>([
       {
         label: '顶栏背景',
@@ -357,7 +364,7 @@ export default defineComponent({
         type: 'switch'
       }
     ])
-    const globalPageSetting = ref<BaseSettingItem[]>([
+    const globalPageShow = ref<BaseSettingItem[]>([
       {
         label: '侧边栏 Logo',
         key: 'isShowLogo',
@@ -368,9 +375,11 @@ export default defineComponent({
         label: '开启 Breadcrumb',
         key: 'isBreadcrumb',
         type: 'switch',
-        style: { opacity: themeConfig.value.layout === 'classic' || themeConfig.value.layout === 'transverse' ? 0.5 : 1 },
+        style: {
+          opacity: themeConfig.value.layout === 'classic' || themeConfig.value.layout === 'transverse' ? 0.5 : 1
+        },
         disabled: themeConfig.value.layout === 'classic' || themeConfig.value.layout === 'transverse',
-        onChange: () => onIsShowLogoChange(),
+        onChange: () => onIsBreadcrumbChange()
       },
       {
         label: '开启 Breadcrumb 图标',
@@ -444,61 +453,129 @@ export default defineComponent({
         label: '水印文案',
         key: 'watermarkText',
         type: 'input',
-        style: { width: '90px' },
+        elStyle: { width: '90px' },
         disabled: isMobile.value,
-        onInput: () => onWaterMarkChange()
+        onInput: (event: string) => onWaterMarkTextInput(event)
+      }
+    ])
+    const globalPageSetting = ref<BaseSettingItem[]>([
+      {
+        label: '菜单水平折叠',
+        key: 'isCollapse',
+        type: 'switch',
+        onChange: () => onThemeConfigChange()
+      },
+      {
+        label: '菜单手风琴',
+        key: 'isUniqueOpened',
+        type: 'switch',
+        onChange: () => setLocalThemeConfig()
+      },
+      {
+        label: '固定 Header',
+        key: 'isFixedHeader',
+        type: 'switch',
+        onChange: () => onIsFixedHeaderChange()
+      },
+      {
+        label: '经典布局分割菜单',
+        key: 'isClassicSplitMenu',
+        type: 'switch',
+        style: { opacity: themeConfig.value.layout !== 'classic' ? 0.5 : 1 },
+        onChange: () => onClassicSplitMenuChange()
+      },
+      {
+        label: '开启锁屏',
+        key: 'isLockScreen',
+        type: 'switch',
+        onChange: () => setLocalThemeConfig()
+      },
+      {
+        label: '自动锁屏(s/秒)',
+        key: 'lockScreenTime',
+        type: 'input-number',
+        elStyle: { width: '90px' },
+        onChange: () => setLocalThemeConfig()
+      }
+    ])
+    const otherSetting = ref<BaseSettingItem[]>([
+      {
+        label: 'TagView 风格',
+        key: 'tagStyle',
+        type: 'select',
+        elStyle: { width: '90px' },
+        onChange: () => setLocalThemeConfig(),
+        options: [
+          { label: '风格1', value: 'tags-style-one' },
+          { label: '风格2', value: 'tags-style-two' },
+          { label: '风格3', value: 'tags-style-three' },
+          { label: '风格4', value: 'tags-style-four' },
+          { label: '风格5', value: 'tags-style-five' }
+        ]
+      },
+      {
+        label: '主页面切换动画',
+        key: 'animation',
+        type: 'select',
+        elStyle: { width: '90px' },
+        onChange: () => setLocalThemeConfig(),
+        options: [
+          { label: 'slide-right', value: 'slide-right' },
+          { label: 'slide-left', value: 'slide-left' },
+          { label: 'opacitys', value: 'opacitys' }
+        ]
+      },
+      {
+        label: '分栏高亮风格',
+        key: 'columnsAsideStyle',
+        type: 'select',
+        elStyle: { width: '90px' },
+        onChange: () => setLocalThemeConfig(),
+        options: [
+          { label: '圆角', value: 'columns-round' },
+          { label: '卡片', value: 'columns-card' }
+        ]
+      },
+      {
+        label: '分栏布局风格',
+        key: 'columnsAsideLayout',
+        type: 'select',
+        elStyle: { width: '90px' },
+        onChange: () => setLocalThemeConfig(),
+        options: [
+          { label: '水平', value: 'columns-horizontal' },
+          { label: '垂直', value: 'columns-vertical' }
+        ]
       }
     ])
     return {
       globalTheme,
       globalMenu,
+      globalPageShow,
       globalPageSetting,
+      otherSetting,
       openDrawer,
       onColorPickerChange,
-      onThemeConfigChange,
-      onIsFixedHeaderChange,
-      onIsShowLogoChange,
       themeConfig,
       onDrawerClose,
-      onAddFilterChange,
-      onAddDarkChange,
-      onWaterMarkChange,
-      onWaterMarkTextInput,
       onSetLayout,
-      setLocalThemeConfig,
-      onClassicSplitMenuChange,
-      onIsBreadcrumbChange,
-      onSortableTagsViewChange,
-      onShareTagsViewChange,
       onCopyConfigClick,
-      onResetConfigClick,
-      isMobile
+      onResetConfigClick
     }
   },
   render() {
     const {
       globalTheme,
       globalMenu,
+      globalPageShow,
       globalPageSetting,
+      otherSetting,
       onColorPickerChange,
-      onThemeConfigChange,
-      onIsFixedHeaderChange,
-      onIsShowLogoChange,
       themeConfig,
       onDrawerClose,
-      onAddFilterChange,
-      onAddDarkChange,
-      onWaterMarkChange,
-      onWaterMarkTextInput,
       onSetLayout,
-      setLocalThemeConfig,
-      onClassicSplitMenuChange,
-      onIsBreadcrumbChange,
-      onSortableTagsViewChange,
-      onShareTagsViewChange,
       onCopyConfigClick,
-      onResetConfigClick,
-      isMobile
+      onResetConfigClick
     } = this
     return (
       <>
@@ -525,7 +602,6 @@ export default defineComponent({
                   </>
                 )
               })}
-              {/* 菜单顶栏 */}
               <el-divider content-position="left">菜单 / 顶栏</el-divider>
               {globalMenu.map(e => {
                 return (
@@ -533,247 +609,112 @@ export default defineComponent({
                     <div class="layout-breadcrumb-setting-bar-flex">
                       <div class="layout-breadcrumb-setting-bar-flex-label">{e.label}</div>
                       <div class="layout-breadcrumb-setting-bar-flex-value">
-                        {e.type === 'color' && <el-color-picker v-model={themeConfig[e.key]} onChange={() => e.onChange()} />}
-                        {e.type === 'switch' && <el-switch v-model={themeConfig[e.key]} onChange={() => e.onChange()}></el-switch>}
+                        {e.type === 'color' && (
+                          <el-color-picker v-model={themeConfig[e.key]} onChange={() => e?.onChange && e.onChange()} />
+                        )}
+                        {e.type === 'switch' && (
+                          <el-switch v-model={themeConfig[e.key]} onChange={() => e.onChange()}></el-switch>
+                        )}
                       </div>
                     </div>
                   </>
                 )
               })}
-              {/* 界面设置 */}
               <el-divider content-position="left">界面设置</el-divider>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">菜单水平折叠</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isCollapse} onChange={onThemeConfigChange}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">菜单手风琴</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isUniqueOpened} onChange={setLocalThemeConfig}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">固定 Header</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isFixedHeader} onChange={onIsFixedHeaderChange}></el-switch>
-                </div>
-              </div>
-              <div
-                class="layout-breadcrumb-setting-bar-flex"
-                style={{ opacity: themeConfig.layout !== 'classic' ? 0.5 : 1 }}
-              >
-                <div class="layout-breadcrumb-setting-bar-flex-label">经典布局分割菜单</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch
-                    v-model={themeConfig.isClassicSplitMenu}
-                    disabled={themeConfig.layout !== 'classic'}
-                    onChange={onClassicSplitMenuChange}
-                  ></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启锁屏</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isLockScreen} onChange={setLocalThemeConfig}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">自动锁屏(s/秒)</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-input-number
-                    v-model={themeConfig.lockScreenTime}
-                    controls-position="right"
-                    min={1}
-                    max={9999}
-                    onChange={setLocalThemeConfig}
-                    size="small"
-                    style={{ width: '90px' }}
-                  ></el-input-number>
-                </div>
-              </div>
-              {/* 界面显示 */}
+              {globalPageSetting.map(e => {
+                return (
+                  <>
+                    <div class="layout-breadcrumb-setting-bar-flex">
+                      <div class="layout-breadcrumb-setting-bar-flex-label">{e.label}</div>
+                      <div class="layout-breadcrumb-setting-bar-flex-value">
+                        {e.type === 'input-number' && (
+                          <el-input-number
+                            v-model={themeConfig[e.key]}
+                            controls-position="right"
+                            min={1}
+                            max={9999}
+                            onChange={() => e.onChange()}
+                            size="small"
+                            style={e.elStyle}
+                          ></el-input-number>
+                        )}
+                        {e.type === 'switch' && (
+                          <el-switch v-model={themeConfig[e.key]} onChange={() => e.onChange()}></el-switch>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )
+              })}
               <el-divider content-position="left">界面显示</el-divider>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">侧边栏 Logo</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isShowLogo} onChange={onIsShowLogoChange}></el-switch>
-                </div>
-              </div>
-              <div
-                class="layout-breadcrumb-setting-bar-flex"
-                style={{ opacity: themeConfig.layout === 'classic' || themeConfig.layout === 'transverse' ? 0.5 : 1 }}
-              >
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启 Breadcrumb</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch
-                    v-model={themeConfig.isBreadcrumb}
-                    disabled={themeConfig.layout === 'classic' || themeConfig.layout === 'transverse'}
-                    onChange={onIsBreadcrumbChange}
-                  />
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启 Breadcrumb 图标</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isBreadcrumbIcon} onChange={setLocalThemeConfig}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启 TagView</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isTagView} onChange={setLocalThemeConfig}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启 Tagsview 图标</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isTagViewIcon} onChange={setLocalThemeConfig}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启 TagsView 缓存</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isCacheTagView} onChange={setLocalThemeConfig}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex" style={{ opacity: isMobile ? 0.5 : 1 }}>
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启 TagView 拖拽</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch
-                    v-model={themeConfig.isSortableTagView}
-                    disabled={isMobile ? true : false}
-                    onChange={onSortableTagsViewChange}
-                  ></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启 TagView 共用</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isShareTagView} onChange={onShareTagsViewChange}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启 Footer</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isFooter} onChange={setLocalThemeConfig}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">灰色模式</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch
-                    v-model={themeConfig.isGrayscale}
-                    onChange={() => onAddFilterChange('grayscale')}
-                  ></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">色弱模式</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isInvert} onChange={() => onAddFilterChange('invert')}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">深色模式</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isIsDark} onChange={onAddDarkChange}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">开启水印</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-switch v-model={themeConfig.isWatermark} onChange={onWaterMarkChange}></el-switch>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">水印文案</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-input
-                    v-model={themeConfig.watermarkText}
-                    size="small"
-                    style={{ width: '90px' }}
-                    onInput={$event => onWaterMarkTextInput($event)}
-                  ></el-input>
-                </div>
-              </div>
-              {/* 其它设置 */}
+              {globalPageShow.map(e => {
+                return (
+                  <>
+                    <div class="layout-breadcrumb-setting-bar-flex" style={e.style || {}}>
+                      <div class="layout-breadcrumb-setting-bar-flex-label">{e.label}</div>
+                      <div class="layout-breadcrumb-setting-bar-flex-value">
+                        {e.type === 'color' && (
+                          <el-color-picker v-model={themeConfig[e.key]} onChange={() => e?.onChange && e.onChange()} />
+                        )}
+                        {e.type === 'switch' && (
+                          <el-switch
+                            v-model={themeConfig[e.key]}
+                            disabled={e.disabled || false}
+                            onChange={() => e.onChange()}
+                          ></el-switch>
+                        )}
+                        {e.type === 'input' && (
+                          <el-input
+                            v-model={themeConfig[e.key]}
+                            disabled={e.disabled || false}
+                            style={e.elStyle || {}}
+                            onInput={(event: string) => e.onInput(event)}
+                          ></el-input>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )
+              })}
               <el-divider content-position="left">其它设置</el-divider>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">TagView 风格</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-select
-                    v-model={themeConfig.tagsStyle}
-                    placeholder="请选择"
-                    size="small"
-                    style={{ width: '90px' }}
-                    onChange={setLocalThemeConfig}
-                  >
-                    <el-option label="风格1" value="tags-style-one"></el-option>
-                    <el-option label="风格2" value="tags-style-two"></el-option>
-                    <el-option label="风格3" value="tags-style-three"></el-option>
-                    <el-option label="风格4" value="tags-style-four"></el-option>
-                    <el-option label="风格5" value="tags-style-five"></el-option>
-                  </el-select>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">主页面切换动画</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-select
-                    v-model={themeConfig.animation}
-                    placeholder="请选择"
-                    size="small"
-                    style={{ width: '90px' }}
-                    onChange={setLocalThemeConfig}
-                  >
-                    <el-option label="slide-right" value="slide-right"></el-option>
-                    <el-option label="slide-left" value="slide-left"></el-option>
-                    <el-option label="opacitys" value="opacitys"></el-option>
-                  </el-select>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">分栏高亮风格</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-select
-                    v-model={themeConfig.columnsAsideStyle}
-                    placeholder="请选择"
-                    size="small"
-                    style={{ width: '90px' }}
-                    onChange={setLocalThemeConfig}
-                  >
-                    <el-option label="圆角" value="columns-round"></el-option>
-                    <el-option label="卡片" value="columns-card"></el-option>
-                  </el-select>
-                </div>
-              </div>
-              <div class="layout-breadcrumb-setting-bar-flex">
-                <div class="layout-breadcrumb-setting-bar-flex-label">分栏布局风格</div>
-                <div class="layout-breadcrumb-setting-bar-flex-value">
-                  <el-select
-                    v-model={themeConfig.columnsAsideLayout}
-                    placeholder="请选择"
-                    size="small"
-                    style={{ width: '90px' }}
-                    onChange={setLocalThemeConfig}
-                  >
-                    <el-option label="水平" value="columns-horizontal"></el-option>
-                    <el-option label="垂直" value="columns-vertical"></el-option>
-                  </el-select>
-                </div>
-              </div>
+              {otherSetting.map(e => {
+                return (
+                  <>
+                    <div class="layout-breadcrumb-setting-bar-flex" style={e.style || {}}>
+                      <div class="layout-breadcrumb-setting-bar-flex-label">{e.label}</div>
+                      <div class="layout-breadcrumb-setting-bar-flex-value">
+                        {e.type === 'select' && (
+                          <el-select
+                            v-model={themeConfig[e.key]}
+                            placeholder="请选择"
+                            size="small"
+                            style={e.elStyle}
+                            onChange={() => e.onChange()}
+                          >
+                            {e.options.map(o => {
+                              return (
+                                <>
+                                  <el-option label={o.label} value={o.value}></el-option>
+                                </>
+                              )
+                            })}
+                          </el-select>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )
+              })}
               {/* 布局切换 */}
               <el-divider content-position="left">布局切换</el-divider>
               <div class="layout-drawer-content-flex">
                 {/* defaults 布局 */}
-                <div class="layout-drawer-content-item" onClick={() => onSetLayout('defaults')}>
+                <div class="layout-drawer-content-item" onClick={() => onSetLayout('default')}>
                   <section
                     class={[
                       'el-container',
                       'el-circular',
-                      themeConfig.layout === 'defaults' ? 'drawer-layout-active' : ''
+                      themeConfig.layout === 'default' ? 'drawer-layout-active' : ''
                     ]}
                   >
                     <aside class="el-aside" style="width: 20px"></aside>
@@ -782,7 +723,7 @@ export default defineComponent({
                       <main class="el-main"></main>
                     </section>
                   </section>
-                  <div class={['layout-tips-warp', themeConfig.layout === 'defaults' ? 'layout-tips-warp-active' : '']}>
+                  <div class={['layout-tips-warp', themeConfig.layout === 'default' ? 'layout-tips-warp-active' : '']}>
                     <div class="layout-tips-box">
                       <p class="layout-tips-txt">默认</p>
                     </div>

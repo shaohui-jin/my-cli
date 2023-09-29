@@ -1,6 +1,5 @@
 import { defineComponent, getCurrentInstance, computed } from 'vue'
 import { useStore } from '@/store'
-import userLogo from '@/assets/images/ms-icon-144.png'
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any

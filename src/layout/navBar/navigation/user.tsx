@@ -1,4 +1,4 @@
-import { defineComponent, defineAsyncComponent, getCurrentInstance, onMounted, ref, computed, Transition } from 'vue'
+import { defineComponent, defineAsyncComponent, getCurrentInstance, onMounted, ref, computed } from 'vue'
 import { Search, Bell, ArrowDown } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
@@ -7,7 +7,7 @@ import screenfull from 'screenfull'
 import UserApi from '@/api/modules/user.ts'
 
 // const SearchBox = defineAsyncComponent(() => import('@/layout/navbar/navgation/search.vue'))
-const UserNews = defineAsyncComponent(() => import('@/layout/navbar/navigation/userNews.tsx'))
+const UserNews = defineAsyncComponent(() => import('@/layout/navBar/navigation/userNews.tsx'))
 
 export default defineComponent({
   setup() {
@@ -15,7 +15,6 @@ export default defineComponent({
     const router = useRouter()
     const searchRef = ref()
     const isScreenFull = ref<boolean>(false)
-    const disabledI18n = ref<string>('zh-cn')
     const disabledSize = ref<string>('mini')
 
     // 用户信息
@@ -98,12 +97,11 @@ export default defineComponent({
      * @desc 组件大小改变
      * @param size
      */
-    const onComponentSizeChange = (size: string) => {
+    const onComponentSizeChange = (size: '' | 'default' | 'small' | 'large') => {
       themeConfig.value.globalComponentSize = size
       window.location.reload()
     }
     onMounted(() => {
-      disabledI18n.value = useStore().useThemeStore.disabledI18n
       disabledSize.value = useStore().useThemeStore.globalComponentSize
     })
     return {
@@ -132,7 +130,7 @@ export default defineComponent({
     } = this
     return (
       <>
-        <div class="layout-navbar-breadcrumb-user" style={{ flex: layoutUserFlexNum }}>
+        <div class="layout-navbar-breadcrumb-user" style={`${layoutUserFlexNum ? 'flex: ' + layoutUserFlexNum : ''}`}>
           <el-dropdown
             show-timeout={70}
             hide-timeout={50}
