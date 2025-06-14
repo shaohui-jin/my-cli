@@ -9,8 +9,8 @@ import { CopyDocument, RefreshRight } from '@element-plus/icons-vue'
 import { ThemeType } from '@/store/modules/theme.ts'
 import { isMobile as _isMobile } from '@/utils/common.ts'
 
+// 设置类型
 type BaseSettingItem = {
-  // 属性值
   key: keyof ThemeType
   // 属性名
   label: string
@@ -30,22 +30,21 @@ type BaseSettingItem = {
 )
 
 type ColorItem = { onChange?: () => void }
-type SelectItem = {
-  onChange: () => void
-  options: { [k in 'label' | 'value']: string }[]
-}
-type SwitchItem = { onChange: () => void }
-type InputItem = { onInput: (str: string) => void }
-type InputNumberItem = { onChange: () => void }
+type SelectItem = { onChange?: () => void; options: { [k in 'label' | 'value']: string }[] }
+type SwitchItem = { onChange?: () => void }
+type InputItem = { onInput?: (str: string) => void }
+type InputNumberItem = { onChange?: () => void }
 
+type ColorPickerType =  keyof Pick<ThemeType, 'primary' | 'success' | 'info' | 'warning' | 'danger'>
 export default defineComponent({
   setup() {
     const { proxy } = getCurrentInstance() as any
-    const isMobile = ref<boolean>(false)
-    // 获取布局配置信息
+    const isMobile = ref<boolean>(_isMobile())
+
     const themeConfig = computed(() => useStore().useThemeStore)
+
     // 1、全局主题
-    const onColorPickerChange = (color: string) => {
+    const onColorPickerChange = (color: ColorPickerType) => {
       setPropertyFun(`--color-${color}`, themeConfig.value[color])
       setDispatchThemeConfig()
     }
@@ -57,7 +56,12 @@ export default defineComponent({
       }
     }
     // 2、菜单 / 顶栏
-    const onBgColorPickerChange = (bg: string) => {
+    const onBgColorPickerChange = (
+      bg: keyof Pick<
+        ThemeType,
+        'topBar' | 'menuBar' | 'columnsMenuBar' | 'topBarColor' | 'menuBarColor' | 'columnsMenuBarColor'
+      >
+    ) => {
       document.documentElement.style.setProperty(`--bg-${bg}`, themeConfig.value[bg])
       onTopBarGradualChange()
       onMenuBarGradualChange()
@@ -91,7 +95,6 @@ export default defineComponent({
             `background-image:linear-gradient(to bottom left , ${color}, ${getLightColor(color, 0.6)})`
           )
         else els.setAttribute('style', `background-image:${color}`)
-        setLocalThemeConfig()
       })
     }
     // 2、菜单 / 顶栏 --> 菜单字体背景高亮
@@ -108,7 +111,6 @@ export default defineComponent({
           } else {
             elActive.setAttribute('id', ``)
           }
-          setLocalThemeConfig()
         }, 0)
       })
     }
@@ -120,38 +122,32 @@ export default defineComponent({
     // 3、界面设置 --> 固定 Header
     const onIsFixedHeaderChange = () => {
       themeConfig.value.isFixedHeaderChange = !themeConfig.value.isFixedHeader
-      setLocalThemeConfig()
     }
     // 3、界面设置 --> 经典布局分割菜单
     const onClassicSplitMenuChange = () => {
       themeConfig.value.isBreadcrumb = false
-      setLocalThemeConfig()
       proxy.mittBus.emit('getBreadcrumbIndexSetFilterRoutes')
     }
     // 4、界面显示 --> 侧边栏 Logo
     const onIsShowLogoChange = () => {
       themeConfig.value.isShowLogoChange = !themeConfig.value.isShowLogo
-      setLocalThemeConfig()
     }
     // 4、界面显示 --> 面包屑 Breadcrumb
     const onIsBreadcrumbChange = () => {
       if (themeConfig.value.layout === 'classic') {
         themeConfig.value.isClassicSplitMenu = false
       }
-      setLocalThemeConfig()
     }
     // 4、界面显示 --> 开启 TagsView 拖拽
     const onSortableTagsViewChange = () => {
       proxy.mittBus.emit('openOrCloseSortable')
-      setLocalThemeConfig()
     }
     // 4、界面显示 --> 开启 TagsView 共用
     const onShareTagsViewChange = () => {
       proxy.mittBus.emit('openShareTagsView')
-      setLocalThemeConfig()
     }
     // 4、界面显示 --> 灰色模式/色弱模式
-    const onAddFilterChange = (attr: string) => {
+    const onAddFilterChange = (attr: 'grayscale' | 'invert') => {
       if (attr === 'grayscale') {
         if (themeConfig.value.isGrayscale) themeConfig.value.isInvert = false
       } else {
@@ -163,7 +159,6 @@ export default defineComponent({
           : `invert(${themeConfig.value.isInvert ? '80%' : '0%'})`
       const appEle: any = document.body
       appEle.setAttribute('style', `filter: ${cssAttr}`)
-      setLocalThemeConfig()
     }
     // 4、界面显示 --> 深色模式
     const onAddDarkChange = () => {
@@ -174,14 +169,12 @@ export default defineComponent({
     // 4、界面显示 --> 开启水印
     const onWaterMarkChange = () => {
       themeConfig.value.isWatermark ? Watermark.set(themeConfig.value.watermarkText) : Watermark.del()
-      setLocalThemeConfig()
     }
     // 4、界面显示 --> 水印文案
     const onWaterMarkTextInput = (val: string) => {
       themeConfig.value.watermarkText = verifyAndSpace(val)
       if (themeConfig.value.watermarkText === '') return false
       if (themeConfig.value.isWatermark) Watermark.set(themeConfig.value.watermarkText)
-      setLocalThemeConfig()
     }
     // 5、布局切换
     const onSetLayout = (layout: 'default' | 'classic' | 'transverse' | 'columns') => {
@@ -204,7 +197,6 @@ export default defineComponent({
       themeConfig.value.isFixedHeaderChange = false
       themeConfig.value.isShowLogoChange = false
       themeConfig.value.isDrawer = false
-      setLocalThemeConfig()
     }
     // 布局配置弹窗打开
     const openDrawer = () => {
@@ -212,14 +204,7 @@ export default defineComponent({
     }
     // 触发 store 布局配置更新
     const setDispatchThemeConfig = () => {
-      setLocalThemeConfig()
       setLocalThemeConfigStyle()
-    }
-    // 存储布局配置
-    const setLocalThemeConfig = () => {
-      useStore().useThemeStore = themeConfig.value
-      // Local.remove('themeConfig')
-      // Local.set('themeConfig', themeConfig.value)
     }
     // 存储布局配置全局主题样式（html根标签）
     const setLocalThemeConfigStyle = () => {
@@ -384,26 +369,22 @@ export default defineComponent({
       {
         label: '开启 Breadcrumb 图标',
         key: 'isBreadcrumbIcon',
-        type: 'switch',
-        onChange: () => setLocalThemeConfig()
+        type: 'switch'
       },
       {
         label: '开启 TagView',
         key: 'isTagView',
-        type: 'switch',
-        onChange: () => setLocalThemeConfig()
+        type: 'switch'
       },
       {
         label: '开启 TagView 图标',
         key: 'isTagViewIcon',
-        type: 'switch',
-        onChange: () => setLocalThemeConfig()
+        type: 'switch'
       },
       {
         label: '开启 TagView 缓存',
         key: 'isCacheTagView',
-        type: 'switch',
-        onChange: () => setLocalThemeConfig()
+        type: 'switch'
       },
       {
         label: '开启 TagView 拖拽',
@@ -422,8 +403,7 @@ export default defineComponent({
       {
         label: '开启 Footer',
         key: 'isFooter',
-        type: 'switch',
-        onChange: () => setLocalThemeConfig()
+        type: 'switch'
       },
       {
         label: '灰色模式',
@@ -468,8 +448,7 @@ export default defineComponent({
       {
         label: '菜单手风琴',
         key: 'isUniqueOpened',
-        type: 'switch',
-        onChange: () => setLocalThemeConfig()
+        type: 'switch'
       },
       {
         label: '固定 Header',
@@ -487,15 +466,13 @@ export default defineComponent({
       {
         label: '开启锁屏',
         key: 'isLockScreen',
-        type: 'switch',
-        onChange: () => setLocalThemeConfig()
+        type: 'switch'
       },
       {
         label: '自动锁屏(s/秒)',
         key: 'lockScreenTime',
         type: 'input-number',
-        elStyle: { width: '90px' },
-        onChange: () => setLocalThemeConfig()
+        elStyle: { width: '90px' }
       }
     ])
     const otherSetting = ref<BaseSettingItem[]>([
@@ -504,7 +481,6 @@ export default defineComponent({
         key: 'tagStyle',
         type: 'select',
         elStyle: { width: '90px' },
-        onChange: () => setLocalThemeConfig(),
         options: [
           { label: '风格1', value: 'tags-style-one' },
           { label: '风格2', value: 'tags-style-two' },
@@ -518,7 +494,6 @@ export default defineComponent({
         key: 'animation',
         type: 'select',
         elStyle: { width: '90px' },
-        onChange: () => setLocalThemeConfig(),
         options: [
           { label: 'slide-right', value: 'slide-right' },
           { label: 'slide-left', value: 'slide-left' },
@@ -530,7 +505,6 @@ export default defineComponent({
         key: 'columnsAsideStyle',
         type: 'select',
         elStyle: { width: '90px' },
-        onChange: () => setLocalThemeConfig(),
         options: [
           { label: '圆角', value: 'columns-round' },
           { label: '卡片', value: 'columns-card' }
@@ -541,7 +515,6 @@ export default defineComponent({
         key: 'columnsAsideLayout',
         type: 'select',
         elStyle: { width: '90px' },
-        onChange: () => setLocalThemeConfig(),
         options: [
           { label: '水平', value: 'columns-horizontal' },
           { label: '垂直', value: 'columns-vertical' }
@@ -596,7 +569,10 @@ export default defineComponent({
                     <div class="layout-breadcrumb-setting-bar-flex">
                       <div class="layout-breadcrumb-setting-bar-flex-label">{e.label}</div>
                       <div class="layout-breadcrumb-setting-bar-flex-value">
-                        <el-color-picker v-model={themeConfig[e.key]} onChange={() => onColorPickerChange(e.key)} />
+                        <el-color-picker
+                          v-model={themeConfig[e.key]}
+                          onChange={() => onColorPickerChange(e.key as ColorPickerType)}
+                        />
                       </div>
                     </div>
                   </>
@@ -613,7 +589,7 @@ export default defineComponent({
                           <el-color-picker v-model={themeConfig[e.key]} onChange={() => e?.onChange && e.onChange()} />
                         )}
                         {e.type === 'switch' && (
-                          <el-switch v-model={themeConfig[e.key]} onChange={() => e.onChange()}></el-switch>
+                          <el-switch v-model={themeConfig[e.key]} onChange={() => e?.onChange && e.onChange()}></el-switch>
                         )}
                       </div>
                     </div>
@@ -633,13 +609,13 @@ export default defineComponent({
                             controls-position="right"
                             min={1}
                             max={9999}
-                            onChange={() => e.onChange()}
+                            onChange={() => e?.onChange && e.onChange()}
                             size="small"
                             style={e.elStyle}
                           ></el-input-number>
                         )}
                         {e.type === 'switch' && (
-                          <el-switch v-model={themeConfig[e.key]} onChange={() => e.onChange()}></el-switch>
+                          <el-switch v-model={themeConfig[e.key]} onChange={() => e?.onChange && e.onChange()}></el-switch>
                         )}
                       </div>
                     </div>
@@ -660,7 +636,7 @@ export default defineComponent({
                           <el-switch
                             v-model={themeConfig[e.key]}
                             disabled={e.disabled || false}
-                            onChange={() => e.onChange()}
+                            onChange={() => e?.onChange && e.onChange()}
                           ></el-switch>
                         )}
                         {e.type === 'input' && (
@@ -668,7 +644,7 @@ export default defineComponent({
                             v-model={themeConfig[e.key]}
                             disabled={e.disabled || false}
                             style={e.elStyle || {}}
-                            onInput={(event: string) => e.onInput(event)}
+                            onInput={(event: string) => e?.onInput && e.onInput(event)}
                           ></el-input>
                         )}
                       </div>
@@ -689,7 +665,7 @@ export default defineComponent({
                             placeholder="请选择"
                             size="small"
                             style={e.elStyle}
-                            onChange={() => e.onChange()}
+                            onChange={() => e?.onChange && e.onChange()}
                           >
                             {e.options.map(o => {
                               return (

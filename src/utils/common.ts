@@ -2,7 +2,6 @@ import { ObjectType } from '@/types'
 import { nextTick } from 'vue'
 import useClipboard from 'vue-clipboard3'
 import { ElMessage } from 'element-plus'
-import { formatDate } from '@/utils/time.ts'
 
 /**
  * desc: 对象扁平化
@@ -218,52 +217,6 @@ export const isMobile = () => {
 const { toClipboard } = useClipboard()
 
 /**
- * @desc 百分比格式化
- * @param row
- * @param column
- * @param cellValue
- */
-export const percentFormat = (row: any, column: number, cellValue: any) => {
-  return cellValue ? `${cellValue}%` : '-'
-}
-
-/**
- * @desc 列表日期时间格式化
- * @param row
- * @param column
- * @param cellValue
- */
-export const dateFormatYMD = (row: any, column: number, cellValue: any) => {
-  if (!cellValue) return '-'
-  return formatDate(new Date(cellValue), 'YYYY-mm-dd')
-}
-
-/**
- * @desc 列表日期时间格式化
- * @param row
- * @param column
- * @param cellValue
- */
-export const dateFormatYMDHMS = (row: any, column: number, cellValue: any) => {
-  if (!cellValue) return '-'
-  return formatDate(new Date(cellValue), 'YYYY-mm-dd HH:MM:SS')
-}
-
-/**
- * @desc 列表日期时间格式化
- * @param row
- * @param column
- * @param cellValue
- */
-export const dateFormatHMS = (row: any, column: number, cellValue: any) => {
-  if (!cellValue) return '-'
-  let time = 0
-  if (typeof row === 'number') time = row
-  if (typeof cellValue === 'number') time = cellValue
-  return formatDate(new Date(time * 1000), 'HH:MM:SS')
-}
-
-/**
  * @desc 小数格式化
  * @param value
  * @param scale
@@ -290,11 +243,11 @@ export const copyText = (text: string) => {
       //复制
       toClipboard(text)
       //下面可以设置复制成功的提示框等操作
-      ElMessage.success(t('message.layout.copyTextSuccess'))
+      ElMessage.success('复制成功！')
       resolve(text)
     } catch (e) {
       //复制失败
-      ElMessage.error(t('message.layout.copyTextError'))
+      ElMessage.error('复制失败！')
       reject(e)
     }
   })
